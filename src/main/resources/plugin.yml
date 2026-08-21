@@ -6,7 +6,7 @@ description: The Ultimate Plot Management System V1 | BY REDGLITCHX
 authors: [RedGlitchX]
 website: https://redglitchx.com
 depend: [Vault]
-softdepend: [PlaceholderAPI, ProtocolLib, WorldGuard, FastAsyncWorldEdit, BlueMap, LuckPerms, SimpleVoiceChat, voicechat]
+softdepend: [Vault, Essentials, EssentialsX, CMI, PlaceholderAPI, ProtocolLib, WorldGuard, FastAsyncWorldEdit, BlueMap, LuckPerms, SimpleVoiceChat, voicechat]
 commands:
   plot:
     description: PlotManager main command
