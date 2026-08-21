@@ -83,7 +83,15 @@ public final class PlotManager extends JavaPlugin {
         store = new PlotStore(this);
         economy = new EconomyService(this);
         if (!economy.setup()) {
-            getLogger().severe("Vault economy not found! PlotManager requires Vault + an economy plugin.");
+            getLogger().severe("Vault economy not found yet! PlotManager requires Vault + an economy plugin (EssentialsX, CMI, ...).");
+            // Economy providers (e.g. EssentialsX) may enable after us - retry once every plugin is up.
+            Bukkit.getScheduler().runTaskLater(this, () -> {
+                if (economy.setup()) {
+                    getLogger().info("Economy hooked: " + economy.status());
+                } else {
+                    getLogger().severe("Economy still OFFLINE - money features disabled. Install Vault + EssentialsX (or any Vault economy) and restart.");
+                }
+            }, 40L);
         }
         luckPerms = new LuckPermsHook(this);
         discord = new DiscordBot(this);
@@ -117,6 +125,8 @@ public final class PlotManager extends JavaPlugin {
         holograms.start();
         PluginTasks.start(this);
         printBanner();
+        getLogger().info("Hooks -> Economy: " + economy.status() + " | FAWE: " + fawe.status()
+                + " | BlueMap: " + blueMap.status() + " | Discord: " + discord.status());
     }
 
     @Override
@@ -1046,6 +1056,7 @@ public final class PlotManager extends JavaPlugin {
         reloadConfig();
         lang.reload();
         luckPerms.reload();
+        if (economy.setup()) getLogger().info("Economy: " + economy.status());
         holograms.shutdown();
         holograms.start();
     }
