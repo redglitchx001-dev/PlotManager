@@ -52,7 +52,7 @@ public class Menus {
         inv.setItem(39, btn(Material.BARREL, plugin.lang.line(player, "gui.main.mailbox-name"), plugin.lang.list(player, "gui.main.mailbox-lore"), "mailboxinfo"));
         inv.setItem(40, btn(Material.PHANTOM_MEMBRANE, plugin.lang.line(player, "gui.main.drone-name"), plugin.lang.list(player, "gui.main.drone-lore"), "drone"));
         inv.setItem(41, btn(mat("gui.unclaim_item", Material.TNT), plugin.lang.line(player, "gui.main.unclaim-name"), plugin.lang.list(player, "gui.main.unclaim-lore"), "unclaim"));
-        inv.setItem(43, btn(Material.WRITABLE_BOOK, plugin.lang.line(player, "gui.main.lang-name"), plugin.lang.list(player, "gui.main.lang-lore"), "language"));
+        inv.setItem(43, btn(mat("gui.language_item", Material.WRITABLE_BOOK), plugin.lang.line(player, "gui.main.lang-name"), plugin.lang.list(player, "gui.main.lang-lore"), "language"));
         inv.setItem(49, btn(mat("gui.close_button_item", Material.BARRIER), plugin.lang.line(player, "gui.common.close"), List.of(), "close"));
         player.openInventory(inv);
         plugin.fx(player, "gui_click");

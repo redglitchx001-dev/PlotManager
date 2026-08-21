@@ -93,6 +93,7 @@ public final class PlotManager extends JavaPlugin {
         voice = new VoiceHook(this);
         lang = new Lang(this);
         lang.load();
+        getLogger().info("Languages: " + String.join(", ", lang.available()) + " (default: " + lang.defaultCode() + ", fallback: " + lang.fallbackCode() + ")");
         holograms = new HologramEngine(this);
         menus = new Menus(this);
 

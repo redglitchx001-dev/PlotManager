@@ -37,7 +37,9 @@ public final class Lang {
     private final List<String> bundled = new ArrayList<>();
     private YamlConfiguration prefs;
     private String defaultCode = "en";
+    private String fallbackCode = "en";
     private boolean perPlayer = true;
+    private boolean autoDetect = true;
 
     public Lang(PlotManager plugin) {
         this.plugin = plugin;
@@ -80,8 +82,11 @@ public final class Lang {
     public void reload() {
         defaultCode = plugin.getConfig().getString("language.default",
                 plugin.getConfig().getString("plugin.language", "en"));
+        fallbackCode = plugin.getConfig().getString("language.fallback", "en");
         perPlayer = plugin.getConfig().getBoolean("language.per-player", true);
+        autoDetect = plugin.getConfig().getBoolean("language.auto-detect", true);
         if (!bundled.contains(defaultCode)) defaultCode = "en";
+        if (!exists(fallbackCode)) fallbackCode = "en";
         loaded.clear();
         for (String code : available()) {
             loaded.put(code, YamlConfiguration.loadConfiguration(file(code)));
@@ -113,7 +118,11 @@ public final class Lang {
         return defaultCode;
     }
 
-    /** The language that should be used for this viewer (player preference or server default). */
+    public String fallbackCode() {
+        return fallbackCode;
+    }
+
+    /** The language that should be used for this viewer (explicit choice > client locale > server default). */
     public String codeFor(CommandSender viewer) {
         if (perPlayer && viewer instanceof Player p) {
             PlayerSession s = plugin.sessions.get(p.getUniqueId());
@@ -121,6 +130,10 @@ public final class Lang {
             if (code != null && !code.isEmpty() && !code.equals(defaultCode)) {
                 code = code.toLowerCase(Locale.ROOT);
                 if (exists(code)) return code;
+            }
+            if (autoDetect && (code == null || code.isEmpty())) {
+                String client = p.locale().getLanguage().toLowerCase(Locale.ROOT);
+                if (!client.equals(defaultCode) && !client.equals("en") && exists(client)) return client;
             }
         }
         return defaultCode;
@@ -150,6 +163,10 @@ public final class Lang {
     private String resolve(String code, String key) {
         YamlConfiguration lang = code == null ? null : loaded.get(code);
         String value = lang == null ? null : lang.getString(key);
+        if (value == null && fallbackCode != null && !fallbackCode.equals(code)) {
+            YamlConfiguration fb = loaded.get(fallbackCode);
+            value = fb == null ? null : fb.getString(key);
+        }
         if (value == null) value = embeddedEn.getString(key);
         if (value == null) value = plugin.getConfig().getString(key); // legacy configs
         return value;
