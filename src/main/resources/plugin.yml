@@ -1,0 +1,42 @@
+name: PlotManager
+version: '${project.version}'
+main: com.redglitchx.plotmanager.PlotManager
+api-version: '1.21'
+description: The Ultimate Plot Management System V1 | BY REDGLITCHX
+authors: [RedGlitchX]
+website: https://redglitchx.com
+depend: [Vault]
+softdepend: [PlaceholderAPI, ProtocolLib, WorldGuard, FastAsyncWorldEdit, BlueMap, LuckPerms, SimpleVoiceChat, voicechat]
+commands:
+  plot:
+    description: PlotManager main command
+    aliases: [p, plots]
+    usage: /plot <subcommand>
+permissions:
+  plotmanager.use:
+    description: Basic plot usage
+    default: true
+  plotmanager.claim:
+    description: Claim plots
+    default: true
+  plotmanager.premium.claim:
+    description: Claim premium plots
+    default: op
+  plotmanager.wand:
+    description: Use the plot selection wand
+    default: op
+  plotmanager.admin:
+    description: Full admin access
+    default: op
+  plotmanager.bypass:
+    description: Bypass plot protection
+    default: op
+  plotmanager.drone:
+    description: Use drone camera mode
+    default: true
+  plotmanager.blackmarket:
+    description: Access the blackmarket
+    default: true
+  plotmanager.mayor:
+    description: Mayor tax powers (also granted dynamically to #1 plot)
+    default: op
