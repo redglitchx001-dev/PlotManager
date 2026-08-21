@@ -27,6 +27,7 @@ import com.redglitchx.plotmanager.util.Cuboid;
 import com.redglitchx.plotmanager.util.FX;
 import com.redglitchx.plotmanager.util.Items;
 import com.redglitchx.plotmanager.util.Keys;
+import com.redglitchx.plotmanager.util.Lang;
 import com.redglitchx.plotmanager.util.Serial;
 import com.redglitchx.plotmanager.util.Text;
 import org.bukkit.Bukkit;
@@ -65,6 +66,7 @@ public final class PlotManager extends JavaPlugin {
     public HologramEngine holograms;
     public Menus menus;
     public Keys keys;
+    public Lang lang;
     public LuckPermsHook luckPerms;
     public DiscordBot discord;
     public FaweHook fawe;
@@ -89,6 +91,8 @@ public final class PlotManager extends JavaPlugin {
         blueMap = new BlueMapHook(this);
         papi = new PapiHook(this);
         voice = new VoiceHook(this);
+        lang = new Lang(this);
+        lang.load();
         holograms = new HologramEngine(this);
         menus = new Menus(this);
 
@@ -215,18 +219,18 @@ public final class PlotManager extends JavaPlugin {
 
     public void unclaim(Player player, Plot plot, boolean confirm) {
         if (!plot.isOwner(player.getUniqueId()) && !player.hasPermission("plotmanager.admin")) {
-            msg(player, "&cOnly the owner can unclaim.");
+            lang.msg(player, "plot.only-owner-unclaim");
             return;
         }
         if (!confirm) {
             session(player).confirmUnclaim = plot.id;
-            msg(player, cfg().getString("claiming.unclaim_confirm_message"));
+            lang.msg(player, "claiming.unclaim_confirm_message");
             return;
         }
         double refund = plot.claimCostPaid * (cfg().getDouble("economy.unclaim_refund_percent", 50) / 100.0);
         economy.deposit(player, refund);
         deletePlot(plot, true);
-        msg(player, cfg().getString("claiming.unclaim_success_message").replace("%amount%", Text.money(refund)));
+        lang.msg(player, "claiming.unclaim_success_message", "%amount%", Text.money(refund));
         fx(player, "unclaim_success");
     }
 
@@ -285,7 +289,7 @@ public final class PlotManager extends JavaPlugin {
 
     public void sendInfo(Player player, Plot plot) {
         if (plot == null) {
-            msg(player, "&7You are in the wilderness.");
+            lang.msg(player, "general.wilderness");
             return;
         }
         Map<String, String> ph = Map.of(
@@ -315,7 +319,7 @@ public final class PlotManager extends JavaPlugin {
     public void teleportHome(Player player, Plot plot) {
         Location home = plot.home();
         if (home == null) {
-            msg(player, "&cHome location is invalid.");
+            lang.msg(player, "plot.home-invalid");
             return;
         }
         player.teleport(home);
@@ -325,74 +329,73 @@ public final class PlotManager extends JavaPlugin {
     public void deposit(Player player, Plot plot, double amount) {
         if (amount <= 0) return;
         if (!plot.canManage(player) && !plot.isOwner(player.getUniqueId())) {
-            msg(player, "&cOnly owners and co-owners can deposit.");
+            lang.msg(player, "bank.deposit-denied");
             return;
         }
         amount = Math.min(amount, economy.balance(player));
         if (!economy.withdraw(player, amount)) {
-            msg(player, cfg().getString("economy.not_enough_money_message").replace("%balance%", Text.money(economy.balance(player))));
+            lang.msg(player, "economy.not_enough_money_message", "%balance%", Text.money(economy.balance(player)));
             return;
         }
         plot.bank += amount;
         plot.audit(player.getName(), "DEPOSIT", "$" + Text.money(amount));
-        msg(player, cfg().getString("economy.deposit_message").replace("%amount%", Text.money(amount)).replace("%balance%", Text.money(plot.bank)));
+        lang.msg(player, "economy.deposit_message", "%amount%", Text.money(amount), "%balance%", Text.money(plot.bank));
     }
 
     public void withdraw(Player player, Plot plot, double amount) {
         if (amount <= 0) return;
         if (!plot.isOwner(player.getUniqueId()) && !player.hasPermission("plotmanager.admin")) {
-            msg(player, "&cOnly the owner can withdraw.");
+            lang.msg(player, "bank.withdraw-denied");
             return;
         }
         if (plot.bank < amount) {
-            msg(player, cfg().getString("economy.not_enough_bank_message"));
+            lang.msg(player, "economy.not_enough_bank_message");
             return;
         }
         plot.bank -= amount;
         economy.deposit(player, amount);
         plot.audit(player.getName(), "WITHDRAW", "$" + Text.money(amount));
-        msg(player, cfg().getString("economy.withdraw_message").replace("%amount%", Text.money(amount)).replace("%balance%", Text.money(plot.bank)));
+        lang.msg(player, "economy.withdraw_message", "%amount%", Text.money(amount), "%balance%", Text.money(plot.bank));
     }
 
     public void buyUpgrade(Player player, Plot plot, String id) {
         if (!plot.canManage(player)) {
-            msg(player, "&cYou cannot buy upgrades for this plot.");
+            lang.msg(player, "upgrades.cannot-buy");
             return;
         }
         switch (id) {
             case "fly" -> purchase(player, plot, cfg().getDouble("upgrades.fly.cost"), () -> {
                 plot.flyUnlocked = true;
-                msg(player, cfg().getString("upgrades.fly.purchase_message").replace("%cost%", Text.money(cfg().getDouble("upgrades.fly.cost"))));
+                lang.msg(player, "upgrades.purchase-messages.fly", "%cost%", Text.money(cfg().getDouble("upgrades.fly.cost")));
             }, plot.flyUnlocked);
             case "crop" -> purchase(player, plot, cfg().getDouble("upgrades.crop_boost.cost"), () -> {
                 plot.cropBoost = true;
-                msg(player, cfg().getString("upgrades.crop_boost.purchase_message")
-                        .replace("%cost%", Text.money(cfg().getDouble("upgrades.crop_boost.cost")))
-                        .replace("%multiplier%", String.valueOf(cfg().getDouble("upgrades.crop_boost.multiplier"))));
+                lang.msg(player, "upgrades.purchase-messages.crop_boost",
+                        "%cost%", Text.money(cfg().getDouble("upgrades.crop_boost.cost")),
+                        "%multiplier%", String.valueOf(cfg().getDouble("upgrades.crop_boost.multiplier")));
             }, plot.cropBoost);
             case "music" -> purchase(player, plot, cfg().getDouble("upgrades.music.cost"), () -> {
                 plot.musicUnlocked = true;
-                msg(player, cfg().getString("upgrades.music.purchase_message").replace("%cost%", Text.money(cfg().getDouble("upgrades.music.cost"))));
+                lang.msg(player, "upgrades.purchase-messages.music", "%cost%", Text.money(cfg().getDouble("upgrades.music.cost")));
             }, plot.musicUnlocked);
             case "sorter" -> purchase(player, plot, cfg().getDouble("upgrades.smart_sorter.cost"), () -> {
                 plot.sorterUnlocked = true;
-                msg(player, cfg().getString("upgrades.smart_sorter.purchase_message").replace("%cost%", Text.money(cfg().getDouble("upgrades.smart_sorter.cost"))));
+                lang.msg(player, "upgrades.purchase-messages.smart_sorter", "%cost%", Text.money(cfg().getDouble("upgrades.smart_sorter.cost")));
             }, plot.sorterUnlocked);
             case "factory" -> purchase(player, plot, cfg().getDouble("upgrades.factory.cost"), () -> {
                 plot.factoryUnlocked = true;
-                msg(player, cfg().getString("upgrades.factory.purchase_message").replace("%cost%", Text.money(cfg().getDouble("upgrades.factory.cost"))));
+                lang.msg(player, "upgrades.purchase-messages.factory", "%cost%", Text.money(cfg().getDouble("upgrades.factory.cost")));
             }, plot.factoryUnlocked);
             case "vault" -> {
                 int max = cfg().getInt("upgrades.vault_page.max_pages", 5);
                 if (plot.vaultPages >= max) {
-                    msg(player, "&cMax vault pages reached.");
+                    lang.msg(player, "upgrades.max-vault-pages");
                     return;
                 }
                 double cost = cfg().getDouble("upgrades.vault_page.cost_per_page");
                 purchase(player, plot, cost, () -> {
                     plot.vaultPages++;
-                    msg(player, cfg().getString("upgrades.vault_page.purchase_message")
-                            .replace("%page%", String.valueOf(plot.vaultPages)).replace("%cost%", Text.money(cost)));
+                    lang.msg(player, "upgrades.purchase-messages.vault_page", "%page%", String.valueOf(plot.vaultPages), "%cost%", Text.money(cost));
                 }, false);
             }
             case "gen1" -> buyGen(player, plot, 1);
@@ -408,7 +411,7 @@ public final class PlotManager extends JavaPlugin {
             default -> 1;
         };
         if (plot.level < need) {
-            msg(player, "&cThis generator unlocks at plot level " + need + ".");
+            lang.msg(player, "upgrades.generator-level", "%level%", String.valueOf(need));
             return;
         }
         String path = "upgrades.generator_tier_" + tier;
@@ -418,18 +421,18 @@ public final class PlotManager extends JavaPlugin {
             g.tier = tier;
             g.lastTick = System.currentTimeMillis();
             plot.generators.add(g);
-            msg(player, cfg().getString(path + ".purchase_message").replace("%cost%", Text.money(cost)));
+            lang.msg(player, "upgrades.purchase-messages.generator_tier_" + tier, "%cost%", Text.money(cost));
         }, false);
     }
 
     private void purchase(Player player, Plot plot, double cost, Runnable success, boolean owned) {
         if (owned) {
-            msg(player, "&aAlready unlocked.");
+            lang.msg(player, "upgrades.already-unlocked");
             return;
         }
         if (plot.bank >= cost) {
             plot.bank -= cost;
-        } else if (!economy.charge(player, cost, cfg().getString("economy.not_enough_money_message").replace("%balance%", Text.money(economy.balance(player))))) {
+        } else if (!economy.charge(player, cost, lang.line(player, "economy.not_enough_money_message", "%balance%", Text.money(economy.balance(player))))) {
             fx(player, "upgrade_denied");
             return;
         }
@@ -444,7 +447,7 @@ public final class PlotManager extends JavaPlugin {
         boolean selected = type.equals("borders") ? id.equals(plot.borderCosmetic) : id.equals(plot.particleCosmetic);
         if (!selected) {
             if (plot.bank < price && !economy.has(player, price)) {
-                msg(player, cfg().getString("economy.not_enough_money_message").replace("%balance%", Text.money(economy.balance(player))));
+                lang.msg(player, "economy.not_enough_money_message", "%balance%", Text.money(economy.balance(player)));
                 return;
             }
             if (plot.bank >= price) plot.bank -= price;
@@ -452,7 +455,7 @@ public final class PlotManager extends JavaPlugin {
         }
         if (type.equals("borders")) plot.borderCosmetic = id;
         else plot.particleCosmetic = id;
-        msg(player, "&aSelected " + cfg().getString(path + ".name", id));
+        lang.msg(player, "upgrades.selected", "%name%", cfg().getString(path + ".name", id));
     }
 
     public boolean canFly(Player player, Plot plot) {
@@ -478,7 +481,7 @@ public final class PlotManager extends JavaPlugin {
 
     public void toggleDrone(Player player) {
         if (!cfg().getBoolean("drone.enabled", true)) {
-            msg(player, "&cDrone mode is disabled.");
+            lang.msg(player, "drone.disabled");
             return;
         }
         PlayerSession s = session(player);
@@ -488,7 +491,7 @@ public final class PlotManager extends JavaPlugin {
         }
         Plot plot = here(player);
         if (plot == null || !plot.isOwner(player.getUniqueId()) && !plot.canManage(player)) {
-            msg(player, "&cYou can only drone your own plot.");
+            lang.msg(player, "drone.own-plot-only");
             return;
         }
         s.drone = true;
@@ -502,7 +505,7 @@ public final class PlotManager extends JavaPlugin {
         if (cfg().getBoolean("drone.invisibility", true)) {
             player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0, false, false, false));
         }
-        msg(player, cfg().getString("drone.enabled_message"));
+        lang.msg(player, "drone.enabled_message");
     }
 
     public void disableDrone(Player player, boolean message) {
@@ -514,7 +517,7 @@ public final class PlotManager extends JavaPlugin {
         player.setFlying(s.droneWasFlying);
         if (s.droneReturn != null) player.teleport(s.droneReturn);
         s.droneReturn = null;
-        if (message) msg(player, cfg().getString("drone.disabled_message"));
+        if (message) lang.msg(player, "drone.disabled_message");
     }
 
     public void tickDrone(Player player, Plot plot) {
@@ -529,7 +532,7 @@ public final class PlotManager extends JavaPlugin {
         boolean outside = loc.getBlockX() < c.minX - max || loc.getBlockX() > c.maxX + max
                 || loc.getBlockZ() < c.minZ - max || loc.getBlockZ() > c.maxZ + max;
         if (outside) {
-            msg(player, cfg().getString("drone.lost_signal_message"));
+            lang.msg(player, "drone.lost_signal_message");
             Location center = home.center();
             if (center != null) player.teleport(center.add(0, 8, 0));
             disableDrone(player, true);
@@ -547,7 +550,7 @@ public final class PlotManager extends JavaPlugin {
         s.gpsPlot = plot.id;
         s.gpsTarget = plot.home();
         s.gpsStarted = System.currentTimeMillis();
-        msg(player, cfg().getString("gps.start_message"));
+        lang.msg(player, "gps.start_message");
     }
 
     public void tickGps(Player player) {
@@ -561,7 +564,7 @@ public final class PlotManager extends JavaPlugin {
         if (to.getWorld() == null || player.getWorld() == null || !to.getWorld().equals(player.getWorld())) return;
         if (player.getLocation().distanceSquared(to) <= Math.pow(cfg().getDouble("gps.arrive_distance", 4), 2)) {
             Plot plot = store.get(s.gpsPlot);
-            msg(player, cfg().getString("gps.arrive_message").replace("%plot_name%", plot == null ? "plot" : plot.name));
+            lang.msg(player, "gps.arrive_message", "%plot_name%", plot == null ? "plot" : plot.name);
             s.gpsTarget = null;
             return;
         }
@@ -626,7 +629,7 @@ public final class PlotManager extends JavaPlugin {
         if (up) {
             Player owner = plot.owner == null ? null : Bukkit.getPlayer(plot.owner);
             if (owner != null) {
-                msg(owner, cfg().getString("leveling.level_up_message").replace("%level%", String.valueOf(plot.level)));
+                lang.msg(owner, "leveling.level_up_message", "%level%", String.valueOf(plot.level));
                 fx(owner, "level_up");
             }
             holograms.spawnPlot(plot);
@@ -642,7 +645,7 @@ public final class PlotManager extends JavaPlugin {
         Plot mayor = top.get(0);
         if (store.mayorPlot == null || !store.mayorPlot.equals(mayor.id)) {
             store.mayorPlot = mayor.id;
-            Text.broadcast(prefix() + cfg().getString("mayor.announce_message", "%player% is Mayor").replace("%player%", mayor.ownerName));
+            lang.broadcast("mayor.announce_message", "%player%", mayor.ownerName);
         }
     }
 
@@ -683,18 +686,18 @@ public final class PlotManager extends JavaPlugin {
 
     public void buyShop(Player player, Plot plot, ChestShop shop, Block sign) {
         if (player.getUniqueId().equals(plot.owner)) {
-            msg(player, "&7That's your shop.");
+            lang.msg(player, "shops.yours");
             return;
         }
         double tax = cfg().getDouble("chest_shops.tax_percent", 5) + store.mayorTaxPercent;
         double total = shop.price;
         if (!economy.has(player, total)) {
-            msg(player, cfg().getString("economy.not_enough_money_message").replace("%balance%", Text.money(economy.balance(player))));
+            lang.msg(player, "economy.not_enough_money_message", "%balance%", Text.money(economy.balance(player)));
             return;
         }
         ItemStack stack = takeShopStock(plot, shop, sign);
         if (stack == null) {
-            msg(player, cfg().getString("chest_shops.out_of_stock_message"));
+            lang.msg(player, "shops.out-of-stock");
             return;
         }
         economy.withdraw(player, total);
@@ -707,17 +710,17 @@ public final class PlotManager extends JavaPlugin {
         }
         HashMap<Integer, ItemStack> overflow = player.getInventory().addItem(stack);
         overflow.values().forEach(i -> player.getWorld().dropItemNaturally(player.getLocation(), i));
-        msg(player, cfg().getString("chest_shops.purchase_message_buyer")
-                .replace("%amount%", String.valueOf(shop.amount))
-                .replace("%item%", shop.item.name())
-                .replace("%price%", Text.money(shop.price)));
+        lang.msg(player, "chest_shops.purchase_message_buyer",
+                "%amount%", String.valueOf(shop.amount),
+                "%item%", shop.item.name(),
+                "%price%", Text.money(shop.price));
         Player owner = Bukkit.getPlayer(plot.owner);
         if (owner != null) {
-            msg(owner, cfg().getString("chest_shops.purchase_message_seller")
-                    .replace("%buyer%", player.getName())
-                    .replace("%amount%", String.valueOf(shop.amount))
-                    .replace("%item%", shop.item.name())
-                    .replace("%price%", Text.money(shop.price)));
+            lang.msg(owner, "chest_shops.purchase_message_seller",
+                    "%buyer%", player.getName(),
+                    "%amount%", String.valueOf(shop.amount),
+                    "%item%", shop.item.name(),
+                    "%price%", Text.money(shop.price));
         } else {
             plot.shopSalesOffline += net;
         }
@@ -768,7 +771,7 @@ public final class PlotManager extends JavaPlugin {
         if (!cfg().getBoolean("mailbox.notification_on_delivery", true)) return;
         Player owner = Bukkit.getPlayer(plot.owner);
         if (owner != null) {
-            msg(owner, cfg().getString("mailbox.delivery_message").replace("%player%", player.getName()));
+            lang.msg(owner, "mailbox.delivery-message", "%player%", player.getName());
             fx(owner, "mailbox_delivery");
         }
     }
@@ -798,32 +801,32 @@ public final class PlotManager extends JavaPlugin {
                 double amt = Double.parseDouble(msg.replace("$", "").trim());
                 double min = cfg().getDouble("economy.tip_jar_minimum", 10);
                 if (amt < min) {
-                    msg(player, "&cMinimum tip is $" + Text.money(min));
+                    lang.msg(player, "economy.tip-minimum", "%amount%", Text.money(min));
                     return;
                 }
-                if (!economy.charge(player, amt, cfg().getString("economy.not_enough_money_message").replace("%balance%", Text.money(economy.balance(player))))) return;
+                if (!economy.charge(player, amt, lang.line(player, "economy.not_enough_money_message", "%balance%", Text.money(economy.balance(player))))) return;
                 plot.bank += amt;
                 addPlotExp(plot, (long) (amt * cfg().getDouble("leveling.exp_per_tip_dollar", 1)));
                 Player owner = Bukkit.getPlayer(plot.owner);
-                if (owner != null) msg(owner, cfg().getString("economy.tip_jar_message").replace("%player%", player.getName()).replace("%amount%", Text.money(amt)));
+                if (owner != null) lang.msg(owner, "economy.tip_jar_message", "%player%", player.getName(), "%amount%", Text.money(amt));
                 else plot.tipsOffline += amt;
-                msg(player, "&aTipped &2$" + Text.money(amt));
+                lang.msg(player, "economy.tipped", "%amount%", Text.money(amt));
             } catch (Exception e) {
-                msg(player, "&cInvalid amount.");
+                lang.msg(player, "general.invalid-amount");
             }
             return;
         }
         if (path.equals("blackmarket-sell")) {
             ItemStack hand = player.getInventory().getItemInMainHand();
             if (hand == null || hand.getType().isAir()) {
-                msg(player, "&cHold the item you want to sell.");
+                lang.msg(player, "economy.sell-hold-item");
                 return;
             }
             try {
                 double price = Double.parseDouble(msg.replace("$", "").trim());
                 if (store.blackmarket.stream().filter(l -> player.getUniqueId().equals(l.seller)).count()
                         >= cfg().getInt("blackmarket.max_listings_per_player", 10)) {
-                    msg(player, "&cYou have too many listings.");
+                    lang.msg(player, "blackmarket.too-many-listings");
                     return;
                 }
                 BlackmarketListing l = new BlackmarketListing();
@@ -836,9 +839,9 @@ public final class PlotManager extends JavaPlugin {
                 store.blackmarket.add(l);
                 player.getInventory().setItemInMainHand(null);
                 if (plot != null) plot.blackmarketUsed = true;
-                msg(player, "&8Item listed anonymously for &a$" + Text.money(price));
+                lang.msg(player, "blackmarket.listed-anonymously", "%price%", Text.money(price));
             } catch (Exception e) {
-                msg(player, "&cInvalid price.");
+                lang.msg(player, "general.invalid-price");
             }
             return;
         }
@@ -846,10 +849,10 @@ public final class PlotManager extends JavaPlugin {
             double v = Double.parseDouble(msg.replace("$", "").trim());
             cfg().set(path, v);
             saveConfig();
-            msg(player, "&aUpdated &2" + path + " &ato &f$" + Text.money(v));
+            lang.msg(player, "prices.updated", "%path%", path, "%price%", Text.money(v));
             fx(player, "claim_success");
         } catch (Exception e) {
-            msg(player, "&cInvalid number.");
+            lang.msg(player, "general.invalid-number");
         }
     }
 
@@ -863,8 +866,7 @@ public final class PlotManager extends JavaPlugin {
     public void createHologram(Player player, Plot plot) {
         int max = cfg().getInt("holograms.max_holograms_per_plot", 2);
         if (plot.holograms.size() >= max) {
-            msg(player, cfg().getString("holograms.max_holograms_message")
-                    .replace("%current%", String.valueOf(plot.holograms.size())).replace("%max%", String.valueOf(max)));
+            lang.msg(player, "holograms.max_holograms_message", "%current%", String.valueOf(plot.holograms.size()), "%max%", String.valueOf(max));
             return;
         }
         double cost = cfg().getDouble("holograms.cost_per_hologram", 500);
@@ -878,21 +880,21 @@ public final class PlotManager extends JavaPlugin {
         h.lines.addAll(cfg().getStringList("holograms.default_lines_on_create"));
         plot.holograms.add(h);
         holograms.spawnCustom(plot, h);
-        msg(player, cfg().getString("holograms.hologram_created_message").replace("%cost%", Text.money(cost)));
+        lang.msg(player, "holograms.hologram_created_message", "%cost%", Text.money(cost));
     }
 
     public void addHoloLine(Player player, Plot plot, String text) {
         if (cfg().getBoolean("holograms.profanity_filter", true) && isProfane(text)) {
-            msg(player, cfg().getString("holograms.profanity_blocked_message"));
+            lang.msg(player, "holograms.profanity_blocked_message");
             return;
         }
         CustomHologram h = holograms.nearest(plot, player.getLocation(), 6);
         if (h == null) {
-            msg(player, "&cStand closer to a hologram.");
+            lang.msg(player, "holograms.too-far");
             return;
         }
         if (h.lines.size() >= cfg().getInt("holograms.max_lines_per_hologram", 10)) {
-            msg(player, "&cMax lines reached.");
+            lang.msg(player, "holograms.max-lines");
             return;
         }
         double cost = cfg().getDouble("holograms.cost_per_extra_line", 50);
@@ -900,29 +902,29 @@ public final class PlotManager extends JavaPlugin {
         else if (!economy.charge(player, cost, cfg().getString("economy.not_enough_money_message").replace("%balance%", Text.money(economy.balance(player))))) return;
         h.lines.add(text);
         holograms.spawnCustom(plot, h);
-        msg(player, cfg().getString("holograms.line_added_message").replace("%text%", text));
+        lang.msg(player, "holograms.line_added_message", "%text%", text);
     }
 
     public void removeHoloLine(Player player, Plot plot, int number) {
         CustomHologram h = holograms.nearest(plot, player.getLocation(), 6);
         if (h == null || number < 1 || number > h.lines.size()) {
-            msg(player, "&cInvalid line.");
+            lang.msg(player, "holograms.invalid-line");
             return;
         }
         h.lines.remove(number - 1);
         holograms.spawnCustom(plot, h);
-        msg(player, cfg().getString("holograms.line_removed_message").replace("%number%", String.valueOf(number)));
+        lang.msg(player, "holograms.line_removed_message", "%number%", String.valueOf(number));
     }
 
     public void deleteHologram(Player player, Plot plot) {
         CustomHologram h = holograms.nearest(plot, player.getLocation(), 6);
         if (h == null) {
-            msg(player, "&cStand closer to a hologram.");
+            lang.msg(player, "holograms.too-far");
             return;
         }
         holograms.despawn("custom:" + plot.id + ":" + h.id);
         plot.holograms.remove(h);
-        msg(player, cfg().getString("holograms.hologram_deleted_message"));
+        lang.msg(player, "holograms.hologram_deleted_message");
     }
 
     public boolean isProfane(String text) {
@@ -951,7 +953,7 @@ public final class PlotManager extends JavaPlugin {
         List<String> scan = cfg().getStringList("admin.inspect_items_to_scan");
         World world = plot.bukkitWorld();
         if (world == null) return;
-        msg(player, "&aScanning plot...");
+        lang.msg(player, "admin.scanning");
         for (int cx = plot.minX >> 4; cx <= plot.maxX >> 4; cx++) {
             for (int cz = plot.minZ >> 4; cz <= plot.maxZ >> 4; cz++) {
                 if (!world.isChunkLoaded(cx, cz)) continue;
@@ -971,13 +973,13 @@ public final class PlotManager extends JavaPlugin {
         }
         double wealth = 0;
         for (var e : counts.entrySet()) {
-            msg(player, cfg().getString("admin.inspect_format")
-                    .replace("%count%", String.valueOf(e.getValue()))
-                    .replace("%item%", e.getKey().name()));
+            lang.msg(player, "admin.inspect_format",
+                    "%count%", String.valueOf(e.getValue()),
+                    "%item%", e.getKey().name());
             wealth += e.getValue() * 10;
         }
         wealth += plot.bank;
-        msg(player, cfg().getString("admin.inspect_total_format").replace("%total%", Text.money(wealth)));
+        lang.msg(player, "admin.inspect_total_format", "%total%", Text.money(wealth));
     }
 
     public void seize(Player admin, Plot plot) {
@@ -989,7 +991,7 @@ public final class PlotManager extends JavaPlugin {
         plot.members.clear();
         holograms.spawnPlot(plot);
         blueMap.upsert(plot);
-        msg(admin, cfg().getString("admin.seize_message").replace("%bank%", Text.money(bank)));
+        lang.msg(admin, "admin.seize_message", "%bank%", Text.money(bank));
         discord.seize(admin.getName(), plot);
     }
 
@@ -1031,7 +1033,7 @@ public final class PlotManager extends JavaPlugin {
         ItemStack map = new ItemStack(Material.FILLED_MAP);
         MapMeta meta = (MapMeta) map.getItemMeta();
         if (meta != null) {
-            meta.displayName(Text.component("&2&lPlot Radar"));
+            meta.displayName(Text.component(lang.line(player, "map.radar-name")));
             meta.setMapView(view);
             map.setItemMeta(meta);
         }
@@ -1041,6 +1043,7 @@ public final class PlotManager extends JavaPlugin {
 
     public void reloadAll() {
         reloadConfig();
+        lang.reload();
         luckPerms.reload();
         holograms.shutdown();
         holograms.start();

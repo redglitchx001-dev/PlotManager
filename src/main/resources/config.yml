@@ -7,6 +7,17 @@
 # ---------------------------------------------------------- #
 # [1] GENERAL SETTINGS                                       #
 # ---------------------------------------------------------- #
+#
+#  LANGUAGE / LIMBĂ / IDIOMA / SPRACHE
+#  Set the server default below. All message files live in
+#  plugins/PlotManager/lang/ (en, ro, es, de + any custom file
+#  you drop there). Players can pick their own language with
+#  /plot lang <code> when per-player is enabled.
+#
+language:
+  default: "en"      # en | ro | es | de | <custom>
+  per-player: true   # allow /plot lang <code> per player
+
 plugin:
   prefix: "&2&lᴘ&a&lʟ&2&lᴏ&a&lᴛ&2&lᴍ&a&lᴀ&2&lɴ&a&lᴀ&2&lɢ&a&lᴇ&2&lʀ &8» &a"
   prefix_short: "&2&lPM &8» &a"

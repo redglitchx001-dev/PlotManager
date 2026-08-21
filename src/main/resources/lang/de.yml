@@ -1,0 +1,412 @@
+# ============================================================ #
+#  PlotManager — Deutsche Nachrichten (de)                     #
+#  Frei bearbeitbar; & für Farben und &#RRGGBB für Hex.        #
+#  Platzhalter sehen so aus: %das%. Lösche die Datei, um sie   #
+#  neu zu erzeugen.                                            #
+# ============================================================ #
+
+general:
+  players-only: "&cDieser Befehl ist nur für Spieler."
+  no-permission: "&cDazu hast du keine Berechtigung."
+  config-reloaded: "&aKonfiguration und Sprachen neu geladen."
+  unknown-subcommand: "&cUnbekannter Unterbefehl. Versuche &a/plot help"
+  invalid-amount: "&cUngültiger Betrag."
+  invalid-number: "&cUngültige Zahl."
+  plot-not-found: "&cPlot nicht gefunden."
+  player-not-found: "&cSpieler nicht gefunden."
+  player-not-online: "&cDer Spieler muss online sein."
+  stand-in-plot: "&cStelle dich zuerst in einen Plot."
+  wilderness: "&7Du bist im Niemandsland."
+  cannot-manage: "&cDu kannst diesen Plot nicht verwalten."
+  usage-player: "&cBenutzung: /plot %sub% <Spieler>"
+  invalid-price: "&cUngültiger Preis."
+
+claiming:
+  pos1_message: "&aPosition 1 gesetzt bei &2(%x%, %y%, %z%)"
+  pos2_message: "&aPosition 2 gesetzt bei &2(%x%, %y%, %z%)"
+  no_selection_message: "&cSetze zuerst beide Positionen mit dem Plot-Stab!"
+  too_small_message: "&cDeine Auswahl ist zu klein! Minimum: %min%x%min%"
+  too_large_message: "&cDeine Auswahl ist zu groß! Maximum: %max%x%max%"
+  overlap_message: "&cDiese Auswahl überschneidet sich mit einem bestehenden Plot!"
+  max_claims_message: "&cDu besitzt bereits %owned%/%max% Plots!"
+  claim_denied_message: "&cDu hast nicht genug Geld! Benötigt: $%cost%"
+  claim_success_message: "&aGlückwunsch! Du hast deinen Plot für &2$%cost% &abekommen!"
+  unclaim_confirm_message: "&cShift-Klick auf das TNT in /plot menu oder tippe /plot unclaim confirm"
+  unclaim_success_message: "&aPlot freigegeben. Erstattet: &2$%amount%&a."
+  wand-given: "&aPlot-Stab erhalten."
+  merge_success_message: "&aPlots erfolgreich zusammengelegt!"
+  merge_fail_message: "&cDu brauchst zwei angrenzende eigene Plots zum Zusammenlegen."
+
+plot:
+  home-set: "&aPlot-Home gesetzt."
+  home-invalid: "&cDie Home-Position ist ungültig."
+  description-usage: "&cBenutzung: /plot description <Text>"
+  description-updated: "&aBeschreibung aktualisiert."
+  renamed: "&aPlot umbenannt in &2%name%"
+  rename-usage: "&cBenutzung: /plot rename <Name>"
+  hidden: "&aPlot ist jetzt in der Übersicht versteckt."
+  public: "&aPlot ist jetzt öffentlich."
+  deleted: "&aPlot gelöscht."
+  unfrozen: "&aPlot enteist."
+  frozen: "&aPlot eingefroren."
+  fly-enabled: "&aPlot-Flug aktiviert."
+  fly-disabled: "&cPlot-Flug deaktiviert."
+  fly-locked: "&cSchalte zuerst den Flug frei oder erreiche das nötige Level."
+  chat-enabled: "&aPlot-Chat aktiviert."
+  chat-disabled: "&cPlot-Chat deaktiviert."
+  list-none: "&7Du besitzt keine Plots."
+  list-entry: "&a#%index% &2%name% &7(%size%) Lv %level%"
+  only-owner-unclaim: "&cNur der Besitzer kann den Plot freigeben."
+
+members:
+  usage-add: "&cBenutzung: /plot add <Spieler> [builder|co-owner|visitor] [--no-chests]"
+  usage-remove: "&cBenutzung: /plot remove <Spieler>"
+  usage-rank: "&cBenutzung: /plot %sub% <Spieler>"
+  member_limit_message: "&cDu kannst nur %current%/%max% Mitglieder haben!"
+  member_add_message: "&a%player% wurde als %role% zu deinem Plot hinzugefügt!"
+  added-target: "&aDu wurdest zu &2%plot% &aals %role% hinzugefügt"
+  member_remove_message: "&c%player% wurde aus deinem Plot entfernt."
+  not-a-member: "&cDieser Spieler ist kein Mitglied."
+  member-not-found: "&cMitglied nicht gefunden."
+  promote_message: "&a%player% befördert zu %role%!"
+  demote_message: "&a%player% zu %role% zurückgestuft!"
+
+flags:
+  usage: "&cBenutzung: /plot flag <Flag> <true|false>"
+  list: "&7Flags: %flags%"
+  unknown: "&cUnbekannte Flag."
+  set: "&aFlag &2%flag% &aauf &f%value% &agesetzt"
+
+bank:
+  usage: "&cBenutzung: /plot %sub% <Betrag>"
+  deposit-denied: "&cNur Besitzer und Mit-Besitzer können einzahlen."
+  withdraw-denied: "&cNur der Besitzer kann abheben."
+  deposited: "&a&2$%amount% &ain die Plot-Bank eingezahlt."
+  withdrawn: "&a&2$%amount% &avon der Plot-Bank abgehoben."
+
+economy:
+  not_enough_money_message: "&cNicht genug Geld! Du hast: $%balance%"
+  tip-minimum: "&cMindest-Trinkgeld: $%amount%"
+  tipped: "&aTrinkgeld gegeben: &2$%amount%"
+  tip-prompt: "&aTippe den Trinkgeld-Betrag in den Chat. Minimum: $%min%"
+  tip_jar_message: "&a%player% hat &2$%amount% &ain deinen Plot getippt!"
+  sell-hold-item: "&cHalte den Gegenstand in der Hand, den du verkaufen willst."
+  price-prompt: "&aHalte den Gegenstand und tippe den Preis in den Chat."
+  tip-jar-created: "&aTrinkgeld-Gefäß erstellt!"
+  deposit_message: "&aDu hast &2$%amount% &ain die Plot-Bank eingezahlt. Kontostand: &2$%balance%"
+  withdraw_message: "&aDu hast &2$%amount% &avon der Plot-Bank abgehoben. Kontostand: &2$%balance%"
+  not_enough_bank_message: "&cDie Plot-Bank hat nicht genug Geld!"
+
+shops:
+  created_message: "&aShop erstellt! Verkauft %amount%x %item% für $%price%"
+  limit: "&cShop-Limit erreicht."
+  format: "&cFormat: [Shop] / Anzahl / ITEM / Preis"
+  yours: "&7Das ist dein eigener Shop."
+  anonymous-bought: "&aAnonym gekauft für &2$%price%"
+  price-edit-prompt: "&aTippe den neuen Preis in den Chat."
+  listing-cancelled: "&aAngebot zurückgezogen."
+  purchase_message_buyer: "&aDu hast &2%amount%x %item% &afür &2$%price% &agekauft"
+  purchase_message_seller: "&a%buyer% hat &2%amount%x %item% &afür &2$%price% &aaus deinem Shop gekauft"
+  out-of-stock: "&cDieser Shop ist ausverkauft!"
+
+mailbox:
+  set_message: "&aBriefkasten an diesem Fass gesetzt!"
+  mailbox_steal_message: "&cHier kannst du nur Gegenstände ABLEGEN, nicht nehmen!"
+  holographic-set: "&aHologramm-Briefkasten-Zone an deiner Position gesetzt. Wirf Gegenstände in die Nähe für Zustellungen."
+  delivery-message: "&a%player% hat Gegenstände in deinen Briefkasten geliefert!"
+
+holograms:
+  usage: "&cBenutzung: /plot holo <create|addline|removeline|delete>"
+  usage-addline: "&cBenutzung: /plot holo addline <Text>"
+  usage-removeline: "&cBenutzung: /plot holo removeline <Nummer>"
+  unknown-action: "&cUnbekannte Hologramm-Aktion."
+  max-lines: "&cMaximale Zeilenzahl erreicht."
+  invalid-line: "&cUngültige Zeile."
+  too-far: "&cStelle dich näher an ein Hologramm."
+  line_added_message: "&aZeile zum Hologramm hinzugefügt: &f%text%"
+  line_removed_message: "&aZeile %number% vom Hologramm entfernt."
+  hologram_deleted_message: "&aHologramm gelöscht."
+  guide: "&aBenutze &2/plot holo create&a, um ein Hologramm zu kaufen."
+  profanity_blocked_message: "&cDein Hologramm-Text enthält ein verbotenes Wort!"
+  hologram_created_message: "&aHologramm erstellt! Kosten: &2$%cost%"
+  hologram_moved_message: "&aHaupt-Hologramm an deine Position verschoben."
+  max_holograms_message: "&cDu hast bereits %current%/%max% Hologramme!"
+
+music:
+  locked: "&cSchalte zuerst Musik in /plot upgrades frei."
+  available: "&7Verfügbar: %discs%"
+  music_set_message: "&aPlot-Musik gesetzt auf: &2%disc%"
+
+mayor:
+  disabled: "&cBürgermeister-System deaktiviert."
+  only-mayor: "&cNur der Bürgermeister (Besitzer des reichsten Plots #1) kann die Steuer setzen."
+  current-tax: "&7Aktuelle Steuer: &a%percent%%"
+  invalid-percent: "&cUngültiger Prozentsatz."
+  tax_set_message: "&aBürgermeister-Steuer auf &2%percent%% &agesetzt."
+  announce_message: "&2&l%player% &aist jetzt der Bürgermeister des Servers!"
+
+merging:
+  disabled: "&cZusammenlegen ist deaktiviert."
+  stand-in-own: "&cStelle dich in einen deiner Plots."
+
+map:
+  given: "&aLive-Plot-Karte erhalten. Halte sie, um Grenzen und Mitglieder zu sehen."
+  radar-name: "&2&lPlot-Radar"
+  link-disabled: "&cMap-Link ist deaktiviert."
+
+drone:
+  disabled: "&cDrohnen-Modus ist deaktiviert."
+  own-plot-only: "&cDu kannst die Drohne nur in deinem eigenen Plot benutzen."
+  lost_signal_message: "&cDrohnen-Signal verloren!"
+  enabled_message: "&aDrohnen-Modus aktiviert. Bleib im Survival — Höhlen bleiben verborgen."
+  disabled_message: "&aDrohnen-Modus deaktiviert. Willkommen zurück."
+
+upgrades:
+  already-unlocked: "&aBereits freigeschaltet."
+  max-vault-pages: "&cMaximale Anzahl an Vault-Seiten erreicht."
+  cannot-buy: "&cDu kannst für diesen Plot keine Upgrades kaufen."
+  generator-level: "&cDieser Generator schaltet sich auf Plot-Level %level% frei."
+  selected: "&aAusgewählt: %name%"
+  purchase_message: "&aDu hast &2%name% &afür &2$%cost% &afreigeschaltet!"
+  names:
+    fly: "Plot-Flug"
+    crop_boost: "Ernte-Boost"
+    music: "Plot-Musik"
+    smart_sorter: "Smart-Sortierer"
+    factory: "Plot-Fabriken"
+    vault_page: "Vault-Seite %page%"
+    generator_tier_1: "Eisen-Generator"
+    generator_tier_2: "Gold-Generator"
+    generator_tier_3: "Diamant-Generator"
+  purchase-messages:
+    fly: "&aDu hast &2Plot-Flug &afür &2$%cost% &afreigeschaltet!"
+    crop_boost: "&aDu hast &2Ernte-Boost (x%multiplier%) &afür &2$%cost% &afreigeschaltet!"
+    music: "&aDu hast &2Plot-Musik &afür &2$%cost% &afreigeschaltet!"
+    smart_sorter: "&aDu hast &2Smart-Sortierer &afür &2$%cost% &afreigeschaltet!"
+    factory: "&aDu hast &2Plot-Fabriken &afür &2$%cost% &afreigeschaltet!"
+    vault_page: "&aDu hast &2Vault-Seite %page% &afür &2$%cost% &afreigeschaltet!"
+    generator_tier_1: "&aDu hast einen &2Eisen-Generator &afür &2$%cost% &agekauft!"
+    generator_tier_2: "&aDu hast einen &6Gold-Generator &afür &2$%cost% &agekauft!"
+    generator_tier_3: "&aDu hast einen &bDiamant-Generator &afür &2$%cost% &agekauft!"
+
+admin:
+  godwand-given: "&aGötter-Stab erhalten."
+  rollbackwand-given: "&aRollback-Stab erhalten."
+  godwand_max_message: "&aPlot maximiert! Level: 100, Bank: $999.999.999"
+  godwand_smite_message: "&c&lBLITZ! &cPlot gelöscht und Gelände wiederhergestellt."
+  rollbackwand_format: "&aBlock: &f%block% &7| &aAktion: &f%action% &7| &aVon: &f%player% &7| &aAm: &f%time%"
+  no-history: "&7Kein Verlauf für diesen Block."
+  quarantine_message: "&c&lDieser Plot wurde von einem Admin unter Quarantäne gestellt!"
+  spy_enabled_message: "&aAdmin-Spy-Modus &2AKTIVIERT&a. Du bist für Plots unsichtbar."
+  spy_disabled_message: "&aAdmin-Spy-Modus &cDEAKTIVIERT&a."
+  scanning: "&aPlot wird gescannt..."
+  quarantine_kick_message: "&cDu wurdest aus einem Plot unter Quarantäne entfernt."
+  inspect_format: "&a&2%count%x %item% &ain Kisten gefunden."
+  inspect_total_format: "&2&lGeschätztes Gesamtvermögen: &a$%total%"
+  seize_message: "&c&lPlot beschlagnahmt! &c$%bank% aus der Plot-Bank überwiesen."
+  purge_message: "&a&2%count% &ainaktive Plots entfernt."
+
+leaderboard:
+  set_message: "&aBestenlisten-Hologramm an deiner Position platziert!"
+
+plot_protections:
+  break_denied_message: "&cDu kannst hier keine Blöcke abbauen."
+  place_denied_message: "&cDu kannst hier keine Blöcke platzieren."
+  interact_denied_message: "&cDu kannst hier nicht interagieren."
+  wilderness_break_message: "&cDu kannst nicht im Niemandsland bauen! Sichere zuerst einen Plot."
+  chest_denied_message: "&cDu hast keine Berechtigung, hier Behälter zu öffnen."
+  hopper_limit_message: "&cTrichter-Limit erreicht (%current%/%max%)!"
+  spawner_limit_message: "&cSpawner-Limit erreicht (%current%/%max%)!"
+
+bouncer_shield:
+  cooldown_message: "&cDu bist von diesem Plot gebannt!"
+  ban_message: "&a%player% wurde von deinem Plot gebannt."
+  unban_message: "&a%player% wurde von deinem Plot entbannt."
+
+signs:
+  tip-jar-line1: "&2[Trinkgeld]"
+  tip-jar-line2: "&aRechtsklick zum Geben"
+  plot-chat: "&2[Plot] &a%player%&7: &f%message%"
+  shop-amount: "&f%amount%x"
+  shop-item: "&a%item%"
+  shop-price: "&e$%price%"
+
+titles:
+  enter_plot:
+    title: "&2%plot_name%"
+    subtitle: "&aBesitzer: %owner% &7| &aLevel %level%"
+  leave_plot:
+    title: "&7Niemandsland"
+    subtitle: "&8Du hast %plot_name% verlassen"
+  actionbar:
+    inside_plot: "&2✦ %plot_name% &7| &aBesitzer: %owner% &7| &aMitglieder: %members%/%max_members%"
+    wilderness: "&7✦ Niemandsland"
+
+visit:
+  usage: "&cBenutzung: /plot visit <Spieler>"
+  none-public: "&cKein öffentlicher Plot dieses Spielers gefunden."
+
+lang:
+  usage: "&cBenutzung: /plot lang <Code> — verfügbar: %codes%"
+  current: "&7Deine Sprache: &a%code% &7(Server: &a%default%&7)"
+  current-server: "&7Server-Sprache: &a%code%"
+  changed: "&aSprache auf &2%code% &agesetzt."
+  reset: "&aSprache auf Server-Standard zurückgesetzt (&2%code%&a)."
+  no-permission: "&cEinzelne Spieler-Sprachen sind auf diesem Server deaktiviert."
+
+blackmarket:
+  player-warning: "&8Pssst... du hast nichts gesehen."
+  too-many-listings: "&cDu hast zu viele Angebote."
+  listed-anonymously: "&8Gegenstand anonym angeboten für &a$%price%"
+
+prices:
+  updated: "&aAktualisiert &2%path% &aauf &f$%price%"
+
+chest_shops:
+  shop_created_message: "&aShop erstellt! Verkauft %amount%x %item% für $%price%"
+  purchase_message_buyer: "&aDu hast &2%amount%x %item% &afür &2$%price% &agekauft"
+  purchase_message_seller: "&a%buyer% hat &2%amount%x %item% &afür &2$%price% &aaus deinem Shop gekauft"
+
+gui:
+  common:
+    back: "&7Zurück"
+    close: "&cSchließen"
+    previous: "&7Zurück"
+    next: "&7Weiter"
+    label-yes: "&aJa"
+    label-no: "&cNein"
+    selected: "&aUSGEWÄHLT"
+    click-select: "&eKlicke zum Kaufen/Auswählen"
+  main:
+    title: "&2&lPlot-Menü"
+    info-name: "&aPlot-Info"
+    info-lore: "&7Klicke für Plot-Statistiken"
+    bank-name: "&6Plot-Bank"
+    bank-lore: "&7Einzahlen oder abheben"
+    members-name: "&aMitglieder"
+    members-lore: "&7Vertraute Spieler verwalten"
+    flags-name: "&aFlags"
+    flags-lore: "&7Plot-Einstellungen umschalten"
+    upgrades-name: "&bUpgrades"
+    upgrades-lore: "&7Kaufe Flug, Vaults, Generatoren"
+    vault-name: "&dPlot-Vault"
+    vault-lore: "&7Virtuellen Speicher öffnen"
+    market-name: "&aGlobaler Markt"
+    market-lore: "&7Alle Kisten-Shops durchstöbern"
+    blackmarket-name: "&8Schwarzmarkt"
+    blackmarket-lore: "&7Pssst... steuerfreier Handel"
+    home-name: "&aHome"
+    home-lore: "&7Zum Plot-Spawn teleportieren"
+    browse-name: "&aPlots ansehen"
+    browse-lore: "&7Öffentliche Plots besuchen"
+    cosmetics-name: "&dMusik & Kosmetik"
+    cosmetics-lore: "&7Spuren, Ränder, Platten"
+    holo-name: "&aHologramme"
+    holo-lore: "&7/plot holo create"
+    mailbox-name: "&6Briefkasten"
+    mailbox-lore: "&7Schau ein Fass an: /plot setmailbox"
+    drone-name: "&bDrohnen-Modus"
+    drone-lore: "&7Luftkamera, nur Survival"
+    unclaim-name: "&cFreigeben"
+    unclaim-lore: "&cShift-Klick zum Freigeben"
+    lang-name: "&aSprache"
+    lang-lore: "&7Klicke, um deine Sprache zu wechseln"
+  bank:
+    title: "&2&lPlot-Bank"
+    deposit-100: "&a100 einzahlen"
+    deposit-1000: "&a1000 einzahlen"
+    deposit-all: "&aAlles einzahlen"
+    withdraw-1000: "&c1000 abheben"
+    withdraw-all: "&cAlles abheben"
+    click-deposit: "&7Klicke zum Einzahlen"
+    balance-lore: "&7Guthaben: &f$%balance%"
+    bank-lore: "&7Plot-Bank: &f$%balance%"
+  members:
+    title: "&2&lPlot-Mitglieder"
+    owner-name: "&6Besitzer: &f%player%"
+    owner-lore: "&7Vollzugriff"
+    role-lore: "&7Rolle: &f%role%"
+    build-lore: "&7Bauen: %value%"
+    chests-lore: "&7Kisten: %value%"
+    click-lore: "&eKlick zum Befördern  &cShift-Klick zum Rauswerfen"
+  flags:
+    title: "&2&lPlot-Flags"
+    currently: "&7Aktuell: %value%"
+    on-state: "&aAN"
+    off-state: "&cAUS"
+    click-toggle: "&eKlicke zum Umschalten"
+  upgrades:
+    title: "&2&lPlot-Upgrades"
+    vault-page-name: "Vault-Seite %page%"
+    unlocked: "&aFREIGESCHALTET"
+    cost-lore: "&7Kosten: &a$%cost%"
+  vault:
+    title: "&2&lPlot-Vault (Seite %page%)"
+  market:
+    title: "&a&lGlobaler Markt"
+    entry-name: "&a%item%"
+    amount-lore: "&7Anzahl: &f%amount%"
+    price-lore: "&7Preis: &a$%price%"
+    plot-lore: "&7Plot: &f%plot%"
+    owner-lore: "&7Besitzer: &f%player%"
+    gps-lore: "&eKlicke für GPS-Navigation"
+  blackmarket:
+    title: "&8&lDie Unterwelt"
+    anonymous: "&8Anonymes Angebot"
+    price-lore: "&7Preis: &a$%price%"
+    buy-lore: "&eKlicke zum Kaufen  &cShift-Klick zum Abbrechen (falls deins)"
+    sell-name: "&aGegenstand in der Hand verkaufen"
+    sell-lore: "&7Tippe nach dem Klick den Preis in den Chat"
+  browse:
+    title: "&2&lÖffentliche Plots ansehen"
+    entry-name: "&a%plot%"
+    owner-lore: "&7Besitzer: &f%player%"
+    level-lore: "&7Level: &f%level%"
+    size-lore: "&7Größe: &f%size%"
+    visit-lore: "&eLinksklick: besuchen"
+    gps-lore: "&aRechtsklick: GPS-Spur"
+  help:
+    title: "&2&lPlot-Hilfe"
+    claim: "Stab-Auswahl beanspruchen"
+    menu: "Dieses Menü öffnen"
+    home: "Nach Hause teleportieren"
+    add: "Einem Spieler vertrauen"
+    vault: "Plot-Vault öffnen"
+    market: "Globale Shops"
+    browse: "Öffentliche Plots besuchen"
+    drone: "Luftkamera-Modus"
+    fly: "Plot-Flug umschalten"
+    holo: "Hologramm kaufen"
+    setmailbox: "Zustellungs-Fass setzen"
+    blackmarket: "Steuerfreier Markt"
+    language: "Deine Sprache wechseln"
+  audit:
+    title: "&c&lPlot-Audit-Log"
+    by-lore: "&7Von: &f%player%"
+  prices:
+    claim: "Plot-Kosten"
+    premium: "Premium-Plot"
+    hologram: "Hologramm"
+    tip-minimum: "Mindest-Trinkgeld"
+    title: "&6&lPreis-Editor"
+    current-lore: "&7Aktuell: &a$%price%"
+    click-lore: "&eKlicke und tippe dann den neuen Preis in den Chat"
+  cosmetics:
+    title: "&d&lPlot-Kosmetik"
+    price-lore: "&7Preis: &a$%price%"
+  mailbox:
+    guide: "&aSchau ein Fass an und tippe &2/plot setmailbox&a."
+
+reset_system:
+  warning_message: "&c&lWARNUNG: &cDein Plot wird in %remaining% Tagen wegen Inaktivität zurückgesetzt!"
+
+upkeep:
+  upkeep_paid_message: "&aDie Unterhaltung von &2$%cost% &awurde automatisch von der Plot-Bank bezahlt."
+  upkeep_failed_message: "&c&lWARNUNG: &cUnterhaltungs-Zahlung fehlgeschlagen! Dein Plot kann gelöscht werden!"
+
+leveling:
+  level_up_message: "&2&l⬆ LEVEL UP! &aDein Plot ist jetzt &2Level %level%&a!"
+
+gps:
+  start_message: "&aGPS-Spur gestartet. Folge dem leuchtenden Pfad!"
+  arrive_message: "&aDu bist bei &2%plot_name% &aangekommen!"

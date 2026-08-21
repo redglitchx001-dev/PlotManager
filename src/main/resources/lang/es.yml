@@ -1,0 +1,412 @@
+# ============================================================ #
+#  PlotManager — Mensajes en español (es)                      #
+#  Edita libremente; usa & para colores y &#RRGGBB para hex.   #
+#  Los placeholders se ven así: %esto%. Borra el archivo para  #
+#  regenerarlo.                                                #
+# ============================================================ #
+
+general:
+  players-only: "&cEste comando es solo para jugadores."
+  no-permission: "&cNo tienes permiso para eso."
+  config-reloaded: "&aConfiguración e idiomas recargados."
+  unknown-subcommand: "&cSubcomando desconocido. Prueba &a/plot help"
+  invalid-amount: "&cCantidad inválida."
+  invalid-number: "&cNúmero inválido."
+  plot-not-found: "&cParcela no encontrada."
+  player-not-found: "&cJugador no encontrado."
+  player-not-online: "&cEl jugador debe estar conectado."
+  stand-in-plot: "&cPárate en una parcela primero."
+  wilderness: "&7Estás en tierras salvajes."
+  cannot-manage: "&cNo puedes administrar esta parcela."
+  usage-player: "&cUso: /plot %sub% <jugador>"
+  invalid-price: "&cPrecio inválido."
+
+claiming:
+  pos1_message: "&aPosición 1 fijada en &2(%x%, %y%, %z%)"
+  pos2_message: "&aPosición 2 fijada en &2(%x%, %y%, %z%)"
+  no_selection_message: "&c¡Fija ambas posiciones con la Varita de Parcelas primero!"
+  too_small_message: "&c¡Tu selección es demasiado pequeña! Mínimo: %min%x%min%"
+  too_large_message: "&c¡Tu selección es demasiado grande! Máximo: %max%x%max%"
+  overlap_message: "&c¡Esa selección se superpone con una parcela existente!"
+  max_claims_message: "&c¡Ya tienes %owned%/%max% parcelas!"
+  claim_denied_message: "&c¡No tienes suficiente dinero! Necesitas: $%cost%"
+  claim_success_message: "&a¡Felicidades! Conseguiste tu parcela por &2$%cost%&a!"
+  unclaim_confirm_message: "&cShift-clic el TNT en /plot menu o escribe /plot unclaim confirm"
+  unclaim_success_message: "&aParcela liberada. Te reembolsaron &2$%amount%&a."
+  wand-given: "&aVarita de Parcelas entregada."
+  merge_success_message: "&a¡Parcelas fusionadas con éxito!"
+  merge_fail_message: "&cNecesitas dos parcelas adyacentes tuyas para fusionar."
+
+plot:
+  home-set: "&aHome de la parcela fijado."
+  home-invalid: "&cLa ubicación del home es inválida."
+  description-usage: "&cUso: /plot description <texto>"
+  description-updated: "&aDescripción actualizada."
+  renamed: "&aParcela renombrada a &2%name%"
+  rename-usage: "&cUso: /plot rename <nombre>"
+  hidden: "&aLa parcela ahora está oculta de la lista."
+  public: "&aLa parcela ahora es pública."
+  deleted: "&aParcela eliminada."
+  unfrozen: "&aParcela descongelada."
+  frozen: "&aParcela congelada."
+  fly-enabled: "&aVuelo en parcela activado."
+  fly-disabled: "&cVuelo en parcela desactivado."
+  fly-locked: "&cDesbloquea el vuelo o alcanza el nivel requerido primero."
+  chat-enabled: "&aChat de parcela activado."
+  chat-disabled: "&cChat de parcela desactivado."
+  list-none: "&7No posees ninguna parcela."
+  list-entry: "&a#%index% &2%name% &7(%size%) Nv %level%"
+  only-owner-unclaim: "&cSolo el propietario puede liberar la parcela."
+
+members:
+  usage-add: "&cUso: /plot add <jugador> [builder|co-owner|visitor] [--no-chests]"
+  usage-remove: "&cUso: /plot remove <jugador>"
+  usage-rank: "&cUso: /plot %sub% <jugador>"
+  member_limit_message: "&c¡Solo puedes tener %current%/%max% miembros!"
+  member_add_message: "&a¡%player% fue añadido a tu parcela como %role%!"
+  added-target: "&aFuiste añadido a &2%plot% &acomo %role%"
+  member_remove_message: "&c%player% fue removido de tu parcela."
+  not-a-member: "&cEse jugador no es miembro."
+  member-not-found: "&cMiembro no encontrado."
+  promote_message: "&a¡%player% ascendido a %role%!"
+  demote_message: "&a¡%player% degradado a %role%!"
+
+flags:
+  usage: "&cUso: /plot flag <flag> <true|false>"
+  list: "&7Flags: %flags%"
+  unknown: "&cFlag desconocido."
+  set: "&aFlag &2%flag% &afijado en &f%value%"
+
+bank:
+  usage: "&cUso: /plot %sub% <cantidad>"
+  deposit-denied: "&cSolo propietarios y co-propietarios pueden depositar."
+  withdraw-denied: "&cSolo el propietario puede retirar."
+  deposited: "&aDepositaste &2$%amount% &aen el banco de la parcela."
+  withdrawn: "&aRetiraste &2$%amount% &adel banco de la parcela."
+
+economy:
+  not_enough_money_message: "&c¡Dinero insuficiente! Tienes: $%balance%"
+  tip-minimum: "&cLa propina mínima es $%amount%"
+  tipped: "&aPropina dada: &2$%amount%"
+  tip-prompt: "&aEscribe el monto de la propina en el chat. Mínimo: $%min%"
+  tip_jar_message: "&a¡%player% dio propina de &2$%amount% &aa tu parcela!"
+  sell-hold-item: "&cSostén el objeto que quieres vender."
+  price-prompt: "&aSostén el objeto y escribe el precio en el chat."
+  tip-jar-created: "&a¡Tarro de propinas creado!"
+  deposit_message: "&aDepositaste &2$%amount% &aen el banco de la parcela. Saldo: &2$%balance%"
+  withdraw_message: "&aRetiraste &2$%amount% &adel banco de la parcela. Saldo: &2$%balance%"
+  not_enough_bank_message: "&c¡El banco de la parcela no tiene suficiente dinero!"
+
+shops:
+  created_message: "&a¡Tienda creada! Vendiendo %amount%x %item% por $%price%"
+  limit: "&cLímite de tiendas alcanzado."
+  format: "&cFormato: [Shop] / cantidad / ITEM / precio"
+  yours: "&7Esa es tu tienda."
+  anonymous-bought: "&aComprado anónimamente por &2$%price%"
+  price-edit-prompt: "&aEscribe el nuevo precio en el chat."
+  listing-cancelled: "&aPublicación cancelada."
+  purchase_message_buyer: "&aCompraste &2%amount%x %item% &apor &2$%price%"
+  purchase_message_seller: "&a%buyer% compró &2%amount%x %item% &ade tu tienda por &2$%price%"
+  out-of-stock: "&c¡Esta tienda está sin stock!"
+
+mailbox:
+  set_message: "&a¡Buzón fijado en este barril!"
+  mailbox_steal_message: "&c¡Aquí solo puedes SOLTAR objetos, no tomarlos!"
+  holographic-set: "&aZona de buzón holográfico fijada en tu ubicación. Suelta objetos cerca para entregarlos."
+  delivery-message: "&a¡%player% entregó objetos a tu buzón!"
+
+holograms:
+  usage: "&cUso: /plot holo <create|addline|removeline|delete>"
+  usage-addline: "&cUso: /plot holo addline <texto>"
+  usage-removeline: "&cUso: /plot holo removeline <número>"
+  unknown-action: "&cAcción de holograma desconocida."
+  max-lines: "&cMáximo de líneas alcanzado."
+  invalid-line: "&cLínea inválida."
+  too-far: "&cAcércate a un holograma."
+  line_added_message: "&aLínea añadida al holograma: &f%text%"
+  line_removed_message: "&aLínea %number% removida del holograma."
+  hologram_deleted_message: "&aHolograma eliminado."
+  guide: "&aUsa &2/plot holo create &apara comprar un holograma."
+  profanity_blocked_message: "&c¡El texto del holograma contiene una palabra prohibida!"
+  hologram_created_message: "&a¡Holograma creado! Costo: &2$%cost%"
+  hologram_moved_message: "&aHolograma principal movido a tu ubicación."
+  max_holograms_message: "&c¡Ya tienes %current%/%max% hologramas!"
+
+music:
+  locked: "&cDesbloquea la música en /plot upgrades primero."
+  available: "&7Disponibles: %discs%"
+  music_set_message: "&aMúsica de la parcela fijada en: &2%disc%"
+
+mayor:
+  disabled: "&cSistema de alcalde desactivado."
+  only-mayor: "&cSolo el Alcalde (dueño de la parcela #1 más rica) puede fijar impuestos."
+  current-tax: "&7Impuesto actual: &a%percent%%"
+  invalid-percent: "&cPorcentaje inválido."
+  tax_set_message: "&aImpuesto del alcalde fijado en &2%percent%%&a."
+  announce_message: "&2&l%player% &aahora es el Alcalde del servidor!"
+
+merging:
+  disabled: "&cLa fusión está desactivada."
+  stand-in-own: "&cPárate en una de tus parcelas."
+
+map:
+  given: "&aMapa de parcelas en vivo entregado. Sostenlo para ver bordes y miembros."
+  radar-name: "&2&lRadar de Parcelas"
+  link-disabled: "&cEl enlace del mapa está desactivado."
+
+drone:
+  disabled: "&cEl modo dron está desactivado."
+  own-plot-only: "&cSolo puedes usar el dron en tu propia parcela."
+  lost_signal_message: "&c¡Perdiste la señal del dron!"
+  enabled_message: "&aModo dron activado. Quédate en Supervivencia — las cuevas permanecen ocultas."
+  disabled_message: "&aModo dron desactivado. Bienvenido de vuelta."
+
+upgrades:
+  already-unlocked: "&aYa está desbloqueado."
+  max-vault-pages: "&cMáximo de páginas de bóveda alcanzado."
+  cannot-buy: "&cNo puedes comprar mejoras para esta parcela."
+  generator-level: "&cEste generador se desbloquea en el nivel %level% de la parcela."
+  selected: "&aSeleccionado: %name%"
+  purchase_message: "&a¡Desbloqueaste &2%name% &apor &2$%cost%&a!"
+  names:
+    fly: "Vuelo en Parcela"
+    crop_boost: "Impulso de Cultivos"
+    music: "Música de Parcela"
+    smart_sorter: "Clasificadores Inteligentes"
+    factory: "Fábricas de Parcela"
+    vault_page: "Página de Bóveda %page%"
+    generator_tier_1: "Generador de Hierro"
+    generator_tier_2: "Generador de Oro"
+    generator_tier_3: "Generador de Diamantes"
+  purchase-messages:
+    fly: "&a¡Desbloqueaste &2Vuelo en Parcela &apor &2$%cost%&a!"
+    crop_boost: "&a¡Desbloqueaste &2Impulso de Cultivos (x%multiplier%) &apor &2$%cost%&a!"
+    music: "&a¡Desbloqueaste &2Música de Parcela &apor &2$%cost%&a!"
+    smart_sorter: "&a¡Desbloqueaste &2Clasificadores Inteligentes &apor &2$%cost%&a!"
+    factory: "&a¡Desbloqueaste &2Fábricas de Parcela &apor &2$%cost%&a!"
+    vault_page: "&a¡Desbloqueaste &2Página de Bóveda %page% &apor &2$%cost%&a!"
+    generator_tier_1: "&a¡Compraste un &2Generador de Hierro &apor &2$%cost%&a!"
+    generator_tier_2: "&a¡Compraste un &6Generador de Oro &apor &2$%cost%&a!"
+    generator_tier_3: "&a¡Compraste un &bGenerador de Diamantes &apor &2$%cost%&a!"
+
+admin:
+  godwand-given: "&aVarita Divina entregada."
+  rollbackwand-given: "&aVarita de Rollback entregada."
+  godwand_max_message: "&a¡Parcela maximizada! Nivel: 100, Banco: $999,999,999"
+  godwand_smite_message: "&c&l¡RAYO! &cParcela eliminada y terreno restaurado."
+  rollbackwand_format: "&aBloque: &f%block% &7| &aAcción: &f%action% &7| &aPor: &f%player% &7| &aEl: &f%time%"
+  no-history: "&7No hay historial para este bloque."
+  quarantine_message: "&c&l¡Esta parcela fue puesta en cuarentena por un admin!"
+  spy_enabled_message: "&aModo Admin Spy &2ACTIVADO&a. Eres invisible para las parcelas."
+  spy_disabled_message: "&aModo Admin Spy &cDESACTIVADO&a."
+  scanning: "&aEscaneando parcela..."
+  quarantine_kick_message: "&cHas sido sacado de una parcela en cuarentena."
+  inspect_format: "&aEncontré &2%count%x %item% &aen cofres."
+  inspect_total_format: "&2&lRiqueza total estimada: &a$%total%"
+  seize_message: "&c&l¡Parcela incautada! &cTransferido $%bank% del banco de la parcela."
+  purge_message: "&aPurgadas &2%count% &aparcelas inactivas."
+
+leaderboard:
+  set_message: "&a¡Holograma de clasificación colocado en tu ubicación!"
+
+plot_protections:
+  break_denied_message: "&cNo puedes romper bloques aquí."
+  place_denied_message: "&cNo puedes colocar bloques aquí."
+  interact_denied_message: "&cNo puedes interactuar aquí."
+  wilderness_break_message: "&c¡No puedes construir en tierras salvajes! Consigue una parcela primero."
+  chest_denied_message: "&cNo tienes permiso para abrir contenedores aquí."
+  hopper_limit_message: "&c¡Límite de embudos alcanzado (%current%/%max%)!"
+  spawner_limit_message: "&c¡Límite de generadores alcanzado (%current%/%max%)!"
+
+bouncer_shield:
+  cooldown_message: "&c¡Estás baneado de esta parcela!"
+  ban_message: "&a%player% fue baneado de tu parcela."
+  unban_message: "&a%player% fue desbaneado de tu parcela."
+
+signs:
+  tip-jar-line1: "&2[Tarro de Propinas]"
+  tip-jar-line2: "&aClic derecho para propinar"
+  plot-chat: "&2[Parcela] &a%player%&7: &f%message%"
+  shop-amount: "&f%amount%x"
+  shop-item: "&a%item%"
+  shop-price: "&e$%price%"
+
+titles:
+  enter_plot:
+    title: "&2%plot_name%"
+    subtitle: "&aDe %owner% &7| &aNivel %level%"
+  leave_plot:
+    title: "&7Tierras salvajes"
+    subtitle: "&8Saliste de %plot_name%"
+  actionbar:
+    inside_plot: "&2✦ %plot_name% &7| &aDueño: %owner% &7| &aMiembros: %members%/%max_members%"
+    wilderness: "&7✦ Tierras salvajes"
+
+visit:
+  usage: "&cUso: /plot visit <jugador>"
+  none-public: "&cNo se encontró parcela pública de ese jugador."
+
+lang:
+  usage: "&cUso: /plot lang <código> — disponibles: %codes%"
+  current: "&7Tu idioma: &a%code% &7(servidor: &a%default%&7)"
+  current-server: "&7Idioma del servidor: &a%code%"
+  changed: "&aIdioma cambiado a &2%code%&a."
+  reset: "&aIdioma restablecido al del servidor (&2%code%&a)."
+  no-permission: "&cLos idiomas por jugador están desactivados en este servidor."
+
+blackmarket:
+  player-warning: "&8Shh... no viste nada."
+  too-many-listings: "&cTienes demasiadas publicaciones."
+  listed-anonymously: "&8Objeto publicado anónimamente por &a$%price%"
+
+prices:
+  updated: "&aActualizado &2%path% &aa &f$%price%"
+
+chest_shops:
+  shop_created_message: "&a¡Tienda creada! Vendiendo %amount%x %item% por $%price%"
+  purchase_message_buyer: "&aCompraste &2%amount%x %item% &apor &2$%price%"
+  purchase_message_seller: "&a%buyer% compró &2%amount%x %item% &ade tu tienda por &2$%price%"
+
+gui:
+  common:
+    back: "&7Atrás"
+    close: "&cCerrar"
+    previous: "&7Anterior"
+    next: "&7Siguiente"
+    label-yes: "&aSí"
+    label-no: "&cNo"
+    selected: "&aSELECCIONADO"
+    click-select: "&eClic para comprar/seleccionar"
+  main:
+    title: "&2&lMenú de Parcelas"
+    info-name: "&aInfo de Parcela"
+    info-lore: "&7Clic para ver estadísticas"
+    bank-name: "&6Banco de Parcela"
+    bank-lore: "&7Deposita o retira"
+    members-name: "&aMiembros"
+    members-lore: "&7Gestiona jugadores de confianza"
+    flags-name: "&aFlags"
+    flags-lore: "&7Alterna ajustes de la parcela"
+    upgrades-name: "&bMejoras"
+    upgrades-lore: "&7Compra vuelo, bóvedas, generadores"
+    vault-name: "&dBóveda de Parcela"
+    vault-lore: "&7Abre almacenamiento virtual"
+    market-name: "&aMercado Global"
+    market-lore: "&7Explora todas las tiendas"
+    blackmarket-name: "&8Mercado Negro"
+    blackmarket-lore: "&7Shh... comercio sin impuestos"
+    home-name: "&aHome"
+    home-lore: "&7Teletransporte al spawn de la parcela"
+    browse-name: "&aExplorar Parcelas"
+    browse-lore: "&7Visita parcelas públicas"
+    cosmetics-name: "&dMúsica y Cosméticos"
+    cosmetics-lore: "&7Rastros, bordes, discos"
+    holo-name: "&aHologramas"
+    holo-lore: "&7/plot holo create"
+    mailbox-name: "&6Buzón"
+    mailbox-lore: "&7Mira un barril: /plot setmailbox"
+    drone-name: "&bModo Dron"
+    drone-lore: "&7Cámara aérea, solo supervivencia"
+    unclaim-name: "&cLiberar"
+    unclaim-lore: "&cShift-clic para liberar"
+    lang-name: "&aIdioma"
+    lang-lore: "&7Clic para cambiar tu idioma"
+  bank:
+    title: "&2&lBanco de Parcela"
+    deposit-100: "&aDepositar 100"
+    deposit-1000: "&aDepositar 1000"
+    deposit-all: "&aDepositar todo"
+    withdraw-1000: "&cRetirar 1000"
+    withdraw-all: "&cRetirar todo"
+    click-deposit: "&7Clic para depositar"
+    balance-lore: "&7Saldo: &f$%balance%"
+    bank-lore: "&7Banco de la parcela: &f$%balance%"
+  members:
+    title: "&2&lMiembros de Parcela"
+    owner-name: "&6Dueño: &f%player%"
+    owner-lore: "&7Control total"
+    role-lore: "&7Rol: &f%role%"
+    build-lore: "&7Construir: %value%"
+    chests-lore: "&7Cofres: %value%"
+    click-lore: "&eClic para ascender  &cShift-clic para expulsar"
+  flags:
+    title: "&2&lFlags de Parcela"
+    currently: "&7Actualmente: %value%"
+    on-state: "&aSÍ"
+    off-state: "&cNO"
+    click-toggle: "&eClic para alternar"
+  upgrades:
+    title: "&2&lMejoras de Parcela"
+    vault-page-name: "Página de Bóveda %page%"
+    unlocked: "&aDESBLOQUEADO"
+    cost-lore: "&7Costo: &a$%cost%"
+  vault:
+    title: "&2&lBóveda de Parcela (Página %page%)"
+  market:
+    title: "&a&lMercado Global"
+    entry-name: "&a%item%"
+    amount-lore: "&7Cantidad: &f%amount%"
+    price-lore: "&7Precio: &a$%price%"
+    plot-lore: "&7Parcela: &f%plot%"
+    owner-lore: "&7Dueño: &f%player%"
+    gps-lore: "&eClic para navegar con GPS"
+  blackmarket:
+    title: "&8&lEl Inframundo"
+    anonymous: "&8Publicación anónima"
+    price-lore: "&7Precio: &a$%price%"
+    buy-lore: "&eClic para comprar  &cShift-clic para cancelar si es tuyo"
+    sell-name: "&aVender objeto en mano"
+    sell-lore: "&7Escribe el precio en el chat tras el clic"
+  browse:
+    title: "&2&lExplorar Parcelas Públicas"
+    entry-name: "&a%plot%"
+    owner-lore: "&7Dueño: &f%player%"
+    level-lore: "&7Nivel: &f%level%"
+    size-lore: "&7Tamaño: &f%size%"
+    visit-lore: "&eClic izquierdo: visitar"
+    gps-lore: "&aClic derecho: ruta GPS"
+  help:
+    title: "&2&lAyuda de Parcelas"
+    claim: "Reclama la selección de la varita"
+    menu: "Abre este menú"
+    home: "Teletransporte a casa"
+    add: "Da confianza a un jugador"
+    vault: "Abre la bóveda de la parcela"
+    market: "Tiendas globales"
+    browse: "Visita parcelas públicas"
+    drone: "Modo cámara aérea"
+    fly: "Alterna el vuelo en parcela"
+    holo: "Compra un holograma"
+    setmailbox: "Fija un barril de entregas"
+    blackmarket: "Mercado sin impuestos"
+    language: "Cambia tu idioma"
+  audit:
+    title: "&c&lRegistro de Auditoría"
+    by-lore: "&7Por: &f%player%"
+  prices:
+    claim: "Costo de Parcela"
+    premium: "Parcela Premium"
+    hologram: "Holograma"
+    tip-minimum: "Propina mínima"
+    title: "&6&lEditor de Precios"
+    current-lore: "&7Actual: &a$%price%"
+    click-lore: "&eClic y luego escribe el nuevo precio en el chat"
+  cosmetics:
+    title: "&d&lCosméticos de Parcela"
+    price-lore: "&7Precio: &a$%price%"
+  mailbox:
+    guide: "&aMira un barril y escribe &2/plot setmailbox&a."
+
+reset_system:
+  warning_message: "&c&lAVISO: &c¡Tu parcela se reiniciará en %remaining% días por inactividad!"
+
+upkeep:
+  upkeep_paid_message: "&aEl mantenimiento de &2$%cost% &ase pagó automáticamente del banco de la parcela."
+  upkeep_failed_message: "&c&lAVISO: &c¡Falló el pago del mantenimiento! ¡Tu parcela puede ser eliminada!"
+
+leveling:
+  level_up_message: "&2&l⬆ ¡SUBISTE DE NIVEL! &aTu parcela ahora es &2Nivel %level%&a!"
+
+gps:
+  start_message: "&a¡Ruta GPS iniciada. Sigue el camino brillante!"
+  arrive_message: "&a¡Llegaste a &2%plot_name%&a!"

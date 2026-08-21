@@ -94,16 +94,16 @@ public class PlayerListener implements Listener {
             var sel = plugin.session(player).selection;
             if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                 sel.pos1 = event.getClickedBlock().getLocation();
-                plugin.msg(player, plugin.cfg().getString("claiming.pos1_message")
-                        .replace("%x%", String.valueOf(sel.pos1.getBlockX()))
-                        .replace("%y%", String.valueOf(sel.pos1.getBlockY()))
-                        .replace("%z%", String.valueOf(sel.pos1.getBlockZ())));
+                plugin.lang.msg(player, "claiming.pos1_message",
+                        "%x%", String.valueOf(sel.pos1.getBlockX()),
+                        "%y%", String.valueOf(sel.pos1.getBlockY()),
+                        "%z%", String.valueOf(sel.pos1.getBlockZ()));
             } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 sel.pos2 = event.getClickedBlock().getLocation();
-                plugin.msg(player, plugin.cfg().getString("claiming.pos2_message")
-                        .replace("%x%", String.valueOf(sel.pos2.getBlockX()))
-                        .replace("%y%", String.valueOf(sel.pos2.getBlockY()))
-                        .replace("%z%", String.valueOf(sel.pos2.getBlockZ())));
+                plugin.lang.msg(player, "claiming.pos2_message",
+                        "%x%", String.valueOf(sel.pos2.getBlockX()),
+                        "%y%", String.valueOf(sel.pos2.getBlockY()),
+                        "%z%", String.valueOf(sel.pos2.getBlockZ()));
             }
             return;
         }
@@ -122,7 +122,7 @@ public class PlayerListener implements Listener {
                 plot.factoryUnlocked = true;
                 plot.sorterUnlocked = true;
                 plot.vaultPages = plugin.cfg().getInt("upgrades.vault_page.max_pages", 5);
-                plugin.msg(player, plugin.cfg().getString("admin.godwand_max_message"));
+                plugin.lang.msg(player, "admin.godwand_max_message");
                 plugin.holograms.spawnPlot(plot);
             } else if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 LocationStrike(player, plot);
@@ -137,14 +137,14 @@ public class PlayerListener implements Listener {
             if (plot == null) return;
             var rec = plot.findHistory(event.getClickedBlock().getLocation());
             if (rec == null) {
-                plugin.msg(player, "&7No history for this block.");
+                plugin.lang.msg(player, "admin.no-history");
                 return;
             }
-            plugin.msg(player, plugin.cfg().getString("admin.rollbackwand_format")
-                    .replace("%block%", rec.block)
-                    .replace("%action%", rec.action)
-                    .replace("%player%", rec.player)
-                    .replace("%time%", Text.formatDate(rec.time, plugin.cfg().getString("plugin.date_format"), plugin.cfg().getString("plugin.timezone"))));
+            plugin.lang.msg(player, "admin.rollbackwand_format",
+                    "%block%", rec.block,
+                    "%action%", rec.action,
+                    "%player%", rec.player,
+                    "%time%", Text.formatDate(rec.time, plugin.cfg().getString("plugin.date_format"), plugin.cfg().getString("plugin.timezone")));
         }
     }
 
@@ -152,7 +152,7 @@ public class PlayerListener implements Listener {
         var loc = plot.center();
         if (loc != null && loc.getWorld() != null) loc.getWorld().strikeLightningEffect(loc);
         plugin.deletePlot(plot, true);
-        plugin.msg(player, plugin.cfg().getString("admin.godwand_smite_message"));
+        plugin.lang.msg(player, "admin.godwand_smite_message");
     }
 
     @EventHandler

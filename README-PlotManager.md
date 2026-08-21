@@ -8,6 +8,13 @@
 - **100% Configurable:** If it exists on the screen, in chat, or in a GUI, it is editable in the `config.yml`.
 - **Absolute Protection:** Prevents every exploit known to Minecraft (Piston pushing, Hopper minecart theft, Dispenser arrows, liquid flow).
 - **Asynchronous & Lag-Free:** All massive operations (Saving, FAWE Rollbacks, Border Particles) are strictly run off the main thread.
+- **Multi-Language:** Full translations for **English (en), Română (ro), Español (es), Deutsch (de)** — plus any custom language you drop in `plugins/PlotManager/lang/`.
+
+## 🌍 Languages / Limbă / Idioma / Sprache
+- **Server default:** set `language.default` in `config.yml` (`en`, `ro`, `es`, `de`, or any custom code).
+- **Per player:** with `language.per-player: true`, everyone picks their own language via `/plot lang <code>` (or the Language button in `/plot menu`) — preference is saved in `lang/preferences.yml`.
+- **Fully editable:** every message, GUI label, sign line, title and action bar lives in `plugins/PlotManager/lang/<code>.yml` (auto-extracted on first run). Colors with `&` codes and `&#RRGGBB` hex, placeholders like `%player%`.
+- **Add a language:** copy `lang/en.yml` to `lang/fr.yml` (for example), translate it — it is detected automatically. Missing keys fall back to English, then to legacy `config.yml` values.
 
 ## 📦 Required & Optional Dependencies
 

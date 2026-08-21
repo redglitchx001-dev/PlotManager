@@ -44,9 +44,9 @@ public class MechanicListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
-            event.line(0, Text.component("&2[Tip Jar]"));
-            event.line(1, Text.component("&aRight-click to tip"));
-            plugin.msg(player, "&aTip jar created!");
+            event.line(0, Text.component(plugin.lang.line(player, "signs.tip-jar-line1")));
+            event.line(1, Text.component(plugin.lang.line(player, "signs.tip-jar-line2")));
+            plugin.lang.msg(player, "economy.tip-jar-created");
             return;
         }
         String shopHeader = plugin.cfg().getString("chest_shops.sign_header", "[Shop]");
@@ -58,14 +58,14 @@ public class MechanicListener implements Listener {
             }
             if (plot.shops.size() >= plugin.cfg().getInt("chest_shops.max_shops_per_plot", 20)) {
                 event.setCancelled(true);
-                plugin.msg(player, "&cShop limit reached.");
+                plugin.lang.msg(player, "shops.limit");
                 return;
             }
             int amount = parseInt(plain(event, 1), 1);
             Material item = Items.material(plain(event, 2), null);
             double price = parseDouble(plain(event, 3).replace("$", ""), -1);
             if (item == null || price < 0) {
-                plugin.msg(player, "&cFormat: [Shop] / amount / ITEM / price");
+                plugin.lang.msg(player, "shops.format");
                 event.setCancelled(true);
                 return;
             }
@@ -80,13 +80,13 @@ public class MechanicListener implements Listener {
             plot.shops.add(shop);
             String color = plugin.cfg().getString("chest_shops.sign_color", "&2");
             event.line(0, Text.component(color + shopHeader));
-            event.line(1, Text.component("&f" + shop.amount + "x"));
-            event.line(2, Text.component("&a" + item.name()));
-            event.line(3, Text.component("&e$" + Text.money(price)));
-            plugin.msg(player, plugin.cfg().getString("chest_shops.shop_created_message")
-                    .replace("%amount%", String.valueOf(shop.amount))
-                    .replace("%item%", item.name())
-                    .replace("%price%", Text.money(price)));
+            event.line(1, Text.component(plugin.lang.line(player, "signs.shop-amount", "%amount%", String.valueOf(shop.amount))));
+            event.line(2, Text.component(plugin.lang.line(player, "signs.shop-item", "%item%", item.name())));
+            event.line(3, Text.component(plugin.lang.line(player, "signs.shop-price", "%price%", Text.money(price))));
+            plugin.lang.msg(player, "chest_shops.shop_created_message",
+                    "%amount%", String.valueOf(shop.amount),
+                    "%item%", item.name(),
+                    "%price%", Text.money(price));
         }
     }
 
@@ -102,7 +102,7 @@ public class MechanicListener implements Listener {
             event.setCancelled(true);
             if (plot == null) return;
             plugin.session(player).priceEditPath = "tip:" + plot.id;
-            plugin.msg(player, "&aType the tip amount in chat. Minimum: $" + plugin.cfg().getDouble("economy.tip_jar_minimum"));
+            plugin.lang.msg(player, "economy.tip-prompt", "%min%", String.valueOf(plugin.cfg().getDouble("economy.tip_jar_minimum")));
             return;
         }
         if (l0.toLowerCase().contains("shop") && plot != null) {
@@ -136,7 +136,7 @@ public class MechanicListener implements Listener {
             if (event.getCurrentItem() != null && !event.getCurrentItem().getType().isAir()
                     && event.getClickedInventory() == event.getView().getTopInventory()) {
                 event.setCancelled(true);
-                plugin.msg(player, plugin.cfg().getString("mailbox.mailbox_steal_message"));
+                plugin.lang.msg(player, "mailbox.mailbox_steal_message");
             }
         }
         if (event.getClickedInventory() == event.getView().getBottomInventory() && event.isShiftClick()) {
@@ -161,10 +161,10 @@ public class MechanicListener implements Listener {
             event.setCancelled(true);
             Plot plot = plugin.store.index.at(player.getLocation());
             if (plot == null) {
-                Bukkit.getScheduler().runTask(plugin, () -> plugin.msg(player, "&cYou are not in a plot."));
+                Bukkit.getScheduler().runTask(plugin, () -> plugin.lang.msg(player, "general.stand-in-plot"));
                 return;
             }
-            String line = "&2[Plot] &a" + player.getName() + "&7: &f" + msg;
+            String line = plugin.lang.line(player, "signs.plot-chat", "%player%", player.getName(), "%message%", msg);
             Bukkit.getScheduler().runTask(plugin, () -> {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     if (plot.contains(p.getLocation()) || plot.isMember(p.getUniqueId())) {

@@ -35,7 +35,7 @@ public class GuiListener implements Listener {
             Plot plot = plugin.store.get(holder.plotId);
             if (plot == null || !plot.canChests(player)) {
                 event.setCancelled(true);
-                plugin.msg(player, plugin.cfg().getString("plot_protections.chest_denied_message"));
+                plugin.lang.msg(player, "plot_protections.chest_denied_message");
             }
             return;
         }
@@ -68,15 +68,29 @@ public class GuiListener implements Listener {
                     player.closeInventory();
                     plugin.unclaim(player, plot, true);
                 } else {
-                    plugin.msg(player, plugin.cfg().getString("claiming.unclaim_confirm_message"));
+                    plugin.lang.msg(player, "claiming.unclaim_confirm_message");
                 }
             }
-            case "holoinfo" -> plugin.msg(player, "&aUse &2/plot holo create &ato buy a hologram.");
-            case "mailboxinfo" -> plugin.msg(player, "&aLook at a barrel and type &2/plot setmailbox&a.");
+            case "holoinfo" -> plugin.lang.msg(player, "holograms.guide");
+            case "mailboxinfo" -> plugin.lang.msg(player, "gui.mailbox.guide");
+            case "language" -> {
+                player.closeInventory();
+                var codes = plugin.lang.available();
+                String current = plugin.lang.codeFor(player);
+                int next = (codes.indexOf(current) + 1) % codes.size();
+                String code = codes.get(next);
+                if (!plugin.cfg().getBoolean("language.per-player", true)) {
+                    plugin.lang.msg(player, "lang.no-permission");
+                } else {
+                    plugin.lang.setPlayerLanguage(player, code);
+                    plugin.lang.msg(player, "lang.changed", "%code%", code);
+                    plugin.lang.msg(player, "lang.usage", "%codes%", String.join(", ", codes));
+                }
+            }
             case "bm-sell" -> {
                 player.closeInventory();
                 plugin.session(player).priceEditPath = "blackmarket-sell";
-                plugin.msg(player, "&aHold the item and type the price in chat.");
+                plugin.lang.msg(player, "economy.price-prompt");
             }
             default -> handleDynamic(player, plot, holder, action, event);
         }
@@ -106,13 +120,13 @@ public class GuiListener implements Listener {
                 UUID id = UUID.fromString(action.substring(7));
                 if (event.isShiftClick()) {
                     plot.members.remove(id);
-                    plugin.msg(player, plugin.cfg().getString("members.member_remove_message").replace("%player%", Bukkit.getOfflinePlayer(id).getName()));
+                    plugin.lang.msg(player, "members.member_remove_message", "%player%", String.valueOf(Bukkit.getOfflinePlayer(id).getName()));
                 } else {
                     var m = plot.members.get(id);
                     if (m != null) {
                         m.role = m.role.promote();
                         m.applyRoleDefaults();
-                        plugin.msg(player, plugin.cfg().getString("members.promote_message").replace("%player%", m.name).replace("%role%", m.role.display));
+                        plugin.lang.msg(player, "members.promote_message", "%player%", m.name, "%role%", m.role.display);
                     }
                 }
                 plugin.menus.openMembers(player, plot);
@@ -141,7 +155,7 @@ public class GuiListener implements Listener {
         } else if (action.startsWith("price:")) {
             player.closeInventory();
             plugin.session(player).priceEditPath = action.substring(6);
-            plugin.msg(player, "&aType the new price in chat.");
+            plugin.lang.msg(player, "shops.price-edit-prompt");
         } else if (action.startsWith("border:") && plot != null) {
             plugin.buyCosmetic(player, plot, "borders", action.substring(7));
             plugin.menus.openCosmetics(player, plot);
@@ -162,12 +176,12 @@ public class GuiListener implements Listener {
                 ItemStack item = Serial.itemFromBase64(l.itemBase64);
                 if (item != null) player.getInventory().addItem(item);
                 it.remove();
-                plugin.msg(player, "&aListing cancelled.");
+                plugin.lang.msg(player, "shops.listing-cancelled");
                 plugin.menus.openBlackmarket(player, 0);
                 return;
             }
             if (!plugin.economy.has(player, l.price)) {
-                plugin.msg(player, plugin.cfg().getString("economy.not_enough_money_message").replace("%balance%", Text.money(plugin.economy.balance(player))));
+                plugin.lang.msg(player, "economy.not_enough_money_message", "%balance%", Text.money(plugin.economy.balance(player)));
                 return;
             }
             plugin.economy.withdraw(player, l.price);
@@ -180,7 +194,7 @@ public class GuiListener implements Listener {
                 plot.blackmarketUsed = true;
                 plugin.maybeSnitch(plot);
             }
-            plugin.msg(player, "&aPurchased anonymously for &2$" + Text.money(l.price));
+            plugin.lang.msg(player, "shops.anonymous-bought", "%price%", Text.money(l.price));
             player.closeInventory();
             return;
         }

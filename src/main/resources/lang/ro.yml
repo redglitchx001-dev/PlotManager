@@ -1,0 +1,412 @@
+# ============================================================ #
+#  PlotManager — Mesaje în română (ro)                         #
+#  Modifică liber; folosește & pentru culori și &#RRGGBB hex.  #
+#  Placeholder-urile arată așa: %asta%. Șterge fișierul        #
+#  pentru a-l regenera.                                        #
+# ============================================================ #
+
+general:
+  players-only: "&cAceastă comandă este doar pentru jucători."
+  no-permission: "&cNu ai permisiunea pentru asta."
+  config-reloaded: "&aConfigurația și limbile au fost reîncărcate."
+  unknown-subcommand: "&cSubcomandă necunoscută. Încearcă &a/plot help"
+  invalid-amount: "&cSumă invalidă."
+  invalid-number: "&cNumăr invalid."
+  plot-not-found: "&cPlotul nu a fost găsit."
+  player-not-found: "&cJucătorul nu a fost găsit."
+  player-not-online: "&cJucătorul trebuie să fie online."
+  stand-in-plot: "&cStai întâi într-un plot."
+  wilderness: "&7Ești în sălbăticie."
+  cannot-manage: "&cNu poți administra acest plot."
+  usage-player: "&cFolosire: /plot %sub% <jucător>"
+  invalid-price: "&cPreț invalid."
+
+claiming:
+  pos1_message: "&aPoziția 1 setată la &2(%x%, %y%, %z%)"
+  pos2_message: "&aPoziția 2 setată la &2(%x%, %y%, %z%)"
+  no_selection_message: "&cSetează mai întâi ambele poziții cu Bagheta de Plot!"
+  too_small_message: "&cSelecția ta este prea mică! Minim: %min%x%min%"
+  too_large_message: "&cSelecția ta este prea mare! Maxim: %max%x%max%"
+  overlap_message: "&cSelecția se suprapune cu un plot existent!"
+  max_claims_message: "&cAi deja %owned%/%max% ploturi!"
+  claim_denied_message: "&cNu ai suficienți bani! Necesar: $%cost%"
+  claim_success_message: "&aFelicitări! Ai primit plotul pentru &2$%cost%&a!"
+  unclaim_confirm_message: "&cShift-click pe TNT în /plot menu sau scrie /plot unclaim confirm"
+  unclaim_success_message: "&aPlot abandonat. Ai primit înapoi &2$%amount%&a."
+  wand-given: "&aBagheta de Plot a fost primită."
+  merge_success_message: "&aPloturi fuzionate cu succes!"
+  merge_fail_message: "&cAi nevoie de două ploturi adiacente ale tale pentru fuziune."
+
+plot:
+  home-set: "&aHome-ul plotului a fost setat."
+  home-invalid: "&cLocația home este invalidă."
+  description-usage: "&cFolosire: /plot description <text>"
+  description-updated: "&aDescrierea a fost actualizată."
+  renamed: "&aPlot redenumit în &2%name%"
+  rename-usage: "&cFolosire: /plot rename <nume>"
+  hidden: "&aPlotul este acum ascuns din listă."
+  public: "&aPlotul este acum public."
+  deleted: "&aPlot șters."
+  unfrozen: "&aPlot decongelat."
+  frozen: "&aPlot înghețat."
+  fly-enabled: "&aZborul pe plot activat."
+  fly-disabled: "&cZborul pe plot dezactivat."
+  fly-locked: "&cDeblochează zborul sau atinge nivelul necesar mai întâi."
+  chat-enabled: "&aChatul plotului activat."
+  chat-disabled: "&cChatul plotului dezactivat."
+  list-none: "&7Nu deții niciun plot."
+  list-entry: "&a#%index% &2%name% &7(%size%) Niv %level%"
+  only-owner-unclaim: "&cDoar ownerul poate abandona plotul."
+
+members:
+  usage-add: "&cFolosire: /plot add <jucător> [builder|co-owner|visitor] [--no-chests]"
+  usage-remove: "&cFolosire: /plot remove <jucător>"
+  usage-rank: "&cFolosire: /plot %sub% <jucător>"
+  member_limit_message: "&cPoți avea doar %current%/%max% membri!"
+  member_add_message: "&a%player% a fost adăugat pe plotul tău ca %role%!"
+  added-target: "&aAi fost adăugat pe &2%plot% &aca %role%"
+  member_remove_message: "&c%player% a fost scos de pe plotul tău."
+  not-a-member: "&cAcel jucător nu este membru."
+  member-not-found: "&cMembru negăsit."
+  promote_message: "&a%player% promovat la %role%!"
+  demote_message: "&a%player% retrogradat la %role%!"
+
+flags:
+  usage: "&cFolosire: /plot flag <flag> <true|false>"
+  list: "&7Flag-uri: %flags%"
+  unknown: "&cFlag necunoscut."
+  set: "&aFlag-ul &2%flag% &asetat pe &f%value%"
+
+bank:
+  usage: "&cFolosire: /plot %sub% <sumă>"
+  deposit-denied: "&cDoar ownerii și co-ownerii pot depune."
+  withdraw-denied: "&cDoar ownerul poate retrage."
+  deposited: "&aAi depus &2$%amount% &aîn banca plotului."
+  withdrawn: "&aAi retras &2$%amount% &adin banca plotului."
+
+economy:
+  not_enough_money_message: "&cBani insuficienți! Ai: $%balance%"
+  tip-minimum: "&cVârful minim este $%amount%"
+  tipped: "&aAi dat un tip de &2$%amount%"
+  tip-prompt: "&aScrie în chat suma pentru tip. Minim: $%min%"
+  tip_jar_message: "&a%player% a dat &2$%amount% &ala plotul tău!"
+  sell-hold-item: "&cȚine în mână obiectul pe care vrei să-l vinzi."
+  price-prompt: "&aȚine obiectul și scrie prețul în chat."
+  tip-jar-created: "&aCutia de tipuri creată!"
+  deposit_message: "&aAi depus &2$%amount% &aîn banca plotului. Balanț: &2$%balance%"
+  withdraw_message: "&aAi retras &2$%amount% &adin banca plotului. Balanț: &2$%balance%"
+  not_enough_bank_message: "&cBanca plotului nu are suficienți bani!"
+
+shops:
+  created_message: "&aMagazin creat! Se vinde %amount%x %item% pentru $%price%"
+  limit: "&cLimita de magazine a fost atinsă."
+  format: "&cFormat: [Shop] / cantitate / ITEM / preț"
+  yours: "&7Acesta este magazinul tău."
+  anonymous-bought: "&aCumpărat anonim pentru &2$%price%"
+  price-edit-prompt: "&aScrie noul preț în chat."
+  listing-cancelled: "&aAnunț anulat."
+  purchase_message_buyer: "&aAi cumpărat &2%amount%x %item% &apentru &2$%price%"
+  purchase_message_seller: "&a%buyer% a cumpărat &2%amount%x %item% &adin magazinul tău pentru &2$%price%"
+  out-of-stock: "&cAcest magazin nu mai are stoc!"
+
+mailbox:
+  set_message: "&aCutia poștală setată la acest butoi!"
+  mailbox_steal_message: "&cAici poți doar să LASI obiecte, nu să le iei!"
+  holographic-set: "&aZona poștală holografică setată la locația ta. Aruncă obiecte aproape pentru livrare."
+  delivery-message: "&a%player% a livrat obiecte în cutia ta poștală!"
+
+holograms:
+  usage: "&cFolosire: /plot holo <create|addline|removeline|delete>"
+  usage-addline: "&cFolosire: /plot holo addline <text>"
+  usage-removeline: "&cFolosire: /plot holo removeline <număr>"
+  unknown-action: "&cAcțiune hologramă necunoscută."
+  max-lines: "&cNumărul maxim de linii a fost atins."
+  invalid-line: "&cLinie invalidă."
+  too-far: "&cApropie-te de o hologramă."
+  line_added_message: "&aLinie adăugată la hologramă: &f%text%"
+  line_removed_message: "&aLinia %number% a fost ștearsă din hologramă."
+  hologram_deleted_message: "&aHologramă ștearsă."
+  guide: "&aFolosește &2/plot holo create &apentru a cumpăra o hologramă."
+  profanity_blocked_message: "&cTextul hologramei conține un cuvânt interzis!"
+  hologram_created_message: "&aHologramă creată! Cost: &2$%cost%"
+  hologram_moved_message: "&aHolograma principală a fost mutată la locația ta."
+  max_holograms_message: "&cAi deja %current%/%max% holograme!"
+
+music:
+  locked: "&cDeblochează mai întâi muzica în /plot upgrades."
+  available: "&7Disponibile: %discs%"
+  music_set_message: "&aMuzica plotului setată pe: &2%disc%"
+
+mayor:
+  disabled: "&cSistemul de primar este dezactivat."
+  only-mayor: "&cDoar Primarul (ownerul celui mai bogat plot #1) poate seta taxa."
+  current-tax: "&7Taxa curentă: &a%percent%%"
+  invalid-percent: "&cProcent invalid."
+  tax_set_message: "&aTaxa primarului setată la &2%percent%%&a."
+  announce_message: "&2&l%player% &aeste acum Primarul serverului!"
+
+merging:
+  disabled: "&cFuzionarea este dezactivată."
+  stand-in-own: "&cStai într-unul dintre ploturile tale."
+
+map:
+  given: "&aHarta live a plotului primită. Ține-o în mână pentru a vedea granițele și membrii."
+  radar-name: "&2&lRadar Plot"
+  link-disabled: "&cLinkul hărții este dezactivat."
+
+drone:
+  disabled: "&cModul dronă este dezactivat."
+  own-plot-only: "&cPoți folosi drona doar pe plotul tău."
+  lost_signal_message: "&cSemnalul dronei s-a pierdut!"
+  enabled_message: "&aModul dronă activat. Rămâi în Survival — peșterile rămân ascunse."
+  disabled_message: "&aModul dronă dezactivat. Bine ai revenit."
+
+upgrades:
+  already-unlocked: "&aDeja deblocat."
+  max-vault-pages: "&cNumărul maxim de pagini din vault a fost atins."
+  cannot-buy: "&cNu poți cumpăra upgrade-uri pentru acest plot."
+  generator-level: "&cAcest generator se deblochează la nivelul %level% al plotului."
+  selected: "&aSelectat: %name%"
+  purchase_message: "&aAi deblocat &2%name% &apentru &2$%cost%&a!"
+  names:
+    fly: "Zbor pe Plot"
+    crop_boost: "Boost Recoltă"
+    music: "Muzică Plot"
+    smart_sorter: "Sortatoare Smart"
+    factory: "Fabrici Plot"
+    vault_page: "Pagină Vault %page%"
+    generator_tier_1: "Generator de Fier"
+    generator_tier_2: "Generator de Aur"
+    generator_tier_3: "Generator de Diamante"
+  purchase-messages:
+    fly: "&aAi deblocat &2Zbor pe Plot &apentru &2$%cost%&a!"
+    crop_boost: "&aAi deblocat &2Boost Recoltă (x%multiplier%) &apentru &2$%cost%&a!"
+    music: "&aAi deblocat &2Muzică Plot &apentru &2$%cost%&a!"
+    smart_sorter: "&aAi deblocat &2Sortatoare Smart &apentru &2$%cost%&a!"
+    factory: "&aAi deblocat &2Fabrici Plot &apentru &2$%cost%&a!"
+    vault_page: "&aAi deblocat &2Pagină Vault %page% &apentru &2$%cost%&a!"
+    generator_tier_1: "&aAi cumpărat un &2Generator de Fier &apentru &2$%cost%&a!"
+    generator_tier_2: "&aAi cumpărat un &6Generator de Aur &apentru &2$%cost%&a!"
+    generator_tier_3: "&aAi cumpărat un &bGenerator de Diamante &apentru &2$%cost%&a!"
+
+admin:
+  godwand-given: "&aBagheta Zeului a fost primită."
+  rollbackwand-given: "&aBagheta de Rollback a fost primită."
+  godwand_max_message: "&aPlot maximizat! Nivel: 100, Bancă: $999.999.999"
+  godwand_smite_message: "&c&lTRĂSNIT! &cPlot șters și teren restaurat."
+  rollbackwand_format: "&aBloc: &f%block% &7| &aAcțiune: &f%action% &7| &aDe: &f%player% &7| &aLa: &f%time%"
+  no-history: "&7Nu există istoric pentru acest bloc."
+  quarantine_message: "&c&lAcest plot a fost pus în carantină de un admin!"
+  spy_enabled_message: "&aModul Admin Spy &2ACTIVAT&a. Ești invizibil pentru ploturi."
+  spy_disabled_message: "&aModul Admin Spy &cDEZACTIVAT&a."
+  scanning: "&aSe scanează plotul..."
+  quarantine_kick_message: "&cAi fost scos de pe un plot pus în carantină."
+  inspect_format: "&aAm găsit &2%count%x %item% &aîn cufere."
+  inspect_total_format: "&2&lAvuția totală estimată: &a$%total%"
+  seize_message: "&c&lPlot confiscat! &cTransferat $%bank% din banca plotului."
+  purge_message: "&aAu fost șterse &2%count% &aploturi inactive."
+
+leaderboard:
+  set_message: "&aHolograma clasamentului a fost plasată la locația ta!"
+
+plot_protections:
+  break_denied_message: "&cNu poți sparge blocuri aici."
+  place_denied_message: "&cNu poți plasa blocuri aici."
+  interact_denied_message: "&cNu poți interacționa aici."
+  wilderness_break_message: "&cNu poți construi în sălbăticie! Prinde un plot mai întâi."
+  chest_denied_message: "&cNu ai permisiunea să deschizi containere aici."
+  hopper_limit_message: "&cLimita de hoppere a fost atinsă (%current%/%max%)!"
+  spawner_limit_message: "&cLimita de spawner-e a fost atinsă (%current%/%max%)!"
+
+bouncer_shield:
+  cooldown_message: "&cEști interzis de pe acest plot!"
+  ban_message: "&a%player% a fost banat de pe plotul tău."
+  unban_message: "&a%player% a fost debanat de pe plotul tău."
+
+signs:
+  tip-jar-line1: "&2[Cutie Tip]"
+  tip-jar-line2: "&aClick-dreapta pentru tip"
+  plot-chat: "&2[Plot] &a%player%&7: &f%message%"
+  shop-amount: "&f%amount%x"
+  shop-item: "&a%item%"
+  shop-price: "&e$%price%"
+
+titles:
+  enter_plot:
+    title: "&2%plot_name%"
+    subtitle: "&aOwner: %owner% &7| &aNivel %level%"
+  leave_plot:
+    title: "&7Sălbăticie"
+    subtitle: "&8Ai părăsit %plot_name%"
+  actionbar:
+    inside_plot: "&2✦ %plot_name% &7| &aOwner: %owner% &7| &aMembri: %members%/%max_members%"
+    wilderness: "&7✦ Sălbăticie"
+
+visit:
+  usage: "&cFolosire: /plot visit <jucător>"
+  none-public: "&cNiciun plot public găsit pentru acel jucător."
+
+lang:
+  usage: "&cFolosire: /plot lang <cod> — disponibil: %codes%"
+  current: "&7Limba ta: &a%code% &7(server: &a%default%&7)"
+  current-server: "&7Limba serverului: &a%code%"
+  changed: "&aLimba setată pe &2%code%&a."
+  reset: "&aLimba resetată la cea a serverului (&2%code%&a)."
+  no-permission: "&cLimbile per-jucător sunt dezactivate pe acest server."
+
+blackmarket:
+  player-warning: "&8Pst... n-ai văzut nimic."
+  too-many-listings: "&cAi prea multe anunțuri."
+  listed-anonymously: "&8Obiect listat anonim pentru &a$%price%"
+
+prices:
+  updated: "&aActualizat &2%path% &ape &f$%price%"
+
+chest_shops:
+  shop_created_message: "&aMagazin creat! Se vinde %amount%x %item% pentru $%price%"
+  purchase_message_buyer: "&aAi cumpărat &2%amount%x %item% &apentru &2$%price%"
+  purchase_message_seller: "&a%buyer% a cumpărat &2%amount%x %item% &adin magazinul tău pentru &2$%price%"
+
+gui:
+  common:
+    back: "&7Înapoi"
+    close: "&cÎnchide"
+    previous: "&7Anteriorul"
+    next: "&7Următorul"
+    label-yes: "&aDa"
+    label-no: "&cNu"
+    selected: "&aSELECTAT"
+    click-select: "&eClick pentru a cumpăra/selecta"
+  main:
+    title: "&2&lMeniu Plot"
+    info-name: "&aInfo Plot"
+    info-lore: "&7Click pentru statisticile plotului"
+    bank-name: "&6Banca Plotului"
+    bank-lore: "&7Depune sau retrage"
+    members-name: "&aMembri"
+    members-lore: "&7Administrează jucătorii de încredere"
+    flags-name: "&aFlag-uri"
+    flags-lore: "&7Comută setările plotului"
+    upgrades-name: "&bUpgrade-uri"
+    upgrades-lore: "&7Cumpără zbor, vaulturi, generatoare"
+    vault-name: "&dVaultul Plotului"
+    vault-lore: "&7Deschide stocarea virtuală"
+    market-name: "&aPiața Globală"
+    market-lore: "&7Răsfoiește toate magazinele"
+    blackmarket-name: "&8Piața Neagră"
+    blackmarket-lore: "&7Pst... comerț fără taxe"
+    home-name: "&aHome"
+    home-lore: "&7Teleportează-te la spawnul plotului"
+    browse-name: "&aRăsfoiește Ploturi"
+    browse-lore: "&7Vizitează ploturi publice"
+    cosmetics-name: "&dMuzică & Cosmetice"
+    cosmetics-lore: "&7Urmări, borduri, discuri"
+    holo-name: "&aHolograme"
+    holo-lore: "&7/plot holo create"
+    mailbox-name: "&6Cutia Poștală"
+    mailbox-lore: "&7Uită-te la un butoi: /plot setmailbox"
+    drone-name: "&bMod Dronă"
+    drone-lore: "&7Cameră aeriană, doar survival"
+    unclaim-name: "&cAbandonează"
+    unclaim-lore: "&cShift-click pentru a abandona"
+    lang-name: "&aLimbă"
+    lang-lore: "&7Click pentru a-ți schimba limba"
+  bank:
+    title: "&2&lBanca Plotului"
+    deposit-100: "&aDepune 100"
+    deposit-1000: "&aDepune 1000"
+    deposit-all: "&aDepune Tot"
+    withdraw-1000: "&cRetrage 1000"
+    withdraw-all: "&cRetrage Tot"
+    click-deposit: "&7Click pentru a depune"
+    balance-lore: "&7Balanț: &f$%balance%"
+    bank-lore: "&7Banca plotului: &f$%balance%"
+  members:
+    title: "&2&lMembrii Plotului"
+    owner-name: "&6Owner: &f%player%"
+    owner-lore: "&7Control total"
+    role-lore: "&7Rol: &f%role%"
+    build-lore: "&7Construcție: %value%"
+    chests-lore: "&7Cufere: %value%"
+    click-lore: "&eClick pentru promovare  &cShift-click pentru kick"
+  flags:
+    title: "&2&lFlag-uri Plot"
+    currently: "&7Momentan: %value%"
+    on-state: "&aACTIV"
+    off-state: "&cINACTIV"
+    click-toggle: "&eClick pentru comutare"
+  upgrades:
+    title: "&2&lUpgrade-uri Plot"
+    vault-page-name: "Pagină Vault %page%"
+    unlocked: "&aDEBLOCAT"
+    cost-lore: "&7Cost: &a$%cost%"
+  vault:
+    title: "&2&lVaultul Plotului (Pagina %page%)"
+  market:
+    title: "&a&lPiața Globală"
+    entry-name: "&a%item%"
+    amount-lore: "&7Cantitate: &f%amount%"
+    price-lore: "&7Preț: &a$%price%"
+    plot-lore: "&7Plot: &f%plot%"
+    owner-lore: "&7Owner: &f%player%"
+    gps-lore: "&eClick pentru navigare GPS"
+  blackmarket:
+    title: "&8&lLumea de Jos"
+    anonymous: "&8Anunț anonim"
+    price-lore: "&7Preț: &a$%price%"
+    buy-lore: "&eClick pentru a cumpăra  &cShift-click pentru anulare dacă e al tău"
+    sell-name: "&aVinde obiectul din mână"
+    sell-lore: "&7Scrie prețul în chat după click"
+  browse:
+    title: "&2&lRăsfoiește Ploturi Publice"
+    entry-name: "&a%plot%"
+    owner-lore: "&7Owner: &f%player%"
+    level-lore: "&7Nivel: &f%level%"
+    size-lore: "&7Mărime: &f%size%"
+    visit-lore: "&eClick-stânga: vizitează"
+    gps-lore: "&aClick-dreapta: traseu GPS"
+  help:
+    title: "&2&lAjutor Plot"
+    claim: "Prinde selecția cu bagheta"
+    menu: "Deschide acest meniu"
+    home: "Teleport acasă"
+    add: "Acordă încredere unui jucător"
+    vault: "Deschide vaultul plotului"
+    market: "Magazine globale"
+    browse: "Vizitează ploturi publice"
+    drone: "Mod cameră aeriană"
+    fly: "Comută zborul pe plot"
+    holo: "Cumpără o hologramă"
+    setmailbox: "Setează un butoi pentru livrări"
+    blackmarket: "Piață fără taxe"
+    language: "Schimbă-ți limba"
+  audit:
+    title: "&c&lJurnal Audit Plot"
+    by-lore: "&7De: &f%player%"
+  prices:
+    claim: "Cost Plot"
+    premium: "Plot Premium"
+    hologram: "Hologramă"
+    tip-minimum: "Tip minim"
+    title: "&6&lEditor Prețuri"
+    current-lore: "&7Curent: &a$%price%"
+    click-lore: "&eClick apoi scrie noul preț în chat"
+  cosmetics:
+    title: "&d&lCosmetice Plot"
+    price-lore: "&7Preț: &a$%price%"
+  mailbox:
+    guide: "&aUită-te la un butoi și scrie &2/plot setmailbox&a."
+
+reset_system:
+  warning_message: "&c&lAVERTISMENT: &cPlotul tău va fi resetat în %remaining% zile din cauza inactivității!"
+
+upkeep:
+  upkeep_paid_message: "&aÎntreținerea de &2$%cost% &aa fost plătită automat din banca plotului."
+  upkeep_failed_message: "&c&lAVERTISMENT: &cPlata întreținerii a eșuat! Plotul tău poate fi șters!"
+
+leveling:
+  level_up_message: "&2&l⬆ NIVEL NOU! &aPlotul tău este acum &2Nivelul %level%&a!"
+
+gps:
+  start_message: "&aTraseu GPS pornit. Urmărește calea strălucitoare!"
+  arrive_message: "&aAi ajuns la &2%plot_name%&a!"
