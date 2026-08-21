@@ -1,3 +1,11 @@
+/*
+ * PlotManager — The Ultimate Plot Management System
+ * Copyright (c) 2026 RedGlitchX. All Rights Reserved.
+ *
+ * This file is proprietary and confidential. Unauthorised copying,
+ * redistribution, modification or use of this file, via any medium,
+ * is strictly prohibited. See the LICENSE file for the full terms.
+ */
 package com.redglitchx.plotmanager.command;
 
 import com.redglitchx.plotmanager.PlotManager;
@@ -38,7 +46,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
             "flag", "deposit", "withdraw", "ban", "unban", "description", "list",
             "visit", "merge", "vault", "market", "blackmarket", "map", "music",
             "holo", "holomove", "setmailbox", "private", "browse", "maplink",
-            "fly", "upgrades", "rename", "chat", "drone", "cosmetics", "tax", "lang"
+            "fly", "upgrades", "rename", "chat", "drone", "cosmetics", "tax", "lang", "hooks"
     );
     private static final List<String> ADMIN_SUBS = List.of(
             "reload", "delete", "freeze", "unfreeze", "purge", "inspect", "seize",
@@ -63,6 +71,10 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         String sub = args[0].toLowerCase(Locale.ROOT);
+        if (sub.equals("hooks") || sub.equals("diagnose") || sub.equals("status")) {
+            for (String line : plugin.hooksReport()) sender.sendMessage(Text.component("&a" + line));
+            return true;
+        }
         if (sub.equals("reload")) {
             if (!sender.hasPermission("plotmanager.admin")) return deny(sender);
             plugin.reloadAll();

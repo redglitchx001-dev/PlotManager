@@ -22,8 +22,10 @@
 1. [Why PlotManager?](#-why-plotmanager)
 2. [Compatibility](#-compatibility)
 3. [Requirements](#-requirements)
-4. [Installation](#-installation)
-5. [Building the jar](#-building-the-jar)
+4. [Downloads](#%EF%B8%8F-downloads)
+5. [Installation](#-installation)
+6. [Troubleshooting](#-troubleshooting)
+7. [Building the jar](#-building-the-jar)
 6. [Languages 🌍](#-languages--)
 7. [Quick start](#-quick-start)
 8. [Commands](#-commands)
@@ -33,6 +35,7 @@
 12. [Premium tiers (LuckPerms)](#-premium-tiers-luckperms)
 13. [Discord bot](#-discord-bot)
 14. [FAQ](#-faq)
+15. [Licence](#-licence)
 
 ---
 
@@ -73,42 +76,88 @@ One jar, the whole 1.21 line and beyond — `plugin.yml` declares `api-version: 
 
 ## 📦 Requirements
 
+**Only two things are truly required: Paper and Java. Everything else is optional.**
+
 | Plugin | Role |
 |---|---|
-| **Paper 1.21.x – 26.x** | Server |
-| **Vault** | Required — economy bridge |
-| **EssentialsX / CMI / any Vault economy** | Required — money provider |
+| **Paper 1.21.4+ (incl. 26.x)** | Required — server |
+| **Java 21+** (25 for 26.x jars) | Required — runtime |
+| Vault + EssentialsX / CMI / any Vault economy | Optional — **only** for money features (claim costs, plot banks, shops, upgrades). Without it PlotManager still loads and every other feature works. |
 | FastAsyncWorldEdit (FAWE) | Optional — natural 7-day rollback |
 | BlueMap | Optional — live 3D web-map boxes |
 | PlaceholderAPI | Optional — `%plotmanager_*%` placeholders |
 | LuckPerms | Optional — premium tiers by group |
 | Simple Voice Chat | Optional — private plot voice isolation |
 
+No hologram plugin, no Discord plugin and no protection plugin are needed —
+holograms are native ArmorStands and the Discord bot is bundled inside the jar.
+
+Run **`/plot hooks`** in game (or `plot hooks` in the console) at any time to see
+exactly what the server detected:
+
+```
+PlotManager v1.0.0 by RedGlitchX - hook report
+  Economy (Vault)      : ONLINE (EssentialsX)  [required for money features]
+  PlaceholderAPI       : NOT INSTALLED  [optional]
+  FAWE / WorldEdit     : NOT INSTALLED  [optional - plot rollback]
+  BlueMap              : NOT INSTALLED  [optional - web map]
+  Simple Voice Chat    : NOT INSTALLED  [optional - plot voice]
+  Discord bot (bundled): DISABLED  [optional - no extra plugin needed]
+  Holograms            : BUILT-IN (no hologram plugin required)
+```
+
+`NOT INSTALLED` is not an error — it just means that optional feature is off.
+
+## ⬇️ Downloads
+
+Every [release](https://github.com/redglitchx001-dev/PlotManager/releases) ships
+a jar per Minecraft version plus the full source code:
+
+| File | Use it for |
+|---|---|
+| `PlotManager-<version>-universal.jar` | **any** supported server — start here |
+| `PlotManager-<version>-mc1.21.4.jar` … `-mc<latest>.jar` | built and verified against exactly that Paper version |
+| `PlotManager-<version>-source.zip` / `-sources.jar` | the complete source code |
+| `SHA256SUMS.txt` | checksums for every file above |
+
 ## 🚀 Installation
 
-1. Drop `PlotManager-1.0.jar` into `plugins/`.
-2. Make sure **Vault + an economy plugin** are installed.
-3. Start once — `plugins/PlotManager/config.yml` and `lang/*.yml` generate automatically.
-4. Set `world_settings.protected_world` to your survival world name.
+1. Drop the jar into `plugins/`.
+2. Start once — `plugins/PlotManager/config.yml` and `lang/*.yml` generate automatically.
+3. Set `world_settings.protected_world` to your survival world name.
+4. (Optional) Install Vault + an economy plugin to switch the money features on.
 5. (Optional) Add your Discord token under `discord:` and set `discord.enabled: true`.
 6. Give staff `plotmanager.admin`; players already have `plotmanager.use` and `plotmanager.claim`.
+7. Run `/plot hooks` to confirm what is active.
+
+## 🩺 Troubleshooting
+
+| Symptom | Cause / fix |
+|---|---|
+| Plugin does not appear in `/plugins` | Wrong Java version — PlotManager needs Java 21+ (Java 25 for the `mc26.*` jars). Check the startup log. |
+| `Economy OFFLINE` in the log | No Vault economy installed. Everything except money works; install Vault + EssentialsX/CMI to enable it. |
+| An optional hook says `NOT INSTALLED` | Working as intended — that integration is simply not present. |
+| A feature is missing but the plugin loaded | Run `/plot hooks`; a `Degraded` line lists any subsystem that failed to start, with the reason in the server log. |
+| Holograms missing after a crash | They are non-persistent by design; they respawn automatically, or run `/plot reload`. |
 
 ## 🔨 Building the jar
 
 ```bash
-mvn -DskipTests package
+mvn -B package
 ```
 
-Output: `target/PlotManager-1.0.jar`
+Output: `target/PlotManager-<version>.jar` (universal, Paper 1.21.4 API).
 
-**Retarget the Paper API** (all three are verified to compile):
+**Retarget the Paper API:**
 
 ```bash
-mvn -DskipTests package -Dpaper.version=1.21.4-R0.1-SNAPSHOT   # oldest target
-mvn -DskipTests package -Dpaper.version=26.1.2-R0.1-SNAPSHOT   # newest target
+mvn -B package -Dpaper.version=1.21.8-R0.1-SNAPSHOT -Djar.classifier=-mc1.21.8
+mvn -B package -Dpaper.version=26.1.2-R0.1-SNAPSHOT -Djava.version=25 -Djar.classifier=-mc26.1.2
 ```
 
-Java **21** is required to build and run.
+CI builds the whole matrix automatically and publishes it — see [`ci/README.md`](ci/README.md).
+
+Java **21** is required to build; the 26.x targets build on Java **25**.
 
 ## 🌍 Languages
 
@@ -158,6 +207,7 @@ Aliases: `/plot` · `/p` · `/plots`
 |---|---|
 | `/plot` or `/plot menu` | Master GUI |
 | `/plot help` | Help menu |
+| `/plot hooks` (`diagnose`, `status`) | Which dependencies were detected |
 | `/plot lang [code\|reset]` | Your language |
 | `/plot wand` | Selection wand (staff) |
 | `/plot claim` · `unclaim [confirm]` | Claim / release a plot |
@@ -262,8 +312,23 @@ Set `discord.enabled: true` and paste a bot token — the JDA bot is **bundled i
 
 ---
 
+## 📜 Licence
+
+**PlotManager is proprietary software. Copyright (c) 2026 RedGlitchX. All Rights Reserved.**
+
+- The plugin is **licensed, not sold** — you may run it on servers you own or operate.
+- **No** redistribution, resale, mirroring, leaking or re-uploading, modified or not.
+- **No** decompiling, deobfuscating or derivative works.
+- **No** removal of the author credit, copyright headers or startup banner.
+- **No** use of this code to train or ground AI systems.
+
+Full terms: [LICENSE](LICENSE). Any other use requires written permission from
+RedGlitchX.
+
+---
+
 <div align="center">
 
-**PlotManager V1** · Copyright (C) **RedGlitchX** · All Rights Reserved
+**PlotManager V1** · Copyright (c) 2026 **RedGlitchX** · All Rights Reserved
 
 </div>

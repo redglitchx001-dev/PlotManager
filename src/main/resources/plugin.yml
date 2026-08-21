@@ -1,12 +1,20 @@
+# ================================================================== #
+#                          PLOTMANAGER V1                            #
+#                       Created by: RedGlitchX                       #
+#          Copyright (c) 2026 RedGlitchX. All Rights Reserved.       #
+# ================================================================== #
 name: PlotManager
 version: '${project.version}'
 main: com.redglitchx.plotmanager.PlotManager
 api-version: '1.21'
-description: The Ultimate Plot Management System V1 | BY REDGLITCHX
+description: The Ultimate Plot Management System V1 | (c) RedGlitchX - All Rights Reserved
 authors: [RedGlitchX]
-website: https://redglitchx.com
-depend: [Vault]
-softdepend: [Vault, Essentials, EssentialsX, CMI, PlaceholderAPI, ProtocolLib, WorldGuard, FastAsyncWorldEdit, BlueMap, LuckPerms, SimpleVoiceChat, voicechat]
+website: https://github.com/redglitchx001-dev/PlotManager
+# Vault is only needed for money features. It is listed as a soft dependency on
+# purpose: PlotManager must still load (with the economy switched off) when Vault
+# or its economy provider is missing, instead of refusing to enable.
+# Everything below is optional - run /plot hooks in game to see what is detected.
+softdepend: [Vault, Essentials, EssentialsX, CMI, PlaceholderAPI, ProtocolLib, WorldGuard, WorldEdit, FastAsyncWorldEdit, BlueMap, LuckPerms, SimpleVoiceChat, voicechat]
 commands:
   plot:
     description: PlotManager main command

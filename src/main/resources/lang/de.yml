@@ -1,3 +1,9 @@
+# ================================================================== #
+#                          PLOTMANAGER V1                            #
+#                       Created by: RedGlitchX                       #
+#          Copyright (c) 2026 RedGlitchX. All Rights Reserved.       #
+#   Proprietary software - see LICENSE. Do not remove this notice.   #
+# ================================================================== #
 # ============================================================ #
 #  PlotManager — Deutsche Nachrichten (de)                     #
 #  Frei bearbeitbar; & für Farben und &#RRGGBB für Hex.        #
@@ -96,6 +102,7 @@ economy:
   deposit_message: "&aDu hast &2$%amount% &ain die Plot-Bank eingezahlt. Kontostand: &2$%balance%"
   withdraw_message: "&aDu hast &2$%amount% &avon der Plot-Bank abgehoben. Kontostand: &2$%balance%"
   not_enough_bank_message: "&cDie Plot-Bank hat nicht genug Geld!"
+  no_economy_message: "&cGeld-Funktionen sind deaktiviert: auf diesem Server ist keine Vault-Wirtschaft installiert."
 
 shops:
   created_message: "&aShop erstellt! Verkauft %amount%x %item% für $%price%"

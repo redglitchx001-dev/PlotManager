@@ -1,0 +1,97 @@
+PLOTMANAGER — PROPRIETARY SOFTWARE LICENSE
+==========================================
+
+Copyright (c) 2026 RedGlitchX. All Rights Reserved.
+
+PlotManager ("the Software"), including but not limited to its source code,
+compiled binaries (.jar), configuration files, language files, documentation,
+assets, names, logos and branding, is the exclusive property of RedGlitchX
+(the "Author") and is protected by copyright law and international treaties.
+
+The Software is licensed, NOT sold. No ownership rights are transferred.
+
+
+1. GRANT OF LICENSE
+-------------------
+Subject to full and continued compliance with this License, the Author grants
+each person who lawfully obtains a copy of the Software (the "Licensee") a
+personal, non-exclusive, non-transferable, non-sublicensable, revocable license
+to install and run one (1) copy of the Software on Minecraft servers that the
+Licensee owns or directly operates, for the sole purpose of running that server.
+
+
+2. RESTRICTIONS
+---------------
+Except where an applicable law expressly grants a right that cannot be waived by
+contract, the Licensee may NOT:
+
+  a) copy, redistribute, republish, mirror, resell, rent, lease, lend, sublicense
+     or otherwise make the Software available to any third party, whether free of
+     charge or for a fee, and whether modified or unmodified;
+  b) upload the Software to any marketplace, forum, file host, repository, Discord
+     server, "leak" site or plugin listing;
+  c) reverse engineer, decompile, deobfuscate or disassemble the Software, or
+     attempt to derive its source code, except to the extent such activity is
+     expressly permitted by applicable law notwithstanding this limitation;
+  d) modify, adapt, translate or create derivative works of the Software, or
+     incorporate any part of it into another project;
+  e) remove, hide, alter or obscure any copyright notice, author credit, licence
+     header, watermark, startup banner or branding contained in the Software;
+  f) claim authorship of the Software or represent it as their own work;
+  g) use the Software or any part of it to train, fine-tune, evaluate or ground
+     any machine-learning or generative artificial-intelligence system.
+
+
+3. OWNERSHIP
+------------
+The Software is and shall at all times remain the sole and exclusive property of
+RedGlitchX. All rights not expressly granted in Section 1 are reserved by the
+Author. This License does not grant any rights to the Author's trademarks,
+service marks or trade names.
+
+
+4. THIRD-PARTY COMPONENTS
+-------------------------
+The Software may bundle or interoperate with third-party libraries and plugins
+that remain the property of their respective owners and are governed by their own
+licenses. Nothing in this License alters those licenses, and nothing in those
+licenses grants any right in the original code of the Software authored by
+RedGlitchX, which remains exclusively the Author's.
+
+
+5. TERMINATION
+--------------
+This License terminates automatically and immediately, without notice, if the
+Licensee breaches any of its terms. Upon termination the Licensee must cease all
+use of the Software and permanently delete every copy in their possession or
+control. Sections 3, 6, 7 and 8 survive termination.
+
+
+6. NO WARRANTY
+--------------
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT.
+
+
+7. LIMITATION OF LIABILITY
+--------------------------
+IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES, DATA LOSS, WORLD
+CORRUPTION, LOSS OF PROFITS OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+8. GENERAL
+----------
+If any provision of this License is held unenforceable, the remaining provisions
+remain in full force. Failure to enforce any provision is not a waiver of it.
+
+Any use of the Software not expressly authorised above requires the prior written
+permission of the Author.
+
+    Author  : RedGlitchX
+    Project : PlotManager
+    Contact : https://github.com/redglitchx001-dev/PlotManager
+
+Copyright (c) 2026 RedGlitchX. All Rights Reserved.

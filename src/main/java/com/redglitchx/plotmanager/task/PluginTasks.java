@@ -1,3 +1,11 @@
+/*
+ * PlotManager — The Ultimate Plot Management System
+ * Copyright (c) 2026 RedGlitchX. All Rights Reserved.
+ *
+ * This file is proprietary and confidential. Unauthorised copying,
+ * redistribution, modification or use of this file, via any medium,
+ * is strictly prohibited. See the LICENSE file for the full terms.
+ */
 package com.redglitchx.plotmanager.task;
 
 import com.redglitchx.plotmanager.PlotManager;
@@ -20,34 +28,70 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 public final class PluginTasks {
     private PluginTasks() {}
 
+    /** How many times a single repeating task may fail before it is muted. */
+    private static final int MAX_TASK_ERRORS = 5;
+
     public static void start(PlotManager plugin) {
         long save = Math.max(1, plugin.cfg().getInt("plugin.auto_save_interval_minutes", 5)) * 60L * 20L;
-        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, plugin.store::saveSync, save, save);
+        async(plugin, "auto-save", plugin.store::saveSync, save, save);
 
-        Bukkit.getScheduler().runTaskTimer(plugin, plugin::tickGenerators, 20L * 30, 20L * 30);
+        timer(plugin, "generators", plugin::tickGenerators, 20L * 30, 20L * 30);
 
         long inactivity = Math.max(1, plugin.cfg().getInt("reset_system.check_interval_minutes", 60)) * 60L * 20L;
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> checkInactivity(plugin), inactivity, inactivity);
+        timer(plugin, "inactivity", () -> checkInactivity(plugin), inactivity, inactivity);
 
         int border = Math.max(5, plugin.cfg().getInt("border_particles.interval_ticks", 15));
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> borders(plugin), border, border);
+        timer(plugin, "border-particles", () -> borders(plugin), border, border);
 
         long snitch = Math.max(1, plugin.cfg().getInt("blackmarket.snitch_check_interval_minutes", 60)) * 60L * 20L;
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> snitch(plugin), snitch, snitch);
+        timer(plugin, "blackmarket-snitch", () -> snitch(plugin), snitch, snitch);
 
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> upkeep(plugin), 20L * 60, 20L * 60 * 30);
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> smartClear(plugin), plugin.cfg().getLong("smart_clear.interval_ticks", 100), plugin.cfg().getLong("smart_clear.interval_ticks", 100));
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> factories(plugin), plugin.cfg().getLong("factories.smelt_interval_ticks", 200), plugin.cfg().getLong("factories.smelt_interval_ticks", 200));
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> sorters(plugin), 40L, 40L);
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> visitors(plugin), 20L * 60, 20L * 60);
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> plugin.discord.refreshStatus(), 20L * 60, 20L * 60);
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> plugin.maybeMayor(null), 20L * 120, 20L * 120);
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> cropBoost(plugin), 40L, 40L);
-        Bukkit.getScheduler().runTaskTimer(plugin, () -> jumpElevators(plugin), 4L, 4L);
+        long clear = Math.max(20L, plugin.cfg().getLong("smart_clear.interval_ticks", 100));
+        long smelt = Math.max(20L, plugin.cfg().getLong("factories.smelt_interval_ticks", 200));
+
+        timer(plugin, "upkeep", () -> upkeep(plugin), 20L * 60, 20L * 60 * 30);
+        timer(plugin, "smart-clear", () -> smartClear(plugin), clear, clear);
+        timer(plugin, "factories", () -> factories(plugin), smelt, smelt);
+        timer(plugin, "sorters", () -> sorters(plugin), 40L, 40L);
+        timer(plugin, "visitors", () -> visitors(plugin), 20L * 60, 20L * 60);
+        timer(plugin, "discord-status", () -> plugin.discord.refreshStatus(), 20L * 60, 20L * 60);
+        timer(plugin, "mayor", () -> plugin.maybeMayor(null), 20L * 120, 20L * 120);
+        timer(plugin, "crop-boost", () -> cropBoost(plugin), 40L, 40L);
+        timer(plugin, "elevators", () -> jumpElevators(plugin), 4L, 4L);
+    }
+
+    private static void timer(PlotManager plugin, String name, Runnable body, long delay, long period) {
+        Bukkit.getScheduler().runTaskTimer(plugin, guard(plugin, name, body), Math.max(1L, delay), Math.max(1L, period));
+    }
+
+    private static void async(PlotManager plugin, String name, Runnable body, long delay, long period) {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, guard(plugin, name, body), Math.max(1L, delay), Math.max(1L, period));
+    }
+
+    /**
+     * Wraps a repeating task so a single failure can never cancel it, spam the
+     * console forever, or take another feature down with it.
+     */
+    private static Runnable guard(PlotManager plugin, String name, Runnable body) {
+        int[] errors = new int[1];
+        return () -> {
+            if (errors[0] > MAX_TASK_ERRORS) return;
+            try {
+                body.run();
+            } catch (Throwable t) {
+                if (++errors[0] > MAX_TASK_ERRORS) {
+                    plugin.getLogger().log(Level.SEVERE, "Task '" + name
+                            + "' keeps failing and has been muted until the next restart.", t);
+                } else {
+                    plugin.getLogger().log(Level.WARNING, "Task '" + name + "' failed this cycle.", t);
+                }
+            }
+        };
     }
 
     private static void checkInactivity(PlotManager plugin) {

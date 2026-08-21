@@ -1,3 +1,9 @@
+# ================================================================== #
+#                          PLOTMANAGER V1                            #
+#                       Created by: RedGlitchX                       #
+#          Copyright (c) 2026 RedGlitchX. All Rights Reserved.       #
+#   Proprietary software - see LICENSE. Do not remove this notice.   #
+# ================================================================== #
 # ============================================================ #
 #  PlotManager — Mensajes en español (es)                      #
 #  Edita libremente; usa & para colores y &#RRGGBB para hex.   #
@@ -96,6 +102,7 @@ economy:
   deposit_message: "&aDepositaste &2$%amount% &aen el banco de la parcela. Saldo: &2$%balance%"
   withdraw_message: "&aRetiraste &2$%amount% &adel banco de la parcela. Saldo: &2$%balance%"
   not_enough_bank_message: "&c¡El banco de la parcela no tiene suficiente dinero!"
+  no_economy_message: "&cLas funciones de dinero están desactivadas: no hay ninguna economía de Vault instalada en este servidor."
 
 shops:
   created_message: "&a¡Tienda creada! Vendiendo %amount%x %item% por $%price%"
