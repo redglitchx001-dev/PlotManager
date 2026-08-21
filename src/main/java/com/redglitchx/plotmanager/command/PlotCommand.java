@@ -38,7 +38,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
             "flag", "deposit", "withdraw", "ban", "unban", "description", "list",
             "visit", "merge", "vault", "market", "blackmarket", "map", "music",
             "holo", "holomove", "setmailbox", "private", "browse", "maplink",
-            "fly", "upgrades", "rename", "chat", "drone", "cosmetics", "tax"
+            "fly", "upgrades", "rename", "chat", "drone", "cosmetics", "tax", "lang"
     );
     private static final List<String> ADMIN_SUBS = List.of(
             "reload", "delete", "freeze", "unfreeze", "purge", "inspect", "seize",
@@ -66,11 +66,11 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         if (sub.equals("reload")) {
             if (!sender.hasPermission("plotmanager.admin")) return deny(sender);
             plugin.reloadAll();
-            plugin.msg(sender, "&aConfig reloaded.");
+            plugin.lang.msg(sender, "general.config-reloaded");
             return true;
         }
         if (!(sender instanceof Player player)) {
-            plugin.msg(sender, "&cPlayers only.");
+            plugin.lang.msg(sender, "general.players-only");
             return true;
         }
         if (!player.hasPermission("plotmanager.use") && !player.hasPermission("plotmanager.admin")) return deny(player);
@@ -115,6 +115,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
             case "drone" -> { plugin.toggleDrone(player); yield true; }
             case "cosmetics" -> { Plot p = owned(player); if (p != null) plugin.menus.openCosmetics(player, p); yield true; }
             case "tax" -> tax(player, args);
+            case "lang" -> language(player, args);
             case "delete" -> adminDelete(player, args);
             case "freeze" -> freeze(player, args, true);
             case "unfreeze" -> freeze(player, args, false);
@@ -128,14 +129,14 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
             case "settop" -> settop(player);
             case "editprices" -> { if (!admin(player)) yield true; plugin.menus.openPrices(player); yield true; }
             default -> {
-                plugin.msg(player, "&cUnknown subcommand. Try &a/plot help");
+                plugin.lang.msg(player, "general.unknown-subcommand");
                 yield true;
             }
         };
     }
 
     private boolean deny(CommandSender sender) {
-        plugin.msg(sender, "&cNo permission.");
+        plugin.lang.msg(sender, "general.no-permission");
         return true;
     }
 
@@ -148,11 +149,11 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
     private Plot owned(Player player) {
         Plot plot = plugin.here(player);
         if (plot == null) {
-            plugin.msg(player, "&cYou are not standing in a plot.");
+            plugin.lang.msg(player, "general.stand-in-plot");
             return null;
         }
         if (!plot.canManage(player)) {
-            plugin.msg(player, "&cYou cannot manage this plot.");
+            plugin.lang.msg(player, "general.cannot-manage");
             return null;
         }
         return plot;
@@ -164,7 +165,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         ItemStack item = Items.glow(Items.named(mat, plugin.cfg().getString("claiming.wand_name"), plugin.cfg().getStringList("claiming.wand_lore")));
         Items.byteTag(item, plugin.keys.wand);
         player.getInventory().addItem(item);
-        plugin.msg(player, "&aPlot Wand given.");
+        plugin.lang.msg(player, "claiming.wand-given");
         return true;
     }
 
@@ -172,38 +173,37 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         if (!player.hasPermission("plotmanager.claim")) return deny(player);
         var sel = plugin.session(player).selection;
         if (!sel.complete()) {
-            plugin.msg(player, plugin.cfg().getString("claiming.no_selection_message"));
+            plugin.lang.msg(player, "claiming.no_selection_message");
             return true;
         }
         Cuboid cuboid = Cuboid.of(sel.pos1, sel.pos2);
         int min = plugin.cfg().getInt("claiming.min_claim_size_blocks", 10);
         int max = plugin.cfg().getInt("claiming.max_claim_size_blocks", 250);
         if (cuboid.sizeX() < min || cuboid.sizeZ() < min) {
-            plugin.msg(player, plugin.cfg().getString("claiming.too_small_message").replace("%min%", String.valueOf(min)));
+            plugin.lang.msg(player, "claiming.too_small_message", "%min%", String.valueOf(min));
             return true;
         }
         if (cuboid.sizeX() > max || cuboid.sizeZ() > max) {
-            plugin.msg(player, plugin.cfg().getString("claiming.too_large_message").replace("%max%", String.valueOf(max)));
+            plugin.lang.msg(player, "claiming.too_large_message", "%max%", String.valueOf(max));
             return true;
         }
         if (plugin.store.index.overlaps(cuboid, null)) {
-            plugin.msg(player, plugin.cfg().getString("claiming.overlap_message"));
+            plugin.lang.msg(player, "claiming.overlap_message");
             return true;
         }
         int owned = plugin.store.ownedBy(player.getUniqueId()).size();
         int cap = plugin.luckPerms.maxPlots(player);
         if (owned >= cap) {
-            plugin.msg(player, plugin.cfg().getString("claiming.max_claims_message")
-                    .replace("%owned%", String.valueOf(owned)).replace("%max%", String.valueOf(cap)));
+            plugin.lang.msg(player, "claiming.max_claims_message", "%owned%", String.valueOf(owned), "%max%", String.valueOf(cap));
             return true;
         }
         var tier = plugin.luckPerms.tierOf(player);
         double cost = tier != null ? tier.claimCost : plugin.cfg().getDouble("economy.claim_cost", 1000);
-        if (!plugin.economy.charge(player, cost, plugin.cfg().getString("claiming.claim_denied_message").replace("%cost%", Text.money(cost)))) {
+        if (!plugin.economy.charge(player, cost, plugin.lang.line(player, "claiming.claim_denied_message", "%cost%", Text.money(cost)))) {
             return true;
         }
         Plot plot = plugin.createPlot(player, cuboid, tier == null ? null : tier.id, cost);
-        plugin.msg(player, plugin.cfg().getString("claiming.claim_success_message").replace("%cost%", Text.money(cost)));
+        plugin.lang.msg(player, "claiming.claim_success_message", "%cost%", Text.money(cost));
         plugin.fx(player, "claim_success");
         plugin.discord.claim(player, plot, cost);
         return true;
@@ -232,7 +232,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
             plot = owned.isEmpty() ? plugin.here(player) : owned.get(0);
         }
         if (plot == null) {
-            plugin.msg(player, "&cPlot not found.");
+            plugin.lang.msg(player, "general.plot-not-found");
             return true;
         }
         plugin.teleportHome(player, plot);
@@ -243,26 +243,25 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         Plot plot = owned(player);
         if (plot == null) return true;
         plot.setHome(player.getLocation());
-        plugin.msg(player, "&aPlot home set.");
+        plugin.lang.msg(player, "plot.home-set");
         return true;
     }
 
     private boolean add(Player player, String[] args) {
         if (args.length < 2) {
-            plugin.msg(player, "&cUsage: /plot add <player> [builder|co-owner|visitor] [--no-chests]");
+            plugin.lang.msg(player, "members.usage-add");
             return true;
         }
         Plot plot = owned(player);
         if (plot == null) return true;
         Player target = Bukkit.getPlayerExact(args[1]);
         if (target == null) {
-            plugin.msg(player, "&cPlayer not found.");
+            plugin.lang.msg(player, "general.player-not-found");
             return true;
         }
         int max = plugin.luckPerms.maxMembers(player);
         if (plot.memberCount() >= max) {
-            plugin.msg(player, plugin.cfg().getString("members.member_limit_message")
-                    .replace("%current%", String.valueOf(plot.memberCount())).replace("%max%", String.valueOf(max)));
+            plugin.lang.msg(player, "members.member_limit_message", "%current%", String.valueOf(plot.memberCount()), "%max%", String.valueOf(max));
             return true;
         }
         PlotRole role = PlotRole.BUILDER;
@@ -273,16 +272,15 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
             if (role == PlotRole.OWNER) role = PlotRole.CO_OWNER;
         }
         plot.addMember(target, role, noChests);
-        plugin.msg(player, plugin.cfg().getString("members.member_add_message")
-                .replace("%player%", target.getName()).replace("%role%", role.display));
-        plugin.msg(target, "&aYou were added to &2" + plot.name + " &aas " + role.display);
+        plugin.lang.msg(player, "members.member_add_message", "%player%", target.getName(), "%role%", role.display);
+        plugin.lang.msg(target, "members.added-target", "%plot%", plot.name, "%role%", role.display);
         plugin.fx(player, "member_added");
         return true;
     }
 
     private boolean remove(Player player, String[] args) {
         if (args.length < 2) {
-            plugin.msg(player, "&cUsage: /plot remove <player>");
+            plugin.lang.msg(player, "members.usage-remove");
             return true;
         }
         Plot plot = owned(player);
@@ -295,18 +293,18 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
             }
         }
         if (id == null || !plot.members.containsKey(id)) {
-            plugin.msg(player, "&cThat player is not a member.");
+            plugin.lang.msg(player, "members.not-a-member");
             return true;
         }
         plot.members.remove(id);
-        plugin.msg(player, plugin.cfg().getString("members.member_remove_message").replace("%player%", args[1]));
+        plugin.lang.msg(player, "members.member_remove_message", "%player%", args[1]);
         plugin.fx(player, "member_removed");
         return true;
     }
 
     private boolean promote(Player player, String[] args, boolean up) {
         if (args.length < 2) {
-            plugin.msg(player, "&cUsage: /plot " + (up ? "promote" : "demote") + " <player>");
+            plugin.lang.msg(player, "members.usage-rank", "%sub%", up ? "promote" : "demote");
             return true;
         }
         Plot plot = owned(player);
@@ -316,20 +314,19 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
             if (m.name.equalsIgnoreCase(args[1])) { member = m; break; }
         }
         if (member == null) {
-            plugin.msg(player, "&cMember not found.");
+            plugin.lang.msg(player, "members.member-not-found");
             return true;
         }
         member.role = up ? member.role.promote() : member.role.demote();
         member.applyRoleDefaults();
-        plugin.msg(player, plugin.cfg().getString(up ? "members.promote_message" : "members.demote_message")
-                .replace("%player%", member.name).replace("%role%", member.role.display));
+        plugin.lang.msg(player, up ? "members.promote_message" : "members.demote_message", "%player%", member.name, "%role%", member.role.display);
         return true;
     }
 
     private boolean members(Player player) {
         Plot plot = plugin.here(player);
         if (plot == null) {
-            plugin.msg(player, "&cYou are not in a plot.");
+            plugin.lang.msg(player, "general.stand-in-plot");
             return true;
         }
         plugin.menus.openMembers(player, plot);
@@ -338,34 +335,34 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
 
     private boolean flag(Player player, String[] args) {
         if (args.length < 3) {
-            plugin.msg(player, "&cUsage: /plot flag <flag> <true|false>");
-            plugin.msg(player, "&7Flags: " + Arrays.stream(PlotFlag.values()).map(f -> f.name().toLowerCase()).collect(Collectors.joining(", ")));
+            plugin.lang.msg(player, "flags.usage");
+            plugin.lang.msg(player, "flags.list", "%flags%", Arrays.stream(PlotFlag.values()).map(f -> f.name().toLowerCase()).collect(Collectors.joining(", ")));
             return true;
         }
         Plot plot = owned(player);
         if (plot == null) return true;
         PlotFlag flag = PlotFlag.from(args[1]);
         if (flag == null) {
-            plugin.msg(player, "&cUnknown flag.");
+            plugin.lang.msg(player, "flags.unknown");
             return true;
         }
         boolean val = args[2].equalsIgnoreCase("true") || args[2].equalsIgnoreCase("on") || args[2].equals("1");
         plot.setFlag(flag, val);
         plot.audit(player.getName(), "FLAG", flag.name() + "=" + val);
-        plugin.msg(player, "&aFlag &2" + flag.name().toLowerCase() + " &aset to &f" + val);
+        plugin.lang.msg(player, "flags.set", "%flag%", flag.name().toLowerCase(), "%value%", String.valueOf(val));
         return true;
     }
 
     private boolean money(Player player, String[] args, boolean dep) {
         if (args.length < 2) {
-            plugin.msg(player, "&cUsage: /plot " + (dep ? "deposit" : "withdraw") + " <amount>");
+            plugin.lang.msg(player, "bank.usage", "%sub%", dep ? "deposit" : "withdraw");
             return true;
         }
         Plot plot = owned(player);
         if (plot == null) return true;
         double amount;
         try { amount = Double.parseDouble(args[1]); } catch (Exception e) {
-            plugin.msg(player, "&cInvalid amount.");
+            plugin.lang.msg(player, "general.invalid-amount");
             return true;
         }
         if (dep) plugin.deposit(player, plot, amount);
@@ -375,64 +372,64 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
 
     private boolean ban(Player player, String[] args, boolean ban) {
         if (args.length < 2) {
-            plugin.msg(player, "&cUsage: /plot " + (ban ? "ban" : "unban") + " <player>");
+            plugin.lang.msg(player, "general.usage-player", "%sub%", ban ? "ban" : "unban");
             return true;
         }
         Plot plot = owned(player);
         if (plot == null) return true;
         Player target = Bukkit.getPlayerExact(args[1]);
         if (target == null) {
-            plugin.msg(player, "&cPlayer must be online.");
+            plugin.lang.msg(player, "general.player-not-online");
             return true;
         }
         if (ban) {
             if (!plot.banned.contains(target.getUniqueId())) plot.banned.add(target.getUniqueId());
-            plugin.msg(player, plugin.cfg().getString("bouncer_shield.ban_message").replace("%player%", target.getName()));
+            plugin.lang.msg(player, "bouncer_shield.ban_message", "%player%", target.getName());
             if (plot.contains(target.getLocation())) {
                 Location out = plot.cuboid().nearestOutside(target.getLocation(), 2);
                 target.teleport(out);
             }
         } else {
             plot.banned.remove(target.getUniqueId());
-            plugin.msg(player, plugin.cfg().getString("bouncer_shield.unban_message").replace("%player%", target.getName()));
+            plugin.lang.msg(player, "bouncer_shield.unban_message", "%player%", target.getName());
         }
         return true;
     }
 
     private boolean desc(Player player, String[] args) {
         if (args.length < 2) {
-            plugin.msg(player, "&cUsage: /plot description <text>");
+            plugin.lang.msg(player, "plot.description-usage");
             return true;
         }
         Plot plot = owned(player);
         if (plot == null) return true;
         plot.description = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
         plugin.holograms.spawnPlot(plot);
-        plugin.msg(player, "&aDescription updated.");
+        plugin.lang.msg(player, "plot.description-updated");
         return true;
     }
 
     private boolean list(Player player) {
         List<Plot> owned = plugin.store.ownedBy(player.getUniqueId());
         if (owned.isEmpty()) {
-            plugin.msg(player, "&7You don't own any plots.");
+            plugin.lang.msg(player, "plot.list-none");
             return true;
         }
         int i = 1;
         for (Plot p : owned) {
-            plugin.msg(player, "&a#" + i++ + " &2" + p.name + " &7(" + p.sizeLabel() + ") Lvl " + p.level);
+            plugin.lang.msg(player, "plot.list-entry", "%index%", String.valueOf(i++), "%name%", p.name, "%size%", p.sizeLabel(), "%level%", String.valueOf(p.level));
         }
         return true;
     }
 
     private boolean visit(Player player, String[] args) {
         if (args.length < 2) {
-            plugin.msg(player, "&cUsage: /plot visit <player>");
+            plugin.lang.msg(player, "visit.usage");
             return true;
         }
         Plot plot = plugin.findByOwnerName(args[1]);
         if (plot == null || plot.hidden) {
-            plugin.msg(player, "&cNo public plot found for that player.");
+            plugin.lang.msg(player, "visit.none-public");
             return true;
         }
         plugin.teleportHome(player, plot);
@@ -441,12 +438,12 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
 
     private boolean merge(Player player) {
         if (!plugin.cfg().getBoolean("claiming.allow_claim_merging", true)) {
-            plugin.msg(player, "&cMerging is disabled.");
+            plugin.lang.msg(player, "merging.disabled");
             return true;
         }
         Plot here = plugin.here(player);
         if (here == null || !here.isOwner(player.getUniqueId())) {
-            plugin.msg(player, "&cStand in one of your plots.");
+            plugin.lang.msg(player, "merging.stand-in-own");
             return true;
         }
         Plot other = null;
@@ -455,18 +452,18 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
             if (p.cuboid().adjacent(here.cuboid())) { other = p; break; }
         }
         if (other == null) {
-            plugin.msg(player, plugin.cfg().getString("claiming.merge_fail_message"));
+            plugin.lang.msg(player, "claiming.merge_fail_message");
             return true;
         }
         plugin.mergePlots(player, here, other);
-        plugin.msg(player, plugin.cfg().getString("claiming.merge_success_message"));
+        plugin.lang.msg(player, "claiming.merge_success_message");
         return true;
     }
 
     private boolean vault(Player player) {
         Plot plot = plugin.here(player);
         if (plot == null || !plot.canChests(player)) {
-            plugin.msg(player, plugin.cfg().getString("plot_protections.chest_denied_message"));
+            plugin.lang.msg(player, "plot_protections.chest_denied_message");
             return true;
         }
         plugin.menus.openVault(player, plot, 1);
@@ -475,7 +472,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
 
     private boolean map(Player player) {
         plugin.giveRadarMap(player);
-        plugin.msg(player, "&aLive plot map given. Hold it to see borders and members.");
+        plugin.lang.msg(player, "map.given");
         return true;
     }
 
@@ -483,23 +480,23 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         Plot plot = owned(player);
         if (plot == null) return true;
         if (!plot.musicUnlocked) {
-            plugin.msg(player, "&cUnlock music in /plot upgrades first.");
+            plugin.lang.msg(player, "music.locked");
             return true;
         }
         if (args.length < 2) {
-            plugin.msg(player, "&7Available: " + String.join(", ", plugin.cfg().getStringList("music.available_discs")));
+            plugin.lang.msg(player, "music.available", "%discs%", String.join(", ", plugin.cfg().getStringList("music.available_discs")));
             return true;
         }
         String disc = args[1].toUpperCase(Locale.ROOT);
         if (!disc.startsWith("MUSIC_DISC_")) disc = "MUSIC_DISC_" + disc;
         plot.musicDisc = disc;
-        plugin.msg(player, plugin.cfg().getString("music.music_set_message").replace("%disc%", disc));
+        plugin.lang.msg(player, "music.music_set_message", "%disc%", disc);
         return true;
     }
 
     private boolean holo(Player player, String[] args) {
         if (args.length < 2) {
-            plugin.msg(player, "&cUsage: /plot holo <create|addline|removeline|delete>");
+            plugin.lang.msg(player, "holograms.usage");
             return true;
         }
         Plot plot = owned(player);
@@ -508,16 +505,16 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         switch (act) {
             case "create" -> plugin.createHologram(player, plot);
             case "addline" -> {
-                if (args.length < 3) { plugin.msg(player, "&cUsage: /plot holo addline <text>"); return true; }
+                if (args.length < 3) { plugin.lang.msg(player, "holograms.usage-addline"); return true; }
                 plugin.addHoloLine(player, plot, String.join(" ", Arrays.copyOfRange(args, 2, args.length)));
             }
             case "removeline" -> {
-                if (args.length < 3) { plugin.msg(player, "&cUsage: /plot holo removeline <number>"); return true; }
+                if (args.length < 3) { plugin.lang.msg(player, "holograms.usage-removeline"); return true; }
                 try { plugin.removeHoloLine(player, plot, Integer.parseInt(args[2])); }
-                catch (Exception e) { plugin.msg(player, "&cInvalid number."); }
+                catch (Exception e) { plugin.lang.msg(player, "general.invalid-number"); }
             }
             case "delete" -> plugin.deleteHologram(player, plot);
-            default -> plugin.msg(player, "&cUnknown hologram action.");
+            default -> plugin.lang.msg(player, "holograms.unknown-action");
         }
         return true;
     }
@@ -527,7 +524,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         if (plot == null) return true;
         plot.setHologram(player.getLocation());
         plugin.holograms.spawnPlot(plot);
-        plugin.msg(player, plugin.cfg().getString("holograms.hologram_moved_message"));
+        plugin.lang.msg(player, "holograms.hologram_moved_message");
         return true;
     }
 
@@ -538,10 +535,10 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         boolean holo = target == null || !(target.getState() instanceof Barrel);
         if (!holo) {
             plot.setMailbox(target.getLocation(), false);
-            plugin.msg(player, plugin.cfg().getString("mailbox.mailbox_set_message"));
+            plugin.lang.msg(player, "mailbox.set_message");
         } else {
             plot.setMailbox(player.getLocation(), true);
-            plugin.msg(player, "&aHolographic mailbox zone set at your location. Drop items nearby to deliver.");
+            plugin.lang.msg(player, "mailbox.holographic-set");
         }
         return true;
     }
@@ -551,13 +548,13 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         if (plot == null) return true;
         plot.hidden = !plot.hidden;
         plot.setFlag(PlotFlag.PRIVATE, plot.hidden);
-        plugin.msg(player, plot.hidden ? "&aPlot is now hidden from browse." : "&aPlot is now public.");
+        plugin.lang.msg(player, plot.hidden ? "plot.hidden" : "plot.public");
         return true;
     }
 
     private boolean maplink(Player player) {
         if (!plugin.cfg().getBoolean("maplink.enabled", true)) {
-            plugin.msg(player, "&cMap link is disabled.");
+            plugin.lang.msg(player, "map.link-disabled");
             return true;
         }
         String url = plugin.cfg().getString("maplink.url", "http://map.yourserver.com");
@@ -573,19 +570,19 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
     private boolean fly(Player player) {
         Plot plot = plugin.here(player);
         if (!plugin.canFly(player, plot)) {
-            plugin.msg(player, "&cUnlock fly or reach the required level first.");
+            plugin.lang.msg(player, "plot.fly-locked");
             return true;
         }
         boolean now = !player.getAllowFlight();
         player.setAllowFlight(now);
         if (!now) player.setFlying(false);
-        plugin.msg(player, now ? "&aPlot fly enabled." : "&cPlot fly disabled.");
+        plugin.lang.msg(player, now ? "plot.fly-enabled" : "plot.fly-disabled");
         return true;
     }
 
     private boolean rename(Player player, String[] args) {
         if (args.length < 2) {
-            plugin.msg(player, "&cUsage: /plot rename <name>");
+            plugin.lang.msg(player, "plot.rename-usage");
             return true;
         }
         Plot plot = owned(player);
@@ -593,38 +590,38 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         plot.name = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
         plugin.holograms.spawnPlot(plot);
         plugin.blueMap.upsert(plot);
-        plugin.msg(player, "&aPlot renamed to &2" + plot.name);
+        plugin.lang.msg(player, "plot.renamed", "%name%", plot.name);
         return true;
     }
 
     private boolean chat(Player player) {
         var s = plugin.session(player);
         s.plotChat = !s.plotChat;
-        plugin.msg(player, s.plotChat ? "&aPlot chat enabled." : "&cPlot chat disabled.");
+        plugin.lang.msg(player, s.plotChat ? "plot.chat-enabled" : "plot.chat-disabled");
         return true;
     }
 
     private boolean tax(Player player, String[] args) {
         if (!plugin.cfg().getBoolean("mayor.enabled", true)) {
-            plugin.msg(player, "&cMayor system disabled.");
+            plugin.lang.msg(player, "mayor.disabled");
             return true;
         }
         Plot top = plugin.store.richest(1).stream().findFirst().orElse(null);
         if (top == null || !top.isOwner(player.getUniqueId())) {
-            plugin.msg(player, "&cOnly the Mayor (owner of the #1 richest plot) can set tax.");
+            plugin.lang.msg(player, "mayor.only-mayor");
             return true;
         }
         if (args.length < 2) {
-            plugin.msg(player, "&7Current tax: &a" + plugin.store.mayorTaxPercent + "%");
+            plugin.lang.msg(player, "mayor.current-tax", "%percent%", String.valueOf(plugin.store.mayorTaxPercent));
             return true;
         }
         try {
             double pct = Math.max(0, Math.min(plugin.cfg().getDouble("mayor.max_tax_percent", 10), Double.parseDouble(args[1])));
             plugin.store.mayorTaxPercent = pct;
             plugin.store.mayorPlot = top.id;
-            plugin.msg(player, plugin.cfg().getString("mayor.tax_set_message").replace("%percent%", String.valueOf(pct)));
+            plugin.lang.msg(player, "mayor.tax_set_message", "%percent%", String.valueOf(pct));
         } catch (Exception e) {
-            plugin.msg(player, "&cInvalid percent.");
+            plugin.lang.msg(player, "mayor.invalid-percent");
         }
         return true;
     }
@@ -633,11 +630,11 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         if (!admin(player)) return true;
         Plot plot = args.length > 1 ? plugin.store.get(parseUuid(args[1])) : plugin.here(player);
         if (plot == null) {
-            plugin.msg(player, "&cPlot not found.");
+            plugin.lang.msg(player, "general.plot-not-found");
             return true;
         }
         plugin.deletePlot(plot, true);
-        plugin.msg(player, "&aPlot deleted.");
+        plugin.lang.msg(player, "plot.deleted");
         return true;
     }
 
@@ -645,7 +642,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         if (!admin(player)) return true;
         Plot plot = args.length > 1 ? plugin.store.get(parseUuid(args[1])) : plugin.here(player);
         if (plot == null) {
-            plugin.msg(player, "&cPlot not found.");
+            plugin.lang.msg(player, "general.plot-not-found");
             return true;
         }
         plot.frozen = freeze;
@@ -656,12 +653,12 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (plot.contains(p.getLocation()) && !p.hasPermission("plotmanager.admin")) {
                     p.teleport(home);
-                    plugin.msg(p, plugin.cfg().getString("admin.quarantine_kick_message"));
+                    plugin.lang.msg(p, "admin.quarantine_kick_message");
                 }
             }
-            plugin.msg(player, plugin.cfg().getString("admin.quarantine_message"));
+            plugin.lang.msg(player, "admin.quarantine_message");
         } else {
-            plugin.msg(player, "&aPlot unfrozen.");
+            plugin.lang.msg(player, "plot.unfrozen");
         }
         return true;
     }
@@ -671,7 +668,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         int days = 7;
         if (args.length > 1) try { days = Integer.parseInt(args[1]); } catch (Exception ignored) {}
         int n = plugin.purgeInactive(days);
-        plugin.msg(player, plugin.cfg().getString("admin.purge_message").replace("%count%", String.valueOf(n)));
+        plugin.lang.msg(player, "admin.purge_message", "%count%", String.valueOf(n));
         plugin.discord.purge(player.getName(), n);
         return true;
     }
@@ -680,7 +677,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         if (!admin(player)) return true;
         Plot plot = plugin.here(player);
         if (plot == null) {
-            plugin.msg(player, "&cStand in a plot.");
+            plugin.lang.msg(player, "general.stand-in-plot");
             return true;
         }
         plugin.inspect(player, plot);
@@ -691,7 +688,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         if (!admin(player)) return true;
         Plot plot = plugin.here(player);
         if (plot == null) {
-            plugin.msg(player, "&cStand in a plot.");
+            plugin.lang.msg(player, "general.stand-in-plot");
             return true;
         }
         plugin.seize(player, plot);
@@ -704,7 +701,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         ItemStack item = Items.glow(Items.named(mat, plugin.cfg().getString("admin.godwand_name"), plugin.cfg().getStringList("admin.godwand_lore")));
         Items.byteTag(item, plugin.keys.godWand);
         player.getInventory().addItem(item);
-        plugin.msg(player, "&aGod Wand given.");
+        plugin.lang.msg(player, "admin.godwand-given");
         return true;
     }
 
@@ -714,7 +711,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         ItemStack item = Items.glow(Items.named(mat, plugin.cfg().getString("admin.rollbackwand_name"), plugin.cfg().getStringList("admin.rollbackwand_lore")));
         Items.byteTag(item, plugin.keys.rollbackWand);
         player.getInventory().addItem(item);
-        plugin.msg(player, "&aRollback Wand given.");
+        plugin.lang.msg(player, "admin.rollbackwand-given");
         return true;
     }
 
@@ -722,7 +719,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         if (!admin(player)) return true;
         var s = plugin.session(player);
         s.adminSpy = !s.adminSpy;
-        plugin.msg(player, s.adminSpy ? plugin.cfg().getString("admin.spy_enabled_message") : plugin.cfg().getString("admin.spy_disabled_message"));
+        plugin.lang.msg(player, s.adminSpy ? "admin.spy_enabled_message" : "admin.spy_disabled_message");
         return true;
     }
 
@@ -730,7 +727,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         if (!admin(player)) return true;
         Plot plot = plugin.here(player);
         if (plot == null) {
-            plugin.msg(player, "&cStand in a plot.");
+            plugin.lang.msg(player, "general.stand-in-plot");
             return true;
         }
         plugin.menus.openAudit(player, plot);
@@ -745,7 +742,38 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         plugin.store.leaderboardY = loc.getY();
         plugin.store.leaderboardZ = loc.getZ();
         plugin.holograms.spawnLeaderboard();
-        plugin.msg(player, plugin.cfg().getString("leaderboard.set_message"));
+        plugin.lang.msg(player, "leaderboard.set_message");
+        return true;
+    }
+
+    private boolean language(Player player, String[] args) {
+        var codes = plugin.lang.available();
+        String current = plugin.lang.codeFor(player);
+        if (args.length < 2) {
+            if (!current.equals(plugin.lang.defaultCode())) {
+                plugin.lang.msg(player, "lang.current", "%code%", current, "%default%", plugin.lang.defaultCode());
+            } else {
+                plugin.lang.msg(player, "lang.current-server", "%code%", current);
+            }
+            plugin.lang.msg(player, "lang.usage", "%codes%", String.join(", ", codes));
+            return true;
+        }
+        String code = args[1].toLowerCase(Locale.ROOT);
+        if (code.equals("reset") || code.equals(plugin.lang.defaultCode())) {
+            plugin.lang.setPlayerLanguage(player, null);
+            plugin.lang.msg(player, "lang.reset", "%code%", plugin.lang.defaultCode());
+            return true;
+        }
+        if (!plugin.lang.exists(code)) {
+            plugin.lang.msg(player, "lang.usage", "%codes%", String.join(", ", codes));
+            return true;
+        }
+        if (!plugin.cfg().getBoolean("language.per-player", true)) {
+            plugin.lang.msg(player, "lang.no-permission");
+            return true;
+        }
+        plugin.lang.setPlayerLanguage(player, code);
+        plugin.lang.msg(player, "lang.changed", "%code%", code);
         return true;
     }
 
@@ -774,6 +802,7 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
                         Arrays.stream(PlotFlag.values()).map(f -> f.name().toLowerCase()).toList(), out);
                 case "holo" -> StringUtil.copyPartialMatches(args[1], List.of("create", "addline", "removeline", "delete"), out);
                 case "music" -> StringUtil.copyPartialMatches(args[1], plugin.cfg().getStringList("music.available_discs"), out);
+                case "lang" -> StringUtil.copyPartialMatches(args[1], plugin.lang.available(), out);
             }
         } else if (args.length == 3 && args[0].equalsIgnoreCase("flag")) {
             StringUtil.copyPartialMatches(args[2], List.of("true", "false"), out);

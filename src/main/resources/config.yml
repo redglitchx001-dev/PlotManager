@@ -7,6 +7,19 @@
 # ---------------------------------------------------------- #
 # [1] GENERAL SETTINGS                                       #
 # ---------------------------------------------------------- #
+#
+#  LANGUAGE / LIMBĂ / IDIOMA / SPRACHE
+#  Set the server default below. All message files live in
+#  plugins/PlotManager/lang/ (en, ro, es, de + any custom file
+#  you drop there). Players can pick their own language with
+#  /plot lang <code> when per-player is enabled.
+#
+language:
+  default: "en"        # en | ro | es | de | <custom>
+  fallback: "en"       # used when a key is missing from the selected language
+  per-player: true     # allow /plot lang <code> per player
+  auto-detect: true    # use each player's client locale (ro_RO -> ro) before the server default
+
 plugin:
   prefix: "&2&lᴘ&a&lʟ&2&lᴏ&a&lᴛ&2&lᴍ&a&lᴀ&2&lɴ&a&lᴀ&2&lɢ&a&lᴇ&2&lʀ &8» &a"
   prefix_short: "&2&lPM &8» &a"
@@ -446,6 +459,7 @@ gui:
   border_glass_color: "BLACK_STAINED_GLASS_PANE"
   back_button_item: "ARROW"
   back_button_name: "&7Back"
+  language_item: "WRITABLE_BOOK"
   close_button_item: "BARRIER"
   close_button_name: "&cClose"
   info_item: "BOOK"

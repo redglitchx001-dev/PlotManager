@@ -73,12 +73,12 @@ public class ProtectionListener implements Listener {
         if (plot != null) {
             if (plot.frozen && !plugin.bypass(player)) {
                 event.setCancelled(true);
-                plugin.msg(player, plugin.cfg().getString("admin.quarantine_message"));
+                plugin.lang.msg(player, "admin.quarantine_message");
                 return;
             }
             if (!plot.canBuild(player)) {
                 event.setCancelled(true);
-                plugin.msg(player, plugin.cfg().getString("plot_protections.break_denied_message"));
+                plugin.lang.msg(player, "plot_protections.break_denied_message");
                 return;
             }
             plot.history(player, "BREAK", block.getType(), block.getLocation());
@@ -88,7 +88,7 @@ public class ProtectionListener implements Listener {
         }
         if (plugin.protectedWorld(block.getWorld()) && !plugin.cfg().getBoolean("world_settings.wilderness_building", false) && !plugin.bypass(player)) {
             event.setCancelled(true);
-            plugin.msg(player, plugin.cfg().getString("plot_protections.wilderness_break_message"));
+            plugin.lang.msg(player, "plot_protections.wilderness_break_message");
         }
     }
 
@@ -104,7 +104,7 @@ public class ProtectionListener implements Listener {
             }
             if (!plot.canBuild(player)) {
                 event.setCancelled(true);
-                plugin.msg(player, plugin.cfg().getString("plot_protections.place_denied_message"));
+                plugin.lang.msg(player, "plot_protections.place_denied_message");
                 return;
             }
             int hopperMax = plugin.luckPerms.hopperLimit(player);
@@ -112,8 +112,7 @@ public class ProtectionListener implements Listener {
             if (block.getType() == Material.HOPPER) {
                 if (plot.hoppers >= hopperMax) {
                     event.setCancelled(true);
-                    plugin.msg(player, plugin.cfg().getString("plot_protections.hopper_limit_message")
-                            .replace("%current%", String.valueOf(plot.hoppers)).replace("%max%", String.valueOf(hopperMax)));
+                    plugin.lang.msg(player, "plot_protections.hopper_limit_message", "%current%", String.valueOf(plot.hoppers), "%max%", String.valueOf(hopperMax));
                     return;
                 }
                 plot.hoppers++;
@@ -121,8 +120,7 @@ public class ProtectionListener implements Listener {
             if (block.getType() == Material.SPAWNER) {
                 if (plot.spawners >= spawnerMax) {
                     event.setCancelled(true);
-                    plugin.msg(player, plugin.cfg().getString("plot_protections.spawner_limit_message")
-                            .replace("%current%", String.valueOf(plot.spawners)).replace("%max%", String.valueOf(spawnerMax)));
+                    plugin.lang.msg(player, "plot_protections.spawner_limit_message", "%current%", String.valueOf(plot.spawners), "%max%", String.valueOf(spawnerMax));
                     return;
                 }
                 plot.spawners++;
@@ -134,7 +132,7 @@ public class ProtectionListener implements Listener {
         }
         if (plugin.protectedWorld(block.getWorld()) && !plugin.cfg().getBoolean("world_settings.wilderness_building", false) && !plugin.bypass(player)) {
             event.setCancelled(true);
-            plugin.msg(player, plugin.cfg().getString("plot_protections.wilderness_break_message"));
+            plugin.lang.msg(player, "plot_protections.wilderness_break_message");
         }
     }
 
@@ -158,17 +156,17 @@ public class ProtectionListener implements Listener {
         if (plot != null) {
             if (plot.frozen && !plugin.bypass(player)) {
                 event.setCancelled(true);
-                plugin.msg(player, plugin.cfg().getString("admin.quarantine_message"));
+                plugin.lang.msg(player, "admin.quarantine_message");
                 return;
             }
             if (container && !plot.canChests(player)) {
                 event.setCancelled(true);
-                plugin.msg(player, plugin.cfg().getString("plot_protections.chest_denied_message"));
+                plugin.lang.msg(player, "plot_protections.chest_denied_message");
                 return;
             }
             if (!container && event.getAction().isRightClick() && !plot.canInteract(player) && !plot.canBuild(player)) {
                 event.setCancelled(true);
-                plugin.msg(player, plugin.cfg().getString("plot_protections.interact_denied_message"));
+                plugin.lang.msg(player, "plot_protections.interact_denied_message");
             }
             return;
         }
@@ -382,7 +380,7 @@ public class ProtectionListener implements Listener {
         if (to != null && (from == null || !from.id.equals(to.id))) {
             if (to.isBanned(event.getPlayer().getUniqueId()) && !plugin.bypass(event.getPlayer())) {
                 event.setCancelled(true);
-                plugin.msg(event.getPlayer(), plugin.cfg().getString("bouncer_shield.cooldown_message"));
+                plugin.lang.msg(event.getPlayer(), "bouncer_shield.cooldown_message");
                 return;
             }
             if (event.getCause() == PlayerTeleportEvent.TeleportCause.ENDER_PEARL
@@ -462,7 +460,7 @@ public class ProtectionListener implements Listener {
     public void onTransform(EntityTransformEvent event) {
         if (!plugin.cfg().getBoolean("plot_protections.prevent_villager_conversion", true)) return;
         if (plugin.store.index.at(event.getEntity().getLocation()) != null
-                && event.getTransformReason() == EntityTransformEvent.TransformReason.INFECTED) {
+                && event.getTransformReason() == EntityTransformEvent.TransformReason.INFECTION) {
             event.setCancelled(true);
         }
     }

@@ -65,7 +65,7 @@ public final class PluginTasks {
                 Player owner = plot.owner == null ? null : Bukkit.getPlayer(plot.owner);
                 if (owner != null && now - plot.lastWarning > 3_600_000L) {
                     long remaining = Math.max(1, (plot.lastOwnerLogin + days * 86_400_000L - now) / 86_400_000L);
-                    plugin.msg(owner, plugin.cfg().getString("reset_system.warning_message").replace("%remaining%", String.valueOf(remaining)));
+                    plugin.lang.msg(owner, "reset_system.warning_message", "%remaining%", String.valueOf(remaining));
                     plot.lastWarning = now;
                 }
             }
@@ -126,10 +126,9 @@ public final class PluginTasks {
             if (plot.bank >= cost) {
                 plot.bank -= cost;
                 plot.lastUpkeep = now;
-                if (owner != null) plugin.msg(owner, plugin.cfg().getString("upkeep.upkeep_paid_message")
-                        .replace("%cost%", Text.money(cost)));
+                if (owner != null) plugin.lang.msg(owner, "upkeep.upkeep_paid_message", "%cost%", Text.money(cost));
             } else {
-                if (owner != null) plugin.msg(owner, plugin.cfg().getString("upkeep.upkeep_failed_message"));
+                if (owner != null) plugin.lang.msg(owner, "upkeep.upkeep_failed_message");
                 plot.lastUpkeep = now;
             }
         }

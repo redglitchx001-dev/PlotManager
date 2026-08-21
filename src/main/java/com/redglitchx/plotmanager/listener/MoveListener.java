@@ -40,7 +40,7 @@ public class MoveListener implements Listener {
 
         if (to != null && to.frozen && !plugin.bypass(player) && !session.adminSpy) {
             event.setCancelled(true);
-            plugin.msg(player, plugin.cfg().getString("admin.quarantine_message"));
+            plugin.lang.msg(player, "admin.quarantine_message");
             return;
         }
 
@@ -53,7 +53,7 @@ public class MoveListener implements Listener {
             FX.spawn(event.getTo(), plugin.cfg().getString("bouncer_shield.particle_type", "VILLAGER_HAPPY"),
                     plugin.cfg().getInt("bouncer_shield.particle_count", 30));
             if (now - session.lastBouncer > plugin.cfg().getInt("bouncer_shield.cooldown_seconds", 3) * 1000L) {
-                plugin.msg(player, plugin.cfg().getString("bouncer_shield.cooldown_message"));
+                plugin.lang.msg(player, "bouncer_shield.cooldown_message");
                 FX.play(player, plugin.cfg().getString("bouncer_shield.knockback_sound", "ENTITY_IRON_GOLEM_HURT"));
                 session.lastBouncer = now;
             }
@@ -73,10 +73,10 @@ public class MoveListener implements Listener {
 
         if (plugin.cfg().getBoolean("titles.actionbar.enabled", true) && player.getTicksLived() % 20 == 0) {
             if (to != null) {
-                String bar = plugin.cfg().getString("titles.actionbar.inside_plot", "&2✦ %plot_name%");
+                String bar = plugin.lang.line(player, "titles.actionbar.inside_plot");
                 Text.actionBar(player, plugin.placeholders(player, bar, to));
             } else {
-                Text.actionBar(player, plugin.cfg().getString("titles.actionbar.wilderness", "&7✦ Wilderness"));
+                Text.actionBar(player, plugin.lang.line(player, "titles.actionbar.wilderness"));
             }
         }
 
@@ -93,8 +93,8 @@ public class MoveListener implements Listener {
     private void enter(Player player, Plot plot) {
         if (plugin.cfg().getBoolean("titles.enter_plot.enabled", true)) {
             Text.title(player,
-                    plugin.placeholders(player, plugin.cfg().getString("titles.enter_plot.title"), plot),
-                    plugin.placeholders(player, plugin.cfg().getString("titles.enter_plot.subtitle"), plot),
+                    plugin.placeholders(player, plugin.lang.line(player, "titles.enter_plot.title"), plot),
+                    plugin.placeholders(player, plugin.lang.line(player, "titles.enter_plot.subtitle"), plot),
                     plugin.cfg().getInt("titles.enter_plot.fade_in", 10),
                     plugin.cfg().getInt("titles.enter_plot.stay", 40),
                     plugin.cfg().getInt("titles.enter_plot.fade_out", 10));
@@ -121,8 +121,8 @@ public class MoveListener implements Listener {
     private void leave(Player player, Plot plot) {
         if (plugin.cfg().getBoolean("titles.leave_plot.enabled", true)) {
             Text.title(player,
-                    plugin.cfg().getString("titles.leave_plot.title", "&7Wilderness"),
-                    plugin.placeholders(player, plugin.cfg().getString("titles.leave_plot.subtitle"), plot),
+                    plugin.lang.line(player, "titles.leave_plot.title"),
+                    plugin.placeholders(player, plugin.lang.line(player, "titles.leave_plot.subtitle"), plot),
                     plugin.cfg().getInt("titles.leave_plot.fade_in", 5),
                     plugin.cfg().getInt("titles.leave_plot.stay", 20),
                     plugin.cfg().getInt("titles.leave_plot.fade_out", 5));

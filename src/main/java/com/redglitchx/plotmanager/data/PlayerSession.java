@@ -28,6 +28,7 @@ public class PlayerSession {
     public UUID combatWith;
     public long lastBouncer;
     public ItemStack[] droneInv;
+    public String lang;
     public Map<String, Object> extra = new ConcurrentHashMap<>();
 
     public PlayerSession(UUID uuid) {
