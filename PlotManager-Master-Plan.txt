@@ -1,0 +1,1469 @@
+# ================================================================== #
+#                                                                    #
+#              ██████╗ ██╗      ██████╗ ████████╗                     #
+#              ██╔══██╗██║     ██╔═══██╗╚══██╔══╝                     #
+#              ██████╔╝██║     ██║   ██║   ██║                        #
+#              ██╔═══╝ ██║     ██║   ██║   ██║                        #
+#              ██║     ███████╗╚██████╔╝   ██║                        #
+#              ╚═╝     ╚══════╝ ╚═════╝    ╚═╝                        #
+#              ███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗ ██████╗  #
+#              ████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝ ██╔══██╗ #
+#              ██╔████╔██║███████║██╔██╗ ██║███████║██║  ███╗█████╗   ██████╔╝ #
+#              ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝   ██╔══██╗ #
+#              ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║ #
+#              ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝  ╚═╝ #
+#                                                                    #
+#                    PLOTMANAGER V1: THE MASTER PLAN                  #
+#                       Created by: RedGlitchX                       #
+#               Copyright (C) RedGlitchX. All Rights Reserved.       #
+#                                                                    #
+
+
+
+#                         OVERVIEW                                    #
+
+PlotManager V1 is the most advanced, feature-packed survival plot
+management plugin ever created for Minecraft. It allows players to
+claim land anywhere in a normal survival world using a Golden Axe
+wand, protect it, upgrade it, and watch it grow into an empire.
+
+It features 44+ premium systems including a built-in Discord JDA bot,
+BlueMap 3D web sync, FAWE terrain rollback, a full economy with
+generators and vaults, ITS OWN BUILT-IN HOLOGRAM SYSTEM (no external
+hologram plugins needed!), and the most powerful admin toolkit ever made.
+
+Target: Paper 1.21.x (1.21, 1.21.1, 1.21.2, 1.21.3, 1.21.4, 1.21.5, 1.21.6, 1.21.7, 1.21.8, 1.21.9, 1.21.10, 1.21.11, 26.0, 26.1, 26.2)
+Language: Java 21
+Theme: 100% English, Green GRADIENT color palette
+Prefix: §2§lᴘ§a§lʟ§2§lᴏ§a§lᴛ§2§lᴍ§a§lᴀ§2§lɴ§a§lᴀ§2§lɢ§a§lᴇ§2§lʀ §8» §a
+  (This is a GREEN GRADIENT with BOLD and SMALL CAPS unicode letters!)
+  (The prefix is fully configurable in config.yml)
+Copyright: RedGlitchX
+
+IMPORTANT DESIGN RULES:
+  - The plugin has ITS OWN built-in hologram rendering system using
+    ArmorStand entities with custom names. It does NOT depend on any
+    external hologram plugin (no FancyHolograms, no HolographicDisplays).
+  - The plugin uses ProtocolLib ONLY if available for enhanced packet
+    features, but works 100% WITHOUT it using ArmorStand fallback.
+  - ALL text, colors, prefixes, messages, GUI titles, hologram lines,
+    sounds, items, lore lines, and formats are configurable in config.yml.
+  - NOTHING is hardcoded. If it appears on screen, it's in the config.
+
+
+#                      DEPENDENCIES                                   
+
+REQUIRED:
+  - Vault (Economy handler)
+  - An Economy Provider (e.g. EssentialsX)
+
+SOFT-DEPENDS (Optional but unlock features):
+  - FastAsyncWorldEdit (FAWE) — Required for 7-day nature rollback
+  - BlueMap — Required for 3D live web map borders
+  - PlaceholderAPI — For scoreboard/tab placeholders
+  - ProtocolLib — Enhanced packets (optional, ArmorStand fallback exists)
+
+BUNDLED INSIDE THE JAR:
+  - JDA (Java Discord API) — The Discord bot runs from inside the plugin
+  - Built-in Hologram Engine — ArmorStand-based, zero dependencies
+
+
+#                plugin.yml CONFIGURATION                             
+
+name: PlotManager
+version: '1.0'
+main: com.redglitchx.plotmanager.PlotManager
+api-version: '1.21'
+description: The Ultimate Plot Management System V1 | BY REDGLITCHX
+authors: [RedGlitchX]
+website: https://redglitchx.com
+depend: [Vault]
+softdepend: [PlaceholderAPI, ProtocolLib, WorldGuard, FastAsyncWorldEdit, BlueMap]
+commands:
+  plot:
+    description: PlotManager main command
+    aliases: [p, plots]
+    usage: /plot <subcommand>
+permissions:
+  plotmanager.use:
+    description: Basic plot usage
+    default: true
+  plotmanager.claim:
+    description: Claim plots
+    default: true
+  plotmanager.premium.claim:
+    description: Claim premium plots
+    default: op
+  plotmanager.wand:
+    description: Use the plot selection wand
+    default: op
+  plotmanager.admin:
+    description: Full admin access
+    default: op
+  plotmanager.bypass:
+    description: Bypass plot protection
+    default: op
+
+
+#                                                                    #
+#                    THE 44 MASTER FEATURES                          #
+#                                                                    #
+
+
+# ------------------------------------------------------------------ #
+# SECTION 1: THE FOUNDATION & WORLD MECHANICS                       #
+# ------------------------------------------------------------------ #
+
+FEATURE 1: 100% ENGLISH & GREEN THEME
+  - Every single message, GUI title, command description, config
+    comment, and hologram text is in English.
+  - Color codes: §2 (dark green) for headers, §a (light green) for
+    body text. Prefix: §2§l[PlotManager] §a
+
+FEATURE 2: VAULT ECONOMY INTEGRATION
+  - Everything costs in-game money via Vault.
+  - Claiming, upgrading, buying generators, unlocking vaults,
+    purchasing music — all tied to economy.
+
+FEATURE 3: PAPER 1.21.X COMPATIBILITY
+  - api-version set to '1.21' which covers all 1.21.x versions.
+  - Compatible with Paper, Spigot, and forks.
+
+FEATURE 4: NO EXPLOSIONS (ABSOLUTE)
+  - TNT, Creepers, Withers, Beds, Respawn Anchors, End Crystals —
+    ALL of them do exactly 0 block damage ANYWHERE in the protected
+    world. This prevents chest/barrel item loss completely.
+  - Listeners: EntityExplodeEvent, BlockExplodeEvent — cancelled.
+
+FEATURE 5: ABSOLUTE WILDERNESS PROTECTION
+  - Outside of plots (wilderness), players CANNOT break or place
+    blocks. They CAN interact (open chests, doors, buttons, levers).
+  - This makes claiming mandatory for building.
+
+FEATURE 6: GOLDEN AXE CLAIMING WAND
+  - Command: /plot wand (OP only by default)
+  - Gives a Golden Axe named §2§lPlot Wand
+  - LEFT_CLICK_BLOCK = Set Position 1 (green message)
+  - RIGHT_CLICK_BLOCK = Set Position 2 (green message)
+  - Then /plot claim to purchase and protect the area.
+
+FEATURE 7: PLOT MERGING
+  - If a player owns two plots that are directly adjacent (touching),
+    they can type /plot merge to combine them into one massive claim.
+  - The wilderness blocks between them are automatically absorbed.
+
+FEATURE 8: 7-DAY INACTIVITY NATURE RESET (FAWE)
+  - When a player first claims a plot, the plugin silently saves a
+    FAWE schematic (.schem) of the RAW, untouched terrain.
+  - If the plot owner does not log into the server for X days
+    (default: 7, configurable to 3, 10, 30, etc.), the plugin
+    automatically PASTES the original schematic, perfectly restoring
+    the land to pure nature as if no one ever built there.
+  - The plot data is then deleted.
+  - A Discord alert is sent to the admin channel.
+
+FEATURE 9: PREMIUM PLOTS
+  - Admins can define "Premium" plot tiers in the config.
+  - Each tier requires a specific permission (e.g. plotmanager.premium.vip)
+  - Premium plots cost more but have higher limits (more hoppers,
+    spawners, vault pages, etc.)
+  - The rank name is fully customizable in config.
+
+# ------------------------------------------------------------------ #
+# SECTION 2: PLOT PROTECTION (INSIDE PLOTS)                         #
+# ------------------------------------------------------------------ #
+
+FEATURE 10: ENTITY PROTECTION
+  - Non-members cannot kill passive mobs (cows, sheep, pigs).
+  - Non-members cannot shear sheep.
+  - Non-members cannot trade with Villagers.
+  - Non-members cannot leash or unleash animals.
+
+FEATURE 11: BOUNCER SHIELDS (PARTICLE WALLS)
+  - When you /plot ban <player>, that player is physically blocked.
+  - If they try to walk into your plot, they hit an invisible wall
+    made of green particles and get bounced backwards.
+  - Uses PlayerMoveEvent to detect crossing the boundary.
+
+FEATURE 12: STRICT TRUST LIMITS
+  - /plot add <player> builder --no-chests
+  - This means the player can break/place blocks but the plugin
+    physically blocks them from opening ANY chest, barrel, shulker,
+    or hopper in the plot.
+  - Fully configurable trust flags per member.
+
+FEATURE 13: COMPLETE BLOCK PROTECTION
+  - BlockBreakEvent, BlockPlaceEvent — non-members blocked.
+  - BlockPistonExtendEvent, BlockPistonRetractEvent — blocked from
+    pushing blocks INTO or OUT OF a plot.
+  - BlockFromToEvent — liquid (water/lava) cannot flow into a plot.
+  - LeavesDecayEvent — leaves don't decay inside plots.
+  - BlockSpreadEvent, BlockBurnEvent — fire cannot spread.
+  - CreatureSpawnEvent — mob spawning toggleable per plot.
+
+FEATURE 14: COMBAT TAGGING
+  - If PvP is enabled in a plot and two players fight, the loser
+    cannot safely log out. Combat tag lasts 5 seconds (configurable).
+  - If they log out during combat, they drop their items.
+
+# ------------------------------------------------------------------ #
+# SECTION 3: ECONOMY & AUTOMATION                                   #
+# ------------------------------------------------------------------ #
+
+FEATURE 15: PLOT VAULTS (VIRTUAL STORAGE)
+  - /plot vault — Opens a virtual double-chest.
+  - This chest belongs to the PLOT, not the player.
+  - Owner and Co-Owners can access it.
+  - Upgradable: Tier 1 = 1 page (27 slots), Tier 2 = 2 pages, etc.
+  - Each tier costs money to unlock (configurable in config).
+
+FEATURE 16: PLOT GENERATORS
+  - Generators are machines that automatically produce resources
+    and deposit them into the Plot Vault.
+  - Tier 1 Generator: 1 Iron Ingot every 10 minutes.
+  - Tier 2 Generator: 1 Gold Ingot every 15 minutes.
+  - Tier 3 Generator: 1 Diamond every 30 minutes.
+  - Works even when the owner is OFFLINE.
+  - All rates and costs are configurable.
+
+FEATURE 17: TIP JARS
+  - Owner places a sign with [Tip Jar] on the first line.
+  - Any visitor can right-click the sign to donate money.
+  - The donated money goes directly into the Plot Bank.
+  - Minimum tip amount is configurable.
+
+FEATURE 18: PLOT CHEST SHOPS
+  - Owner places a sign on a chest with format:
+      [Shop]
+      <quantity>
+      <item>
+      <price>
+  - Buyers right-click the sign to purchase items.
+  - Money goes into the PLOT BANK (not personal wallet).
+  - Supports Placeholder format for the sign lines.
+
+FEATURE 19: GLOBAL MARKET GUI
+  - /plot market — Opens a massive GUI showing ALL active chest
+    shops across the entire server.
+  - Players can search by item name.
+  - Clicking a listing teleports you directly to that plot's shop.
+  - Sorted by price (cheapest first).
+
+FEATURE 20: PLOT LEVELING (EXP SYSTEM)
+  - Plots start at Level 1 and can reach Level 100.
+  - Plots gain EXP from:
+      * Visitors spending time inside the plot
+      * Tips donated via Tip Jars
+      * Chest Shop sales
+  - Higher levels unlock:
+      * New particle border colors
+      * Better generator tiers
+      * More vault pages
+      * The "Plot Lord" Discord role at Level 10
+
+FEATURE 21: OFFLINE EARNINGS REPORT
+  - When a plot owner logs into the server after being offline,
+    the plugin gives them a Written Book item.
+  - The book contains a detailed report:
+      * Total visitors while offline
+      * Total money earned from Chest Shops
+      * Total tips received
+      * Generator output summary
+  - All formatted in green theme.
+
+# ------------------------------------------------------------------ #
+# SECTION 4: DISCORD & WEB INTEGRATIONS                              #
+# ------------------------------------------------------------------ #
+
+FEATURE 22: DISCORD LIVE CHAT SYNC (TWO-WAY)
+  - Messages typed in Minecraft appear in a Discord channel.
+  - Messages typed in the Discord channel appear in Minecraft.
+  - Format is configurable: "[MC] %player%: %message%"
+  - Channel ID is set in config.yml.
+
+FEATURE 23: DISCORD ACTION LOGGER
+  - Logs the following events to a separate Discord channel:
+      * Player joins/leaves the server
+      * Plot claimed (who, where, cost)
+      * Plot deleted/unclaimed
+      * 7-day nature reset triggered
+      * Admin actions (freeze, seize, purge)
+  - Channel ID is set in config.yml.
+
+FEATURE 24: DISCORD ROLE SYNC
+  - When a plot reaches Level 10 (configurable), the Discord bot
+    automatically gives the plot owner a special role.
+  - Default role name: "Plot Lord"
+  - Role ID is set in config.yml.
+
+FEATURE 25: BLUEMAP 3D WEB INTEGRATION
+  - The plugin hooks into BlueMap API.
+  - Draws 3D colored boxes (default: green #00FF00) around every
+    claimed plot on the live web map.
+  - Clicking a plot on the website shows a popup with:
+      * Plot Name
+      * Owner Name
+      * Plot Level
+      * Bank Balance
+  - Border color and thickness are configurable.
+
+# ------------------------------------------------------------------ #
+# SECTION 5: PLAYER UTILITIES & FUN                                  #
+# ------------------------------------------------------------------ #
+
+FEATURE 26: THE MASTER GUI (/plot menu)
+  - Opens a single central 54-slot inventory GUI.
+  - From this ONE menu, players can click buttons to access:
+      * Plot Info (shows stats in chat)
+      * Bank (deposit/withdraw)
+      * Members (add/kick/promote)
+      * Flags (toggle PvP, mobs, fire, etc.)
+      * Upgrades (buy Fly, Vaults, Generators)
+      * Vault (open virtual storage)
+      * Market (browse server shops)
+      * Blackmarket (secret underground market)
+      * Home (teleport to plot spawn)
+      * Unclaim (shift-click to confirm)
+  - Every GUI button ALSO has a command equivalent for players
+    who prefer typing commands.
+
+FEATURE 27: PLOT ROLES (4 TIERS)
+  - Owner: Full control. Can delete, manage members, withdraw bank.
+  - Co-Owner: Can add/remove members, toggle flags, access vault.
+  - Builder: Can break/place blocks only.
+  - Visitor: Can walk around and interact only.
+  - /plot promote <player> and /plot demote <player> to change roles.
+
+FEATURE 28: ADVANCED HOLOGRAMS (FANCYHOLOGRAMS STYLE)
+  - Players can BUY holograms with money.
+  - Max holograms per plot is configurable.
+  - Commands:
+      * /plot holo create — Creates a new hologram at your location
+      * /plot holo addline <text> — Adds a line of text
+      * /plot holo removeline <number> — Removes a specific line
+      * /plot holo delete — Deletes the hologram
+  - Built-in PROFANITY FILTER blocks bad words (configurable list).
+  - Holograms display STATUS:
+      * If plot is unclaimed: Shows status_free text (default: &a&lFREE)
+      * If plot is claimed: Shows status_occupied text (default: &c&lOCCUPIED)
+  - Status text is fully configurable in config.yml.
+
+FEATURE 29: PLOT MUSIC
+  - Players pay money to unlock a music disc for their plot.
+  - When ANY player walks into the plot, the selected music disc
+    starts playing automatically via note block sounds.
+  - /plot music <disc_name> to select the track.
+  - Music cost is configurable.
+
+FEATURE 30: PLOT MAILBOXES
+  - Owner types /plot setmailbox while looking at a Barrel.
+  - Visitors can open the barrel and DROP items in.
+  - Visitors are physically BLOCKED from taking items out.
+  - Only the Owner/Co-Owner can retrieve items from the mailbox.
+  - Perfect for receiving payments or deliveries.
+
+FEATURE 31: LIVE PLOT MAP ITEM
+  - /plot map — Gives the player a Map item.
+  - When held, it displays a live radar view of the plot's borders.
+  - Green dots show where members are currently standing.
+  - Updates in real-time.
+
+FEATURE 32: TITLE SCREENS & SOUND EFFECTS
+  - When entering a plot: Big green title on screen showing the
+    plot name and owner, plus a pleasant chime sound.
+  - When leaving a plot: Subtitle saying "Wilderness" with a
+    different sound effect.
+  - Uses ActionBar and Title packets.
+
+# ------------------------------------------------------------------ #
+# SECTION 6: ADMIN POWERS & COMMANDS                                 #
+# ------------------------------------------------------------------ #
+
+FEATURE 33: ADMIN GODWAND (/plot godwand)
+  - Permission: plotmanager.admin
+  - Gives an enchanted Stick named §4§lGod Wand.
+  - LEFT CLICK on a plot: Instantly sets it to Max Level (100),
+    fills the bank with infinite money, and unlocks all upgrades.
+  - RIGHT CLICK on a plot: Lightning strikes the center, the plot
+    is instantly deleted, and the terrain is rolled back to nature.
+  - Perfect for testing and moderation.
+
+FEATURE 34: X-RAY INSPECTOR (/plot inspect)
+  - Permission: plotmanager.admin
+  - Scans every single chest, barrel, hopper, shulker box, and
+    dropper inside the plot boundaries.
+  - Outputs a detailed chat report:
+      * Total Diamonds found: X
+      * Total Spawners found: X
+      * Total Netherite found: X
+      * Total estimated wealth: $X
+  - Perfect for catching dupers instantly.
+
+FEATURE 35: MASS PURGE (/plot purge <days>)
+  - Permission: plotmanager.admin
+  - Finds every plot where the owner hasn't logged in for X days.
+  - Deletes all of them simultaneously and restores nature.
+  - Sends a summary to Discord: "Purged 47 inactive plots."
+  - This is IN ADDITION to the automatic 7-day system (Feature 8).
+
+FEATURE 36: QUARANTINE MODE (/plot freeze)
+  - Permission: plotmanager.admin
+  - Instantly quarantines a plot:
+      * Teleports all non-admin players OUT of the plot.
+      * Wraps the entire plot in a RED particle dome.
+      * Completely freezes all interactions (no breaking, placing,
+        chest opening, or movement inside).
+  - /plot unfreeze to release.
+  - Perfect for investigating duping or rule-breaking.
+
+FEATURE 37: ADMIN ROLLBACK WAND
+  - Permission: plotmanager.admin
+  - /plot rollbackwand — Gives a Blaze Rod.
+  - LEFT CLICK any block inside a plot:
+      * Shows who placed or broke that exact block.
+      * Shows the exact timestamp.
+  - Perfect for catching trusted members who grief from inside.
+
+FEATURE 38: EMINENT DOMAIN (/plot seize)
+  - Permission: plotmanager.admin
+  - Admin instantly takes ownership of the target plot.
+  - Kicks the original owner.
+  - Transfers ALL money from the Plot Bank to the admin.
+  - Sends a Discord alert.
+
+FEATURE 39: IN-GAME PRICE EDITOR (/plot editprices)
+  - Permission: plotmanager.admin
+  - Opens a beautiful GUI showing all purchasable items:
+      * Claim Cost, Generator Cost, Vault Cost, Fly Cost, etc.
+  - Click on an item, type the new price in chat.
+  - Saves directly to config.yml WITHOUT requiring a server restart.
+
+FEATURE 40: ADMIN SPY MODE (/plot adminspy)
+  - Permission: plotmanager.admin
+  - Toggle on/off.
+  - When active:
+      * Admin bypasses all Bouncer Shields.
+      * Admin can walk into frozen/quarantined plots.
+      * Admin can silently open any Plot Vault without the owner
+        receiving any notification.
+
+FEATURE 41: PLOT AUDIT GUI (/plot audit)
+  - Permission: plotmanager.admin
+  - Opens a GUI showing the complete financial history of a plot:
+      * Who deposited money and when
+      * Who withdrew money and when
+      * Who was added/removed as a member and when
+      * What upgrades were purchased and when
+  - All entries have exact timestamps.
+
+FEATURE 42: LEADERBOARDS (/plot settop)
+  - Permission: plotmanager.admin
+  - Admin stands at a location and types /plot settop.
+  - A floating hologram appears showing the Top 10 plots:
+      * Ranked by Bank Balance (richest plots).
+  - Updates automatically every X ticks (configurable).
+
+FEATURE 43: RELOAD COMMAND (/plot reload)
+  - Permission: plotmanager.admin
+  - Reloads config.yml and lang.yml without restarting the server.
+
+
+# SECTION 7: SECRETS                                                 #
+
+
+FEATURE 44: THE BLACKMARKET (/plot blackmarket)
+  - A secret underground GUI where players can sell items
+    anonymously to avoid server taxes.
+  - BUT: Every hour, there is a 5% chance the Discord bot sends
+    an "Anonymous Tip" to the admin Discord channel, exposing
+    exactly which Plot ID is running the illegal market.
+  - Admins can then raid the plot using /plot inspect and /plot freeze.
+
+FEATURE 45: PLOT FACTORIES & AUTO-RESTOCK
+  - Links the Plot Vault directly to Chest Shops.
+  - If a chest shop runs out of items, it pulls from the Vault while offline!
+  - Virtual smelters automatically smelt raw ores.
+
+FEATURE 46: PLOT PRIVATE VOICE CHAT
+  - Hooks into SimpleVoiceChat mod.
+  - Walking into a plot automatically puts you in a private, soundproof voice channel.
+  - Players outside cannot hear you.
+
+FEATURE 47: MAYOR TAXES / POLITICAL ECONOMY
+  - The owner of the #1 Top Plot becomes the "Mayor".
+  - The Mayor can set a global server tax (e.g. 1%) on all shops.
+  - Taxes go straight into their Plot Bank!
+
+FEATURE 48: SMART CLEAR (AUTO-WIPE)
+  - Special flags like /plot flag autowipe_snow true.
+  - Automatically melts snow, destroys tall grass, or removes weeds instantly.
+  - Keeps massive plots looking perfectly clean without manual labor.
+
+FEATURE 49: GPS NAVIGATION PARTICLES
+  - Clicking on a plot in the Plot Browser (/plot browse) creates a GPS trail.
+  - A glowing path of particles spawns on the ground leading you straight to the plot.
+  - Disappears once you reach the destination.
+
+FEATURE 50: PLOT ELEVATORS
+  - Place two Iron Blocks on the same Y-axis inside a plot.
+  - Jump on the bottom one to instantly teleport up.
+  - Sneak (Shift) on the top one to instantly teleport down.
+
+FEATURE 51: SMART AUTO-SORTERS
+  - Unlocked via Upgrades. Place a specific "Smart Hopper".
+  - If you put an Item Frame on a chest with a diamond, the Smart Hopper sends all diamonds to that chest instantly.
+  - Zero redstone lag.
+
+FEATURE 52: HOLOGRAPHIC MAILBOX
+  - An interactive 3D zone (/plot setmailbox).
+  - Players drop an item on the ground in that zone.
+  - The item floats as a hologram, plays a custom sound, and gets sucked directly into the plot owner's private Mailbox GUI.
+
+FEATURE 53: ADVANCED DRONE MODE (/plot drone)
+  - Puts the owner in a fake "Camera Mode" to view their massive plot from the sky.
+  - Mechanics: Gives the player Invisibility, allows them to fly (allowFlight=true), but keeps them in SURVIVAL mode (NOT spectator, so they can't see caves underground).
+  - Keeps their inventory 100% safe.
+  - If they fly more than 10 blocks outside the plot border, it says "&cYou lost drone signal!" and teleports them back to the center, disabling drone mode.
+
+
+#                  COMMANDS & PERMISSIONS                            #
+#                   ALL COMMANDS (COMPLETE LIST)                      #
+
+
+PLAYER COMMANDS (plotmanager.use):
+  /plot wand              — Get the Golden Axe selection wand (OP only)
+  /plot claim             — Buy and protect your wand selection
+  /plot unclaim           — Remove your plot (must be owner)
+  /plot info              — View stats of the plot you're in
+  /plot menu              — Open the Master GUI
+  /plot home              — Teleport to your plot's spawn point
+  /plot sethome           — Set your plot's spawn point
+  /plot add <player>      — Add a member to your plot
+  /plot remove <player>   — Remove a member
+  /plot promote <player>  — Promote member (Visitor > Builder > Co-Owner)
+  /plot demote <player>   — Demote member
+  /plot members           — List all members and their roles
+  /plot flag <flag> <bool>— Toggle flags (pvp, mobs, fire, etc.)
+  /plot deposit <amount>  — Put money into the Plot Bank
+  /plot withdraw <amount> — Take money from the Plot Bank
+  /plot ban <player>      — Ban a player (activates Bouncer Shield)
+  /plot unban <player>    — Unban a player
+  /plot description <text>— Set your plot's description
+  /plot list              — List all your owned plots
+  /plot visit <player>    — Teleport to another player's plot
+  /plot merge             — Merge two adjacent plots
+  /plot vault             — Open your Plot Vault
+  /plot market            — Open the Global Market GUI
+  /plot blackmarket       — Open the secret Blackmarket
+  /plot map               — Get a live radar map item
+  /plot music <disc>      — Set your plot's music disc
+  /plot holo create       — Create a hologram
+  /plot holo addline <txt>— Add a line to your hologram
+  /plot holo removeline # — Remove a line from your hologram
+  /plot holo delete       — Delete your hologram
+  /plot holomove          — Move the main plot hologram to where you stand
+  /plot setmailbox        — Set a barrel as your mailbox
+  /plot private           — Hide your plot from /plot browse
+  /plot browse            — Browse all public plots (GUI)
+  /plot maplink           — Shows the live web map link (set in config)
+  /plot help              — Opens the Help GUI with all commands
+  /plot fly               — Toggle plot fly (if unlocked)
+  /plot upgrades          — Open the upgrades shop GUI
+  /plot rename <name>     — Rename your plot
+  /plot chat              — Toggle plot-only chat mode
+  /plot trust <player>    — Alias for /plot add
+  /plot untrust <player>  — Alias for /plot remove
+
+ADMIN COMMANDS (plotmanager.admin):
+  /plot reload            — Reload config and lang files
+  /plot delete <id>       — Force delete any plot
+  /plot freeze <id>       — Quarantine a plot (red dome)
+  /plot unfreeze <id>     — Release a quarantined plot
+  /plot purge <days>      — Mass wipe all inactive plots
+  /plot inspect           — X-Ray scan for hidden wealth
+  /plot seize             — Take ownership of a plot
+  /plot godwand           — Get the God Wand (max/smite)
+  /plot rollbackwand      — Get the Rollback Wand (block history)
+  /plot adminspy          — Toggle spy mode
+  /plot audit             — View full audit history of a plot
+  /plot settop            — Place the Top 10 leaderboard hologram
+  /plot editprices        — Open the in-game price editor GUI
+
+
+
+#                                                                    #
+#                   ALL PLACEHOLDERS (PAPI)                          #
+#                                                                    #
+
+
+  %plotmanager_plots_owned%                — Number of plots you own
+  %plotmanager_plots_max%                  — Max plots you can own
+  %plotmanager_current_plot_name%          — Name of plot you're in
+  %plotmanager_current_plot_id%            — ID of plot you're in
+  %plotmanager_current_plot_owner%         — Owner of plot you're in
+  %plotmanager_current_plot_level%         — Level of plot you're in
+  %plotmanager_current_plot_exp%           — EXP of plot you're in
+  %plotmanager_current_plot_bank%          — Bank balance of plot
+  %plotmanager_current_plot_vault_tier%    — Vault tier of plot
+  %plotmanager_current_plot_members%       — How many members (e.g. "3")
+  %plotmanager_current_plot_members_max%   — Max members allowed (e.g. "10")
+  %plotmanager_current_plot_members_format%— Members formatted (e.g. "3/10")
+  %plotmanager_current_plot_role%          — Your role in this plot
+  %plotmanager_current_plot_status%        — FREE or OCCUPIED (configurable text)
+  %plotmanager_current_plot_created%       — Date when the plot was claimed
+  %plotmanager_current_plot_description%   — Plot description text
+  %plotmanager_current_plot_size%          — Plot size in blocks (e.g. "50x50")
+  %plotmanager_current_plot_generators%    — Number of active generators
+  %plotmanager_current_plot_upkeep%        — Upkeep cost per cycle
+  %plotmanager_current_plot_flags%         — Active flags list
+  %plotmanager_in_wilderness%              — Yes or No
+  %plotmanager_total_server_plots%         — Total plots on server
+  %plotmanager_total_server_players%       — Total unique plot owners
+  %plotmanager_player_total_bank%          — Sum of all your plot banks
+  %plotmanager_player_rank%                — Your rank among all plot owners
+  %plotmanager_top_1_owner%                — #1 richest plot owner
+  %plotmanager_top_1_bank%                 — #1 richest plot balance
+  %plotmanager_top_2_owner%                — #2 richest plot owner
+  %plotmanager_top_2_bank%                 — #2 richest plot balance
+  %plotmanager_top_3_owner%                — #3 richest plot owner
+  %plotmanager_top_3_bank%                 — #3 richest plot balance
+  %plotmanager_top_4_owner%                — #4 richest plot owner
+  %plotmanager_top_4_bank%                 — #4 richest plot balance
+  %plotmanager_top_5_owner%                — #5 richest plot owner
+  %plotmanager_top_5_bank%                 — #5 richest plot balance
+  %plotmanager_top_6_owner%                — #6
+  %plotmanager_top_7_owner%                — #7
+  %plotmanager_top_8_owner%                — #8
+  %plotmanager_top_9_owner%                — #9
+  %plotmanager_top_10_owner%               — #10
+
+                                                              #
+#                 EXACT config.yml STRUCTURE                         #
+#        (THE AI MUST CREATE THIS EXACT CONFIGURATION)               #
+#                                                                    #
+
+# ---------------------------------------------------------- #
+# [1] GENERAL SETTINGS                                       #
+# ---------------------------------------------------------- #
+plugin:
+  # GREEN GRADIENT BOLD SMALL CAPS PREFIX
+  # Uses unicode small caps: ᴘʟᴏᴛᴍᴀɴᴀɢᴇʀ
+  # Alternates &2 (dark green) and &a (light green) per letter
+  prefix: "&2&lᴘ&a&lʟ&2&lᴏ&a&lᴛ&2&lᴍ&a&lᴀ&2&lɴ&a&lᴀ&2&lɢ&a&lᴇ&2&lʀ &8» &a"
+  prefix_short: "&2&lPM &8» &a"
+  language: "en"
+  debug_mode: false
+  auto_save_interval_minutes: 5
+  date_format: "dd/MM/yyyy HH:mm"
+  timezone: "UTC"
+  # ASCII banner printed to console on startup
+  startup_banner:
+    enabled: true
+    lines:
+      - "&2&l=========================================================================="
+      - "&2&l  ██████╗ ██╗      ██████╗ ████████╗███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗ ██████╗  "
+      - "&2&l  ██╔══██╗██║     ██╔═══██╗╚══██╔══╝████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝ ██╔══██╗ "
+      - "&2&l  ██████╔╝██║     ██║   ██║   ██║   ██╔████╔██║███████║██╔██╗ ██║███████║██║  ███╗█████╗   ██████╔╝ "
+      - "&2&l  ██╔═══╝ ██║     ██║   ██║   ██║   ██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝   ██╔══██╗ "
+      - "&2&l  ██║     ███████╗╚██████╔╝   ██║   ██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║ "
+      - "&2&l  ╚═╝     ╚══════╝ ╚═════╝    ╚═╝   ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝╚══════╝╚═╝  ╚═╝ "
+      - "&2&l"
+      - "&a&l  Version: &f%plugin_version%                 &a&lAuthor: &fRedGlitchX"
+      - "&a&l  Server: &f%server_version%              &a&lState: &a&lONLINE & READY"
+      - "&2&l"
+      - "&a&l  [System Status]"
+      - "&7  ▶ Total Plots Loaded: &f%total_plots%"
+      - "&7  ▶ Database Connection: &f%db_status%"
+      - "&7  ▶ Vault Economy: &f%vault_status%"
+      - "&7  ▶ JDA Discord Bot: &f%discord_status%"
+      - "&7  ▶ BlueMap Web Hook: &f%bluemap_status%"
+      - "&7  ▶ FAWE Rollback: &f%fawe_status%"
+      - "&2&l=========================================================================="
+
+world_settings:
+  protected_world: "world"
+  wilderness_building: false
+  wilderness_interact: true
+  wilderness_crop_trample: false
+  disable_explosions_everywhere: true
+  disable_fire_everywhere: true
+  disable_wither_everywhere: true
+  disable_dragon_grief: true
+  disable_enderman_pickup: true
+
+# The live web map URL shown with /plot maplink
+maplink:
+  enabled: true
+  url: "http://map.yourserver.com"
+  message: "&aView our live server map at: &2&n%url%"
+  hover_text: "&aClick to open the map!"
+  clickable: true
+
+# ---------------------------------------------------------- #
+# [2] CLAIMING & LIMITS                                      #
+# ---------------------------------------------------------- #
+claiming:
+  max_plots_per_player_default: 3
+  max_plots_per_player_vip: 10
+  min_claim_size_blocks: 10
+  max_claim_size_blocks: 250
+  allow_claim_merging: true
+  wand_item: "GOLDEN_AXE"
+  wand_name: "&2&lPlot Wand"
+  wand_lore:
+    - "&aLeft-Click: Set Position 1"
+    - "&aRight-Click: Set Position 2"
+    - "&7Then type /plot claim"
+  pos1_message: "&aPosition 1 set at &2(%x%, %y%, %z%)"
+  pos2_message: "&aPosition 2 set at &2(%x%, %y%, %z%)"
+  claim_success_message: "&aCongratulations! You claimed your plot for &2$%cost%&a!"
+  claim_denied_message: "&cYou don't have enough money! Need: $%cost%"
+  max_claims_message: "&cYou already have %owned%/%max% plots!"
+
+# ---------------------------------------------------------- #
+# [3] MEMBER LIMITS                                          #
+# ---------------------------------------------------------- #
+members:
+  max_members_default: 5
+  max_members_vip: 10
+  max_members_mvp: 25
+  max_coowners: 2
+  max_builders: 10
+  member_add_message: "&a%player% has been added to your plot as %role%!"
+  member_remove_message: "&c%player% has been removed from your plot."
+  member_limit_message: "&cYou can only have %current%/%max% members!"
+
+# ---------------------------------------------------------- #
+# [4] PREMIUM PLOTS                                          #
+# ---------------------------------------------------------- #
+# HOW TO LINK TO LUCKPERMS (OR ANY PERMISSIONS PLUGIN):      #
+# You no longer need to mess with permissions! You can just  #
+# type the exact NAME of your LuckPerms group below.         #
+# You can add as many groups as you want for each tier.      #
+# ---------------------------------------------------------- #
+premium:
+  enabled: true
+  tiers:
+    vip:
+      # Any player in THESE LuckPerms groups will get this VIP plot tier!
+      luckperms_groups:
+        - "vip"
+        - "vip-plus"
+        - "sponsor"
+      display_name: "&a&lVIP"
+      claim_cost: 5000.0
+      max_plots: 5
+      max_members: 10
+      hopper_limit: 100
+      spawner_limit: 20
+    mvp:
+      # Any player in THESE LuckPerms groups will get this MVP plot tier!
+      luckperms_groups:
+        - "mvp"
+        - "mvp-plus"
+        - "titan"
+        - "legend"
+      display_name: "&b&lMVP"
+      claim_cost: 10000.0
+      max_plots: 10
+      max_members: 25
+      hopper_limit: 200
+      spawner_limit: 50
+    god:
+      # Create as many custom tiers as you want!
+      luckperms_groups:
+        - "god"
+        - "owner"
+        - "admin"
+      display_name: "&4&lGOD"
+      claim_cost: 0.0
+      max_plots: 100
+      max_members: 100
+      hopper_limit: 1000
+      spawner_limit: 500
+
+# ---------------------------------------------------------- #
+# [5] DISCORD JDA INTEGRATION                                #
+# ---------------------------------------------------------- #
+discord:
+  enabled: true
+  bot_token: "YOUR_BOT_TOKEN_HERE"
+  bot_status: "Watching %total_plots% plots"
+  log_channel_id: "YOUR_LOG_CHANNEL_ID_HERE"
+  chat_sync:
+    enabled: true
+    chat_channel_id: "YOUR_CHAT_CHANNEL_ID_HERE"
+    minecraft_to_discord_format: "[MC] **%player%**: %message%"
+    discord_to_minecraft_format: "&9[Discord] &f%user%&7: &f%message%"
+  join_leave_channel_id: "YOUR_JOIN_LEAVE_CHANNEL_ID_HERE"
+  join_message: ":green_circle: **%player%** joined the server!"
+  leave_message: ":red_circle: **%player%** left the server."
+  claim_log_message: ":house: **%player%** claimed a new plot at (%x%, %z%) for $%cost%"
+  reset_log_message: ":recycle: Plot **%plot_id%** owned by **%owner%** has been reset to nature after %days% days."
+  purge_log_message: ":broom: **Admin %admin%** purged %count% inactive plots."
+  seize_log_message: ":police_car: **Admin %admin%** seized plot **%plot_id%** from **%owner%**."
+  role_sync:
+    enabled: true
+    plot_lord_role_id: "YOUR_ROLE_ID_HERE"
+    required_plot_level: 10
+
+# ---------------------------------------------------------- #
+# [6] FAWE & INACTIVITY NATURE RESET                         #
+# ---------------------------------------------------------- #
+reset_system:
+  enabled: true
+  inactivity_days: 7
+  check_interval_minutes: 60
+  paste_original_schematic: true
+  send_discord_alert: true
+  alert_message: "Plot %plot_id% owned by %owner% has been reset to nature after %days% days of inactivity."
+  warning_days_before: 2
+  warning_message: "&c&lWARNING: &cYour plot will be reset in %remaining% days due to inactivity!"
+
+# ---------------------------------------------------------- #
+# [7] ECONOMY & PRICING                                      #
+# ---------------------------------------------------------- #
+economy:
+  claim_cost: 1000.0
+  premium_claim_cost: 5000.0
+  unclaim_refund_percent: 50
+  tip_jar_minimum: 10.0
+  tip_jar_message: "&a%player% tipped &2$%amount% &ato your plot!"
+  deposit_message: "&aYou deposited &2$%amount% &ainto the plot bank. Balance: &2$%balance%"
+  withdraw_message: "&aYou withdrew &2$%amount% &afrom the plot bank. Balance: &2$%balance%"
+  not_enough_money_message: "&cNot enough money! You have: $%balance%"
+
+upkeep:
+  enabled: true
+  cost_per_cycle: 0
+  cycle_hours: 168
+  upkeep_warning_message: "&c&lUpkeep due! &cYour plot costs &4$%cost% &cevery %hours% hours."
+  upkeep_paid_message: "&aUpkeep of &2$%cost% &ahas been automatically paid from your plot bank."
+  upkeep_failed_message: "&c&lWARNING: &cUpkeep payment failed! Your plot may be deleted!"
+
+upgrades:
+  fly:
+    enabled: true
+    cost: 1500.0
+    description: "Unlock flying inside your plot"
+    purchase_message: "&aYou unlocked &2Plot Fly &afor &2$%cost%&a!"
+  crop_boost:
+    enabled: true
+    cost: 2500.0
+    multiplier: 2.0
+    description: "Crops grow 2x faster in your plot"
+    purchase_message: "&aYou unlocked &2Crop Boost (x%multiplier%) &afor &2$%cost%&a!"
+  vault_page:
+    cost_per_page: 500.0
+    max_pages: 5
+    purchase_message: "&aYou unlocked &2Vault Page %page% &afor &2$%cost%&a!"
+  generator_tier_1:
+    cost: 2000.0
+    item: "IRON_INGOT"
+    amount: 1
+    interval_minutes: 10
+    description: "Produces 1 Iron Ingot every 10 minutes"
+    purchase_message: "&aYou bought an &2Iron Generator &afor &2$%cost%&a!"
+  generator_tier_2:
+    cost: 5000.0
+    item: "GOLD_INGOT"
+    amount: 1
+    interval_minutes: 15
+    description: "Produces 1 Gold Ingot every 15 minutes"
+    purchase_message: "&aYou bought a &6Gold Generator &afor &2$%cost%&a!"
+  generator_tier_3:
+    cost: 15000.0
+    item: "DIAMOND"
+    amount: 1
+    interval_minutes: 30
+    description: "Produces 1 Diamond every 30 minutes"
+    purchase_message: "&aYou bought a &bDiamond Generator &afor &2$%cost%&a!"
+  music:
+    cost: 200.0
+    description: "Unlock music in your plot"
+    purchase_message: "&aYou unlocked &2Plot Music &afor &2$%cost%&a!"
+
+# ---------------------------------------------------------- #
+# [8] AUTO-HOLOGRAM (SPAWNS WHEN YOU CLAIM)                  #
+# ---------------------------------------------------------- #
+# PlotManager has ITS OWN built-in hologram rendering engine #
+# using invisible ArmorStand entities. It does NOT need any  #
+# external hologram plugin (no FancyHolograms, no HD, etc.)  #
+# Use /plot holomove to move it to a different location.     #
+# ---------------------------------------------------------- #
+auto_hologram:
+  enabled: true
+  spawn_on_claim: true
+  height_above_center: 3.0
+  line_spacing: 0.28
+  update_ticks: 40
+  view_distance_blocks: 48
+  invisible_armorstand: true
+  glow_effect: false
+  animation:
+    enabled: true
+    type: "FLOAT"
+    speed: 0.02
+
+  # Lines when the plot IS CLAIMED (OCCUPIED)
+  # Supports ALL PlaceholderAPI placeholders!
+  lines_occupied:
+    - "&2&l━━━━━━━━━━━━━━━━━"
+    - "&c&lOCCUPIED"
+    - ""
+    - "&2&l%plot_name%"
+    - "&aOwner: &f%plotmanager_current_plot_owner%"
+    - "&aLevel: &f%plotmanager_current_plot_level% &8| &aEXP: &f%plotmanager_current_plot_exp%"
+    - "&aBank: &f$%plotmanager_current_plot_bank%"
+    - "&aMembers: &f%plotmanager_current_plot_members%/%plotmanager_current_plot_members_max%"
+    - "&aGenerators: &f%plotmanager_current_plot_generators%"
+    - "&aSince: &f%plotmanager_current_plot_created%"
+    - ""
+    - "&7%plotmanager_current_plot_description%"
+    - "&2&l━━━━━━━━━━━━━━━━━"
+
+  # Lines for VIP PREMIUM Plots
+  lines_premium_vip:
+    - "&e&l⭐ ━━━━━━━━━━━━━ ⭐"
+    - "&6&lVIP PLOT"
+    - ""
+    - "&e&l%plot_name%"
+    - "&6Owner: &f%plotmanager_current_plot_owner%"
+    - "&6Level: &f%plotmanager_current_plot_level%"
+    - "&6Members: &f%plotmanager_current_plot_members%/%plotmanager_current_plot_members_max%"
+    - "&e&l⭐ ━━━━━━━━━━━━━ ⭐"
+
+  # Lines for MVP PREMIUM Plots
+  lines_premium_mvp:
+    - "&b&l💎 ━━━━━━━━━━━━━ 💎"
+    - "&3&lMVP PLOT"
+    - ""
+    - "&b&l%plot_name%"
+    - "&3Owner: &f%plotmanager_current_plot_owner%"
+    - "&3Level: &f%plotmanager_current_plot_level%"
+    - "&3Members: &f%plotmanager_current_plot_members%/%plotmanager_current_plot_members_max%"
+    - "&b&l💎 ━━━━━━━━━━━━━ 💎"
+
+  # Lines when the plot is NOT CLAIMED (FREE)
+  lines_free:
+    - "&2&l━━━━━━━━━━━━━━━━━"
+    - "&a&l✦ FREE PLOT ✦"
+    - ""
+    - "&7This plot is available!"
+    - "&aPrice: &f$%claim_cost%"
+    - "&aSize: &f%size_x%x%size_z% blocks"
+    - ""
+    - "&7Use &a/plot claim &7to buy"
+    - "&2&l━━━━━━━━━━━━━━━━━"
+
+# ---------------------------------------------------------- #
+# [9] CUSTOM HOLOGRAMS (FANCYHOLOGRAMS STYLE)                #
+# ---------------------------------------------------------- #
+# These are PLAYER-BOUGHT holograms, separate from the auto  #
+# hologram above. Players can buy multiple and edit them.     #
+# ---------------------------------------------------------- #
+holograms:
+  enabled: true
+  max_holograms_per_plot: 2
+  cost_per_hologram: 500.0
+  cost_per_extra_line: 50.0
+  max_lines_per_hologram: 10
+  profanity_filter: true
+  profanity_replacement: "***"
+  update_ticks: 60
+  default_lines_on_create:
+    - "&2&lMy Hologram"
+    - "&aEdit me with /plot holo addline"
+  banned_words:
+    - "nigga"
+    - "nigger"
+    - "faggot"
+    - "retard"
+    - "fuck"
+    - "shit"
+    - "dick"
+    - "pussy"
+    - "bitch"
+    - "ass"
+    - "cunt"
+  profanity_blocked_message: "&cYour hologram text contains a banned word!"
+  hologram_created_message: "&aHologram created! Cost: &2$%cost%"
+  hologram_deleted_message: "&aHologram deleted."
+  hologram_moved_message: "&aMain hologram moved to your location."
+  line_added_message: "&aLine added to hologram: &f%text%"
+  line_removed_message: "&aLine %number% removed from hologram."
+  max_holograms_message: "&cYou already have %current%/%max% holograms!"
+
+# ---------------------------------------------------------- #
+# [10] BLUE MAP WEB INTEGRATION                              #
+# ---------------------------------------------------------- #
+bluemap:
+  enabled: true
+  border_color: "#00FF00"
+  border_color_premium: "#FFD700"
+  border_color_frozen: "#FF0000"
+  border_opacity: 0.7
+  border_thickness: 3
+  show_owner_name: true
+  show_plot_level: true
+  show_bank_balance: true
+  show_member_count: true
+  label_format: "Plot: %plot_name% | Owner: %owner% | Lvl: %level% | Members: %members%/%max_members%"
+
+# ---------------------------------------------------------- #
+# [11] PLOT LEVELING (EXP SYSTEM)                            #
+# ---------------------------------------------------------- #
+leveling:
+  enabled: true
+  exp_per_visitor_minute: 5
+  exp_per_tip_dollar: 1
+  exp_per_shop_sale: 10
+  exp_per_block_placed: 0
+  max_level: 100
+  level_up_message: "&2&l⬆ LEVEL UP! &aYour plot is now &2Level %level%&a!"
+  level_up_sound: "ENTITY_PLAYER_LEVELUP"
+  particles_unlocked_at_level: 5
+  generator_tier2_unlocked_at_level: 10
+  generator_tier3_unlocked_at_level: 25
+  fly_unlocked_at_level: 15
+  exp_formula: "level * 100"
+
+# ---------------------------------------------------------- #
+# [12] PROTECTION DETAILS                                    #
+# ---------------------------------------------------------- #
+plot_protections:
+  hopper_limit: 50
+  spawner_limit: 10
+  redstone_enabled: true
+  prevent_piston_push_in: true
+  prevent_piston_push_out: true
+  prevent_liquid_flow_in: true
+  prevent_leaf_decay: false
+  prevent_mob_spawning_default: false
+  prevent_fire_spread: true
+  entity_protection: true
+  protect_item_frames: true
+  protect_armor_stands: true
+  protect_paintings: true
+  prevent_enderman_grief: true
+  prevent_villager_conversion: true
+  combat_tag_seconds: 5
+  enderpearl_into_plot: false
+  chorus_fruit_into_plot: false
+  break_denied_message: "&cYou cannot break blocks here."
+  place_denied_message: "&cYou cannot place blocks here."
+  interact_denied_message: "&cYou cannot interact here."
+  wilderness_break_message: "&cYou cannot build in the wilderness! Claim a plot first."
+  chest_denied_message: "&cYou don't have permission to open containers here."
+
+# ---------------------------------------------------------- #
+# [13] BOUNCER SHIELD                                        #
+# ---------------------------------------------------------- #
+bouncer_shield:
+  enabled: true
+  particle_type: "VILLAGER_HAPPY"
+  particle_color: "GREEN"
+  particle_count: 30
+  knockback_strength: 1.5
+  knockback_sound: "ENTITY_IRON_GOLEM_HURT"
+  cooldown_seconds: 3
+  cooldown_message: "&cYou are banned from this plot!"
+  ban_message: "&a%player% has been banned from your plot."
+  unban_message: "&a%player% has been unbanned from your plot."
+
+# ---------------------------------------------------------- #
+# [14] GUI SETTINGS                                          #
+# ---------------------------------------------------------- #
+gui:
+  main_menu_title: "&2&lPlot Menu"
+  main_menu_size: 54
+  bank_menu_title: "&2&lPlot Bank"
+  members_menu_title: "&2&lPlot Members"
+  flags_menu_title: "&2&lPlot Flags"
+  upgrades_menu_title: "&2&lPlot Upgrades"
+  vault_menu_title: "&2&lPlot Vault (Page %page%)"
+  market_menu_title: "&a&lGlobal Market"
+  blackmarket_title: "&8&lThe Underworld"
+  audit_menu_title: "&c&lPlot Audit Log"
+  price_editor_title: "&6&lPrice Editor"
+  browse_menu_title: "&2&lBrowse Public Plots"
+  help_menu_title: "&2&lPlot Help"
+  glass_pane_color: "GREEN_STAINED_GLASS_PANE"
+  border_glass_color: "BLACK_STAINED_GLASS_PANE"
+  back_button_item: "ARROW"
+  back_button_name: "&7Back"
+  close_button_item: "BARRIER"
+  close_button_name: "&cClose"
+  info_item: "BOOK"
+  bank_item: "GOLD_INGOT"
+  members_item: "PLAYER_HEAD"
+  flags_item: "OAK_SIGN"
+  upgrades_item: "DIAMOND"
+  vault_item: "ENDER_CHEST"
+  home_item: "COMPASS"
+  unclaim_item: "TNT"
+
+
+# [15] CHEST SHOPS                                           #
+
+chest_shops:
+  enabled: true
+  sign_header: "[Shop]"
+  sign_color: "&2"
+  tax_percent: 5
+  max_shops_per_plot: 20
+  purchase_message_buyer: "&aYou bought &2%amount%x %item% &afor &2$%price%"
+  purchase_message_seller: "&a%buyer% bought &2%amount%x %item% &afrom your shop for &2$%price%"
+  out_of_stock_message: "&cThis shop is out of stock!"
+  shop_created_message: "&aShop created! Selling %amount%x %item% for $%price%"
+
+
+# [16] MAILBOX                                               #
+
+mailbox:
+  enabled: true
+  max_mailboxes_per_plot: 1
+  notification_on_delivery: true
+  delivery_message: "&a%player% dropped items in your mailbox!"
+  mailbox_set_message: "&aMailbox set at this barrel!"
+  mailbox_steal_message: "&cYou can only DROP items here, not take!"
+
+
+# [17] PLOT MUSIC                                            #
+
+music:
+  enabled: true
+  play_on_enter: true
+  stop_on_leave: true
+  volume: 1.0
+  music_set_message: "&aPlot music set to: &2%disc%"
+  available_discs:
+    - "MUSIC_DISC_CAT"
+    - "MUSIC_DISC_BLOCKS"
+    - "MUSIC_DISC_CHIRP"
+    - "MUSIC_DISC_FAR"
+    - "MUSIC_DISC_MALL"
+    - "MUSIC_DISC_MELLOHI"
+    - "MUSIC_DISC_STAL"
+    - "MUSIC_DISC_STRAD"
+    - "MUSIC_DISC_WAIT"
+    - "MUSIC_DISC_WARD"
+    - "MUSIC_DISC_PIGSTEP"
+
+# ---------------------------------------------------------- #
+# [18] BLACKMARKET                                           #
+# ---------------------------------------------------------- #
+blackmarket:
+  enabled: true
+  snitch_chance_percent: 5
+  snitch_check_interval_minutes: 60
+  snitch_discord_message: ":detective: ANONYMOUS TIP: Plot ID **%plot_id%** owned by **%owner%** is running an illegal black market operation!"
+  player_warning: "&8&lShh... &7Welcome to the Underworld. Be careful..."
+
+# ---------------------------------------------------------- #
+# [19] LEADERBOARD                                           #
+# ---------------------------------------------------------- #
+leaderboard:
+  enabled: true
+  update_interval_ticks: 1200
+  max_entries: 10
+  title: "&2&l━━ Top 10 Richest Plots ━━"
+  entry_format: "&a#%rank% &2%owner% &7- &a$%bank% &8(Lvl %level%)"
+  empty_entry: "&7#%rank% — Empty"
+  set_message: "&aLeaderboard hologram placed at your location!"
+
+# ---------------------------------------------------------- #
+# [20] TITLES & SOUNDS                                       #
+# ---------------------------------------------------------- #
+titles:
+  enter_plot:
+    enabled: true
+    title: "&2%plot_name%"
+    subtitle: "&aOwned by %owner% &7| &aLevel %level%"
+    sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
+    sound_volume: 0.5
+    sound_pitch: 1.0
+    fade_in: 10
+    stay: 40
+    fade_out: 10
+  leave_plot:
+    enabled: true
+    title: "&7Wilderness"
+    subtitle: "&8You left %plot_name%"
+    sound: "BLOCK_NOTE_BLOCK_BASS"
+    sound_volume: 0.3
+    sound_pitch: 0.5
+    fade_in: 5
+    stay: 20
+    fade_out: 5
+  actionbar:
+    enabled: true
+    inside_plot: "&2✦ %plot_name% &7| &aOwner: %owner% &7| &aMembers: %members%/%max_members%"
+    wilderness: "&7✦ Wilderness"
+
+# ---------------------------------------------------------- #
+# [21] ADMIN SETTINGS                                        #
+# ---------------------------------------------------------- #
+admin:
+  quarantine_particle: "REDSTONE"
+  quarantine_color: "RED"
+  quarantine_message: "&c&lThis plot has been quarantined by an admin!"
+  quarantine_kick_message: "&cYou have been removed from a quarantined plot."
+  inspect_scan_delay_ticks: 1
+  inspect_items_to_scan:
+    - "DIAMOND"
+    - "DIAMOND_BLOCK"
+    - "NETHERITE_INGOT"
+    - "NETHERITE_BLOCK"
+    - "SPAWNER"
+    - "EMERALD"
+    - "EMERALD_BLOCK"
+    - "GOLDEN_APPLE"
+    - "ENCHANTED_GOLDEN_APPLE"
+    - "TOTEM_OF_UNDYING"
+    - "ELYTRA"
+  inspect_format: "&aFound &2%count%x %item% &ain chests."
+  inspect_total_format: "&2&lTotal estimated wealth: &a$%total%"
+  godwand_item: "STICK"
+  godwand_name: "&4&lGod Wand"
+  godwand_lore:
+    - "&cLeft-Click: Max Level + Infinite Bank"
+    - "&cRight-Click: Lightning + Delete Plot"
+  godwand_max_message: "&aPlot maxed out! Level: 100, Bank: $999,999,999"
+  godwand_smite_message: "&c&lSMITE! &cPlot deleted and terrain restored."
+  rollbackwand_item: "BLAZE_ROD"
+  rollbackwand_name: "&6&lRollback Wand"
+  rollbackwand_lore:
+    - "&eLeft-Click: See who placed/broke this block"
+  rollbackwand_format: "&aBlock: &f%block% &7| &aAction: &f%action% &7| &aBy: &f%player% &7| &aAt: &f%time%"
+  seize_message: "&c&lPlot seized! &cTransferred $%bank% from plot bank."
+  purge_message: "&aPurged &2%count% &ainactive plots."
+  spy_enabled_message: "&aAdmin Spy mode &2ENABLED&a. You are invisible to plots."
+  spy_disabled_message: "&aAdmin Spy mode &cDISABLED&a."
+
+# ---------------------------------------------------------- #
+# [22] OFFLINE EARNINGS REPORT                               #
+# ---------------------------------------------------------- #
+offline_report:
+  enabled: true
+  book_title: "&2Earnings Report"
+  book_author: "PlotManager"
+  header: "&2&l--- Offline Report ---"
+  visitors_line: "&aVisitors: &f%count%"
+  tips_line: "&aTips received: &f$%amount%"
+  shop_sales_line: "&aShop sales: &f$%amount%"
+  generator_line: "&aGenerator output: &f%items% items"
+  total_line: "&2&lTotal earned: &a$%total%"
+
+# ---------------------------------------------------------- #
+# [23] PLOT INFO FORMAT                                      #
+# ---------------------------------------------------------- #
+plot_info:
+  header: "&2&l━━━━ Plot Info ━━━━"
+  name: "&aName: &f%name%"
+  owner: "&aOwner: &f%owner%"
+  level: "&aLevel: &f%level% &7(&aEXP: %exp%&7)"
+  bank: "&aBank: &f$%bank%"
+  members: "&aMembers: &f%members%/%max_members%"
+  size: "&aSize: &f%size_x%x%size_z% blocks"
+  created: "&aCreated: &f%date%"
+  description: "&aDescription: &f%description%"
+  status: "&aStatus: %status%"
+  flags: "&aFlags: &f%flags%"
+  generators: "&aGenerators: &f%generators%"
+  vault_tier: "&aVault Tier: &f%tier%"
+  footer: "&2&l━━━━━━━━━━━━━━━━━"
+
+# ---------------------------------------------------------- #
+# [24] PLACEHOLDERS CONFIG                                   #
+# ---------------------------------------------------------- #
+placeholders:
+  format_money: true
+  currency_symbol: "$"
+  none_text: "None"
+  wilderness_text: "Wilderness"
+  free_text: "FREE"
+  occupied_text: "OCCUPIED"
+  yes_text: "Yes"
+  no_text: "No"
+  date_format: "dd/MM/yyyy"
+  members_format: "%current%/%max%"
+
+# ---------------------------------------------------------- #
+# [25] SOUNDS (ALL CONFIGURABLE)                             #
+# ---------------------------------------------------------- #
+sounds:
+  claim_success: "ENTITY_PLAYER_LEVELUP"
+  unclaim_success: "ENTITY_IRON_GOLEM_DEATH"
+  upgrade_purchase: "ENTITY_VILLAGER_YES"
+  upgrade_denied: "ENTITY_VILLAGER_NO"
+  member_added: "ENTITY_EXPERIENCE_ORB_PICKUP"
+  member_removed: "BLOCK_ANVIL_LAND"
+  teleport_home: "ENTITY_ENDERMAN_TELEPORT"
+  gui_click: "UI_BUTTON_CLICK"
+  gui_denied: "ENTITY_VILLAGER_NO"
+  bouncer_hit: "ENTITY_IRON_GOLEM_HURT"
+  mailbox_delivery: "ENTITY_ITEM_PICKUP"
+  level_up: "ENTITY_PLAYER_LEVELUP"
+  quarantine: "ENTITY_WITHER_SPAWN"
+
+
+
+# ---------------------------------------------------------- #
+# [26] PLOT COSMETICS SHOP (UP TO 25 OF EACH!)               #
+# ---------------------------------------------------------- #
+# Buy these with Plot Bank Money or unlock via Leveling!     #
+# ---------------------------------------------------------- #
+cosmetics:
+  borders:
+    border_1: { name: "&aSlime Green", material: "SLIME_BLOCK", price: 1000 }
+    border_2: { name: "&cRuby Red", material: "REDSTONE_BLOCK", price: 2000 }
+    border_3: { name: "&bDiamond Blue", material: "DIAMOND_BLOCK", price: 3000 }
+    border_4: { name: "&eGolden Glow", material: "GOLD_BLOCK", price: 4000 }
+    border_5: { name: "&8Obsidian Void", material: "OBSIDIAN", price: 5000 }
+    border_6: { name: "&dAmethyst Sparkle", material: "AMETHYST_BLOCK", price: 6000 }
+    border_7: { name: "&2Emerald Royal", material: "EMERALD_BLOCK", price: 7000 }
+    border_8: { name: "&fQuartz Pure", material: "QUARTZ_BLOCK", price: 8000 }
+    border_9: { name: "&6Copper Rust", material: "COPPER_BLOCK", price: 9000 }
+    border_10: { name: "&3Prismarine Aqua", material: "PRISMARINE", price: 10000 }
+    border_11: { name: "&5Purpur End", material: "PURPUR_BLOCK", price: 11000 }
+    border_12: { name: "&4Nether Brick", material: "NETHER_BRICKS", price: 12000 }
+    border_13: { name: "&7Cobbled Stone", material: "COBBLESTONE", price: 13000 }
+    border_14: { name: "&eSponge Absorb", material: "SPONGE", price: 14000 }
+    border_15: { name: "&aMelon Fresh", material: "MELON", price: 15000 }
+    border_16: { name: "&fSnow Frost", material: "SNOW_BLOCK", price: 16000 }
+    border_17: { name: "&1Lapis Magic", material: "LAPIS_BLOCK", price: 17000 }
+    border_18: { name: "&cMagma Heat", material: "MAGMA_BLOCK", price: 18000 }
+    border_19: { name: "&8Coal Dark", material: "COAL_BLOCK", price: 19000 }
+    border_20: { name: "&6Honey Sweet", material: "HONEY_BLOCK", price: 20000 }
+    border_21: { name: "&9Ice Cold", material: "PACKED_ICE", price: 21000 }
+    border_22: { name: "&dMagenta Wool", material: "MAGENTA_WOOL", price: 22000 }
+    border_23: { name: "&4Crimson Nylium", material: "CRIMSON_NYLIUM", price: 23000 }
+    border_24: { name: "&3Warped Nylium", material: "WARPED_NYLIUM", price: 24000 }
+    border_25: { name: "&0Bedrock Admin", material: "BEDROCK", price: 100000 }
+  
+  particles:
+    particle_1: { name: "&cHeart Love", effect: "HEART", price: 5000 }
+    particle_2: { name: "&aHappy Villager", effect: "VILLAGER_HAPPY", price: 6000 }
+    particle_3: { name: "&eFlame Spark", effect: "FLAME", price: 7000 }
+    particle_4: { name: "&dDragon Breath", effect: "DRAGON_BREATH", price: 8000 }
+    particle_5: { name: "&fCrit Strike", effect: "CRIT", price: 9000 }
+    particle_6: { name: "&bMagic Crit", effect: "CRIT_MAGIC", price: 10000 }
+    particle_7: { name: "&8Smoke Void", effect: "SMOKE_LARGE", price: 11000 }
+    particle_8: { name: "&6Lava Drip", effect: "DRIP_LAVA", price: 12000 }
+    particle_9: { name: "&3Water Drip", effect: "DRIP_WATER", price: 13000 }
+    particle_10: { name: "&aSlime Bounce", effect: "SLIME", price: 14000 }
+    particle_11: { name: "&fSnow Shovel", effect: "SNOW_SHOVEL", price: 15000 }
+    particle_12: { name: "&eTotem Life", effect: "TOTEM", price: 16000 }
+    particle_13: { name: "&1Portal End", effect: "PORTAL", price: 17000 }
+    particle_14: { name: "&4Redstone Dust", effect: "REDSTONE", price: 18000 }
+    particle_15: { name: "&5Witch Magic", effect: "SPELL_WITCH", price: 19000 }
+    particle_16: { name: "&bSweep Attack", effect: "SWEEP_ATTACK", price: 20000 }
+    particle_17: { name: "&cDamage Indicator", effect: "DAMAGE_INDICATOR", price: 21000 }
+    particle_18: { name: "&fCloud Fluff", effect: "CLOUD", price: 22000 }
+    particle_19: { name: "&aComposter", effect: "COMPOSTER", price: 23000 }
+    particle_20: { name: "&eNautilus Shell", effect: "NAUTILUS", price: 24000 }
+    particle_21: { name: "&dEnd Rod Glow", effect: "END_ROD", price: 25000 }
+    particle_22: { name: "&6Campfire Smoke", effect: "CAMPFIRE_COSY_SMOKE", price: 26000 }
+    particle_23: { name: "&3Soul Fire", effect: "SOUL_FIRE_FLAME", price: 27000 }
+    particle_24: { name: "&4Falling Lava", effect: "FALLING_LAVA", price: 28000 }
+    particle_25: { name: "&fCherry Leaves", effect: "CHERRY_LEAVES", price: 50000 }
+
+
+# ================================================================== #
+#                                                                    #
+#                 DEEP MECHANICS & ARCHITECTURE                      #
+#          (EXTREME DETAIL FOR THE BUILDING AI DEVELOPER)            #
+#                                                                    #
+# ================================================================== #
+
+## 1. THE HOLOGRAM ENGINE (BUILT-IN)
+The hologram system MUST be built from scratch using Bukkit's EntityType.ARMOR_STAND.
+- Entities must be spawned with NBT tags: `Invisible:1b, Marker:1b, NoGravity:1b`.
+- They must have a custom name and `CustomNameVisible:1b`.
+- For multi-line holograms, spawn an ArmorStand for each line, separated by the `line_spacing` config value (default 0.28 blocks on the Y axis).
+- Auto-Holograms update every `update_ticks`. Instead of destroying and respawning, the AI MUST keep a Map<UUID, List<ArmorStand>> and simply update `setCustomName(PlaceholderAPI.setPlaceholders(player, string))` for performance.
+
+## 2. THE FAWE ROLLBACK SYSTEM (7-DAY RESET)
+- When a plot is claimed, use FAWE's `CuboidRegion` to capture the area.
+- Use `ClipboardFormat.SCHEMATIC.getWriter(new FileOutputStream(file))` to save the pristine nature.
+- When `PlotManager.checkInactivity()` runs, if `System.currentTimeMillis() - plot.getLastLogin() > (inactivity_days * 86400000L)`, trigger the reset.
+- Load the schematic using FAWE's `ClipboardFormat.SCHEMATIC.getReader(new FileInputStream(file))`.
+- Paste it using `EditSession` with `flushQueue()` for zero lag.
+- Delete the plot from `plots.yml` and remove the auto-hologram.
+- Send webhook to Discord using JDA.
+
+## 3. ABSOLUTE EXPLOSION & GRIEF PREVENTION
+- `EntityExplodeEvent`: Check `e.blockList()`. Iterate through blocks. If `Block.getLocation()` is inside ANY plot, `e.blockList().remove(block)`. Do not cancel the whole event, just remove protected blocks.
+- Do the same for `BlockExplodeEvent`.
+- `EntityChangeBlockEvent`: Block Endermen from picking up blocks in plots.
+- `PlayerInteractEvent`: Check `e.getAction() == Action.PHYSICAL`. Block crop trampling if `wilderness_crop_trample` is false, or if inside another player's plot.
+
+## 4. THE BOUNCER SHIELD ALGORITHM
+- In `PlayerMoveEvent`, check if `e.getFrom()` is outside the plot and `e.getTo()` is inside.
+- If the player is in the plot's `banned_players` list, cancel the event.
+- Compute the vector from the plot center to the player. Normalize it, multiply by `knockback_strength`.
+- Apply `player.setVelocity(vector)`.
+- Spawn a dense wall of `Particle.VILLAGER_HAPPY` (if set in config) at the plot border facing the player using `world.spawnParticle()`.
+
+## 5. GENERATORS & OFFLINE EARNINGS
+- Generators run on a `BukkitRunnable` every 1 minute.
+- Instead of actually dropping items on the ground (which causes lag), the plugin adds the items directly into the `Plot Vault` (Virtual Inventory).
+- If the Vault is full, the items are lost.
+- When an owner logs in, calculate how many items were generated while offline by comparing `System.currentTimeMillis()` with `last_logout`. Add the items retroactively.
+
+## 6. THE BLACKMARKET SYSTEM
+- The Blackmarket GUI is an asynchronous virtual inventory.
+- Items sold here bypass the 5% `chest_shops.tax_percent`.
+- When a transaction occurs, roll a random number `ThreadLocalRandom.current().nextInt(100)`.
+- If the number is < `blackmarket.snitch_chance_percent`, trigger the snitch event.
+- Use `jda.getTextChannelById(log_channel).sendMessage()` to alert admins.
+
+## 7. COMBAT TAGGING INSIDE PLOTS
+- If the plot flag `PvP` is true, listen to `EntityDamageByEntityEvent`.
+- If both entities are Players, put them in a `Map<UUID, Long>` tracking the combat timestamp.
+- Listen to `PlayerQuitEvent`. If `Map.containsKey(uuid)` and `currentTime - timestamp < 5000` (5s combat tag), kill the player instantly using `player.setHealth(0)`.
+
+## 8. VAULT VIRTUAL DOUBLE-CHESTS
+- Store vault items as Base64 strings in the `plots.yml` file.
+- Use Bukkit's serialization: `BukkitObjectOutputStream` to convert `Inventory` to a byte array, then Base64 encode it.
+- When opening the vault, decode the Base64 string back into an `Inventory`.
+- Tier 1 gets 27 slots (Chest). Tier 2+ gets 54 slots (Double Chest).
+
+## 9. BLUEMAP INTEGRATION
+- Connect to BlueMap API.
+- For each plot, create an `ExtrudeMarker` using the plot's X, Z bounds and Y=min_height to Y=max_height.
+- Set the `LineColor` to the hex value from the config.
+- Update the marker's label whenever the plot's name or owner changes.
+- Delete the marker when the plot is unclaimed or reset by FAWE.
+
+## 10. ADVANCED EDGE CASES & EXPLOIT PREVENTION
+- **Piston Push/Pull Exploits:** Players often try to push blocks into a plot using pistons from the wilderness. Listen to `BlockPistonExtendEvent` and `BlockPistonRetractEvent`. For every block in the `getBlocks()` list, check if its future location intersects with a plot boundary. If it does, and the piston owner is not a member, cancel it immediately.
+- **Hopper Minecart Theft:** Players might place Hopper Minecarts under a plot's chests to steal items. Listen to `VehicleMoveEvent` and `InventoryMoveItemEvent`. If a hopper minecart crosses into a plot boundary, destroy it or cancel the item suction.
+- **Dispenser Griefing:** Prevent dispensers in the wilderness from shooting TNT, arrows, or lava buckets into a plot. Check `BlockDispenseEvent`. If the dispenser is outside the plot but facing inside, cancel the event.
+- **Liquid Flow Griefing:** Water and Lava must not flow into a plot from outside. In `BlockFromToEvent`, check `e.getBlock().getLocation()` (source) and `e.getToBlock().getLocation()` (destination). If source is in wilderness and destination is in plot, cancel.
+
+## 11. ASYNCHRONOUS DATA SAVING (NO LAG)
+- The AI MUST NEVER save `plots.yml` on the main server thread.
+- Create an `AutoSaveTask` that runs every `auto_save_interval_minutes`.
+- Use Bukkit's `Bukkit.getScheduler().runTaskAsynchronously()` to write data to disk.
+- When the server shuts down (`onDisable`), use the main thread to forcefully save everything one last time to prevent rollback.
+
+## 12. PACKET-BASED TITLES & ACTIONBARS
+- Use the Paper API for titles: `player.showTitle(Title.title(Component.text(...)))` instead of old NMS packets. This is much cleaner and cross-version compatible.
+- For the `Live Plot Map Item` (Feature 31), intercept `PacketPlayOutMap` using ProtocolLib (if available) to draw the green dots (members) and red dots (intruders) dynamically on the map canvas, bypassing normal Minecraft map rendering. If ProtocolLib isn't present, use Bukkit's `MapRenderer` API instead.
+
+## 13. EXACT HOPPER & SPAWNER LIMITING ALGORITHM
+- When a player places a hopper/spawner (`BlockPlaceEvent`), check the plot's `current_hoppers` count.
+- If `current_hoppers >= plot_protections.hopper_limit`, cancel the event and send the `place_denied_message`.
+- Crucial Edge Case: If a player breaks a hopper, decrement the count.
+- Extreme Edge Case: If FAWE resets the plot, or TNT blows up a hopper (if explosions are allowed), the counter MUST be recalculated. Run an async scan of the plot chunks every 10 minutes to auto-correct the hopper/spawner counts.
+
+## 14. IN-GAME PRICE EDITOR GUI LOGIC
+- When an admin uses `/plot editprices` and clicks an item, close the GUI and put their UUID in a `price_edit_mode` Set.
+- Listen to `AsyncChatEvent`. If the player is in the Set, cancel their chat message, parse it as a Double, update the config file in memory, and immediately save it using `yamlConfiguration.save(file)`.
+- Play `ENTITY_EXPERIENCE_ORB_PICKUP` and remove them from the Set.
+
+# ================================================================== #
+#          END OF MASTER PLAN — COPYRIGHT REDGLITCHX                 #
+# ================================================================== #
