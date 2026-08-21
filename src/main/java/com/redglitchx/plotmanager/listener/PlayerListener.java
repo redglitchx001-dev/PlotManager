@@ -87,7 +87,7 @@ public class PlayerListener implements Listener {
         ItemStack item = event.getItem();
         if (item == null) return;
         Player player = event.getPlayer();
-        if (Items.hasTag(item, plugin.keys.wand())) {
+        if (Items.hasTag(item, plugin.keys.wand)) {
             if (event.getClickedBlock() == null) return;
             event.setCancelled(true);
             if (!player.hasPermission("plotmanager.wand") && !player.hasPermission("plotmanager.admin")) return;
@@ -107,7 +107,7 @@ public class PlayerListener implements Listener {
             }
             return;
         }
-        if (Items.hasTag(item, plugin.keys.godWand())) {
+        if (Items.hasTag(item, plugin.keys.godWand)) {
             event.setCancelled(true);
             if (!player.hasPermission("plotmanager.admin")) return;
             if (event.getClickedBlock() == null) return;
@@ -129,7 +129,7 @@ public class PlayerListener implements Listener {
             }
             return;
         }
-        if (Items.hasTag(item, plugin.keys.rollbackWand())) {
+        if (Items.hasTag(item, plugin.keys.rollbackWand)) {
             event.setCancelled(true);
             if (!player.hasPermission("plotmanager.admin")) return;
             if (event.getClickedBlock() == null) return;

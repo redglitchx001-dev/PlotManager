@@ -206,7 +206,7 @@ public class HologramEngine {
             if (plugin.cfg().getBoolean("auto_hologram.glow_effect", false)) as.setGlowing(true);
             as.getPersistentDataContainer().set(key, PersistentDataType.STRING, id);
             as.setRemoveWhenFarAway(false);
-        }, false);
+        });
         return stand;
     }
 

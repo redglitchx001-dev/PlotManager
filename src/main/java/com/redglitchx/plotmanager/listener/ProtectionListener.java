@@ -462,7 +462,7 @@ public class ProtectionListener implements Listener {
     public void onTransform(EntityTransformEvent event) {
         if (!plugin.cfg().getBoolean("plot_protections.prevent_villager_conversion", true)) return;
         if (plugin.store.index.at(event.getEntity().getLocation()) != null
-                && event.getTransformReason() == EntityTransformEvent.TransformReason.INFECTED) {
+                && event.getTransformReason() == EntityTransformEvent.TransformReason.INFECTION) {
             event.setCancelled(true);
         }
     }
