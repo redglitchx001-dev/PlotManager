@@ -1,3 +1,11 @@
+/*
+ * PlotManager — The Ultimate Plot Management System
+ * Copyright (c) 2026 RedGlitchX. All Rights Reserved.
+ *
+ * This file is proprietary and confidential. Unauthorised copying,
+ * redistribution, modification or use of this file, via any medium,
+ * is strictly prohibited. See the LICENSE file for the full terms.
+ */
 package com.redglitchx.plotmanager.integration;
 
 import com.redglitchx.plotmanager.PlotManager;
@@ -15,25 +23,38 @@ import java.util.logging.Level;
 public class PapiHook {
     private final PlotManager plugin;
     private final boolean available;
+    private boolean registered;
     private Method setPlaceholders;
 
     public PapiHook(PlotManager plugin) {
         this.plugin = plugin;
-        available = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
-        if (available) {
-            try {
-                Class<?> api = Class.forName("me.clip.placeholderapi.PlaceholderAPI");
-                setPlaceholders = api.getMethod("setPlaceholders", OfflinePlayer.class, String.class);
-                Class<?> expansion = Class.forName("com.redglitchx.plotmanager.integration.PapiExpansion");
-                Object inst = expansion.getConstructor(PlotManager.class).newInstance(plugin);
-                expansion.getMethod("register").invoke(inst);
-            } catch (Throwable t) {
-                plugin.getLogger().log(Level.WARNING, "PlaceholderAPI hook failed", t);
-            }
+        boolean found = false;
+        try {
+            found = Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null;
+        } catch (Throwable ignored) {
+        }
+        this.available = found;
+        if (!found) return;
+        try {
+            Class<?> api = Class.forName("me.clip.placeholderapi.PlaceholderAPI");
+            setPlaceholders = api.getMethod("setPlaceholders", OfflinePlayer.class, String.class);
+            // Loaded reflectively: PapiExpansion extends a PlaceholderAPI class, so it
+            // must never be touched on servers without PlaceholderAPI installed.
+            Class<?> expansion = Class.forName("com.redglitchx.plotmanager.integration.PapiExpansion");
+            Object inst = expansion.getConstructor(PlotManager.class).newInstance(plugin);
+            Object ok = expansion.getMethod("register").invoke(inst);
+            registered = !(ok instanceof Boolean b) || b;
+        } catch (Throwable t) {
+            plugin.getLogger().log(Level.WARNING, "PlaceholderAPI hook failed (placeholders stay internal)", t);
         }
     }
 
     public boolean available() { return available; }
+
+    public String status() {
+        if (!available) return "NOT INSTALLED";
+        return registered ? "ONLINE" : "INSTALLED (expansion not registered)";
+    }
 
     public String apply(Player player, String text) {
         return apply((OfflinePlayer) player, text);

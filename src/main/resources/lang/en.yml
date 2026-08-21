@@ -1,3 +1,9 @@
+# ================================================================== #
+#                          PLOTMANAGER V1                            #
+#                       Created by: RedGlitchX                       #
+#          Copyright (c) 2026 RedGlitchX. All Rights Reserved.       #
+#   Proprietary software - see LICENSE. Do not remove this notice.   #
+# ================================================================== #
 # ============================================================ #
 #  PlotManager — English messages (en)                         #
 #  Edit freely; use & for colors and &#RRGGBB for hex.         #
@@ -95,6 +101,7 @@ economy:
   deposit_message: "&aYou deposited &2$%amount% &ainto the plot bank. Balance: &2$%balance%"
   withdraw_message: "&aYou withdrew &2$%amount% &afrom the plot bank. Balance: &2$%balance%"
   not_enough_bank_message: "&cThe plot bank does not have enough money!"
+  no_economy_message: "&cMoney features are disabled: no Vault economy is installed on this server."
 
 shops:
   created_message: "&aShop created! Selling %amount%x %item% for $%price%"

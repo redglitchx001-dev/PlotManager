@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  PlotManager — The Ultimate Plot Management System
+  Copyright (c) 2026 RedGlitchX. All Rights Reserved.
+
+  Proprietary software. Redistribution, modification or removal of the author
+  credit is prohibited. See the LICENSE file for the full terms.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -6,22 +13,61 @@
 
     <groupId>com.redglitchx</groupId>
     <artifactId>PlotManager</artifactId>
-    <version>1.0</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>PlotManager</name>
-    <description>The Ultimate Plot Management System V1 | BY REDGLITCHX</description>
+    <description>The Ultimate Plot Management System V1 | (c) RedGlitchX - All Rights Reserved</description>
+    <url>https://github.com/redglitchx001-dev/PlotManager</url>
+    <inceptionYear>2026</inceptionYear>
+
+    <organization>
+        <name>RedGlitchX</name>
+        <url>https://github.com/redglitchx001-dev</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>PlotManager Proprietary License - Copyright (c) 2026 RedGlitchX, All Rights Reserved</name>
+            <url>https://github.com/redglitchx001-dev/PlotManager/blob/main/LICENSE</url>
+            <distribution>manual</distribution>
+            <comments>Proprietary. All rights reserved by RedGlitchX. No redistribution or derivative works.</comments>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>redglitchx</id>
+            <name>RedGlitchX</name>
+            <url>https://github.com/redglitchx001-dev</url>
+            <roles>
+                <role>Author</role>
+                <role>Copyright holder</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/redglitchx001-dev/PlotManager</url>
+        <connection>scm:git:https://github.com/redglitchx001-dev/PlotManager.git</connection>
+        <developerConnection>scm:git:git@github.com:redglitchx001-dev/PlotManager.git</developerConnection>
+    </scm>
 
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <copyright>Copyright (c) 2026 RedGlitchX. All Rights Reserved.</copyright>
         <!--
-            Paper API build target. The plugin is verified to compile against ALL of:
-              1.21.4-R0.1-SNAPSHOT   (oldest supported)
-              1.21.11-R0.1-SNAPSHOT
-              26.1.2-R0.1-SNAPSHOT
-            Override at build time:  mvn package -Dpaper.version=26.1.2-R0.1-SNAPSHOT
+            Paper API build target. One jar is published per supported server
+            version by the release workflow; override at build time with:
+
+                mvn -B package -Dpaper.version=1.21.4-R0.1-SNAPSHOT
+
+            The oldest supported target (1.21.4) produces the "universal" jar,
+            which also runs on every newer 1.21.x / 26.x server.
         -->
-        <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
+        <paper.version>1.21.4-R0.1-SNAPSHOT</paper.version>
+        <!-- Suffix appended to the jar name, e.g. PlotManager-1.0.0-mc1.21.4.jar -->
+        <jar.classifier></jar.classifier>
     </properties>
 
     <repositories>
@@ -30,52 +76,38 @@
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <repository>
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
-        </repository>
-        <repository>
-            <id>enginehub</id>
-            <url>https://maven.enginehub.org/repo/</url>
-        </repository>
-        <repository>
-            <id>codemc</id>
-            <url>https://repo.codemc.io/repository/maven-public/</url>
-        </repository>
-        <repository>
-            <id>bluemap</id>
-            <url>https://repo.bluecolored.de/releases</url>
         </repository>
     </repositories>
 
     <dependencies>
+        <!-- Server API -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
             <version>${paper.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.github.MilkBowl</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>1.7.1</version>
-            <scope>provided</scope>
-        </dependency>
+
+        <!--
+            PlaceholderAPI: compile-time only, for PapiExpansion. It is loaded
+            reflectively at runtime, so servers without PAPI are unaffected.
+        -->
         <dependency>
             <groupId>me.clip</groupId>
             <artifactId>placeholderapi</artifactId>
             <version>2.11.6</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>net.luckperms</groupId>
-            <artifactId>api</artifactId>
-            <version>5.4</version>
-            <scope>provided</scope>
-        </dependency>
+
+        <!--
+            Vault is NOT a compile dependency on purpose: EconomyService talks to
+            it purely through reflection so that a missing, renamed or forked
+            Vault can never stop the plugin from enabling.
+        -->
+
+        <!-- Bundled Discord bot (shaded + relocated into the jar) -->
         <dependency>
             <groupId>net.dv8tion</groupId>
             <artifactId>JDA</artifactId>
@@ -90,7 +122,7 @@
     </dependencies>
 
     <build>
-        <finalName>PlotManager-1.0</finalName>
+        <finalName>${project.artifactId}-${project.version}${jar.classifier}</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -106,6 +138,15 @@
                     <exclude>plugin.yml</exclude>
                 </excludes>
             </resource>
+            <!-- Ship the licence inside every jar -->
+            <resource>
+                <directory>${project.basedir}</directory>
+                <targetPath>META-INF</targetPath>
+                <filtering>false</filtering>
+                <includes>
+                    <include>LICENSE</include>
+                </includes>
+            </resource>
         </resources>
         <plugins>
             <plugin>
@@ -113,11 +154,29 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
                     <release>${java.version}</release>
+                    <compilerArgs>
+                        <arg>-Xlint:-options</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
+
+            <!-- Source archive published alongside every release -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -130,6 +189,22 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <transformers>
+                                <!-- keeps JDA/okhttp/jackson service lookups working after relocation -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <manifestEntries>
+                                        <Implementation-Title>PlotManager</Implementation-Title>
+                                        <Implementation-Version>${project.version}</Implementation-Version>
+                                        <Implementation-Vendor>RedGlitchX</Implementation-Vendor>
+                                        <Specification-Vendor>RedGlitchX</Specification-Vendor>
+                                        <Author>RedGlitchX</Author>
+                                        <Copyright>${copyright}</Copyright>
+                                        <License>Proprietary - All Rights Reserved</License>
+                                        <Built-Against-Paper>${paper.version}</Built-Against-Paper>
+                                    </manifestEntries>
+                                </transformer>
+                            </transformers>
                             <relocations>
                                 <relocation>
                                     <pattern>net.dv8tion</pattern>
@@ -160,10 +235,6 @@
                                     <shadedPattern>com.redglitchx.plotmanager.lib.jackson</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>org.slf4j</pattern>
-                                    <shadedPattern>com.redglitchx.plotmanager.lib.slf4j</shadedPattern>
-                                </relocation>
-                                <relocation>
                                     <pattern>kotlin</pattern>
                                     <shadedPattern>com.redglitchx.plotmanager.lib.kotlin</shadedPattern>
                                 </relocation>
@@ -179,9 +250,11 @@
                                         <exclude>META-INF/*.SF</exclude>
                                         <exclude>META-INF/*.DSA</exclude>
                                         <exclude>META-INF/*.RSA</exclude>
-                                        <exclude>META-INF/LICENSE*</exclude>
+                                        <exclude>META-INF/maven/**</exclude>
                                         <exclude>META-INF/NOTICE*</exclude>
+                                        <exclude>META-INF/DEPENDENCIES</exclude>
                                         <exclude>META-INF/versions/9/module-info.class</exclude>
+                                        <exclude>module-info.class</exclude>
                                     </excludes>
                                 </filter>
                             </filters>

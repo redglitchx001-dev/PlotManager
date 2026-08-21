@@ -1,3 +1,11 @@
+/*
+ * PlotManager — The Ultimate Plot Management System
+ * Copyright (c) 2026 RedGlitchX. All Rights Reserved.
+ *
+ * This file is proprietary and confidential. Unauthorised copying,
+ * redistribution, modification or use of this file, via any medium,
+ * is strictly prohibited. See the LICENSE file for the full terms.
+ */
 package com.redglitchx.plotmanager;
 
 import com.redglitchx.plotmanager.command.PlotCommand;
@@ -59,6 +67,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
 
 public final class PlotManager extends JavaPlugin {
     public PlotStore store;
@@ -76,68 +85,169 @@ public final class PlotManager extends JavaPlugin {
     public final Map<UUID, PlayerSession> sessions = new ConcurrentHashMap<>();
     public final Map<UUID, Long> combat = new ConcurrentHashMap<>();
 
+    /** Subsystems that refused to start, reported once on /plot hooks and at boot. */
+    private final List<String> bootFailures = new ArrayList<>();
+
+    /** A startup step that is allowed to explode without taking the plugin down. */
+    @FunctionalInterface
+    private interface BootStep {
+        void run() throws Throwable;
+    }
+
+    /**
+     * Runs an optional startup step. A failure is logged and recorded, never
+     * propagated: one broken integration must never stop PlotManager from
+     * enabling.
+     *
+     * @return true when the step completed
+     */
+    private boolean optional(String name, BootStep step) {
+        try {
+            step.run();
+            return true;
+        } catch (Throwable t) {
+            bootFailures.add(name);
+            getLogger().log(Level.WARNING, "Optional subsystem '" + name
+                    + "' failed to start - PlotManager keeps running without it.", t);
+            return false;
+        }
+    }
+
     @Override
     public void onEnable() {
-        saveDefaultConfig();
+        try {
+            saveDefaultConfig();
+        } catch (Throwable t) {
+            getLogger().log(Level.SEVERE, "Could not write the default config.yml", t);
+        }
+
+        // --- core (must exist; all of these are dependency-free) -------------
         keys = new Keys(this);
         store = new PlotStore(this);
         economy = new EconomyService(this);
-        if (!economy.setup()) {
-            getLogger().severe("Vault economy not found yet! PlotManager requires Vault + an economy plugin (EssentialsX, CMI, ...).");
-            // Economy providers (e.g. EssentialsX) may enable after us - retry once every plugin is up.
-            Bukkit.getScheduler().runTaskLater(this, () -> {
-                if (economy.setup()) {
-                    getLogger().info("Economy hooked: " + economy.status());
-                } else {
-                    getLogger().severe("Economy still OFFLINE - money features disabled. Install Vault + EssentialsX (or any Vault economy) and restart.");
-                }
-            }, 40L);
-        }
+        lang = new Lang(this);
+        holograms = new HologramEngine(this);
+        menus = new Menus(this);
+
+        // --- optional integrations -------------------------------------------
+        // Each hook detects its plugin on its own and reports NOT INSTALLED when
+        // absent. None of them is required for PlotManager to work.
         luckPerms = new LuckPermsHook(this);
         discord = new DiscordBot(this);
         fawe = new FaweHook(this);
         blueMap = new BlueMapHook(this);
         papi = new PapiHook(this);
         voice = new VoiceHook(this);
-        lang = new Lang(this);
-        lang.load();
-        getLogger().info("Languages: " + String.join(", ", lang.available()) + " (default: " + lang.defaultCode() + ", fallback: " + lang.fallbackCode() + ")");
-        holograms = new HologramEngine(this);
-        menus = new Menus(this);
 
-        store.load();
-        discord.start();
-        blueMap.start();
+        setupEconomy();
+
+        optional("languages", () -> {
+            lang.load();
+            getLogger().info("Languages: " + String.join(", ", lang.available())
+                    + " (default: " + lang.defaultCode() + ", fallback: " + lang.fallbackCode() + ")");
+        });
+        optional("plot storage", store::load);
+        optional("discord", discord::start);
+        optional("bluemap", blueMap::start);
 
         PlotCommand cmd = new PlotCommand(this);
         var plot = getCommand("plot");
         if (plot != null) {
             plot.setExecutor(cmd);
             plot.setTabCompleter(cmd);
+        } else {
+            getLogger().severe("The /plot command is missing from plugin.yml - the jar looks corrupted, please re-download it.");
         }
 
-        Bukkit.getPluginManager().registerEvents(new ProtectionListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new MoveListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new GuiListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new MechanicListener(this), this);
+        optional("protection listener", () -> Bukkit.getPluginManager().registerEvents(new ProtectionListener(this), this));
+        optional("move listener", () -> Bukkit.getPluginManager().registerEvents(new MoveListener(this), this));
+        optional("player listener", () -> Bukkit.getPluginManager().registerEvents(new PlayerListener(this), this));
+        optional("gui listener", () -> Bukkit.getPluginManager().registerEvents(new GuiListener(this), this));
+        optional("mechanic listener", () -> Bukkit.getPluginManager().registerEvents(new MechanicListener(this), this));
 
-        holograms.start();
-        PluginTasks.start(this);
-        printBanner();
-        getLogger().info("Hooks -> Economy: " + economy.status() + " | FAWE: " + fawe.status()
-                + " | BlueMap: " + blueMap.status() + " | Discord: " + discord.status());
+        optional("holograms", holograms::start);
+        optional("scheduled tasks", () -> PluginTasks.start(this));
+        optional("startup banner", this::printBanner);
+
+        for (String line : hooksReport()) getLogger().info(line);
+        if (!bootFailures.isEmpty()) {
+            getLogger().warning("Started with " + bootFailures.size() + " degraded subsystem(s): "
+                    + String.join(", ", bootFailures) + " - see the warnings above. /plot hooks shows the details.");
+        }
+    }
+
+    /**
+     * Binds the Vault economy, retrying after the server finishes loading because
+     * providers such as EssentialsX or CMI may register after us.
+     */
+    private void setupEconomy() {
+        if (economy.setup()) return;
+        getLogger().warning("No Vault economy bound yet - retrying once every plugin has loaded.");
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            if (economy.setup()) {
+                getLogger().info("Economy hooked: " + economy.status());
+            } else {
+                getLogger().warning("Economy OFFLINE - PlotManager still runs, but money features "
+                        + "(claim costs, banks, shops, upgrades) stay disabled until Vault + an economy "
+                        + "plugin such as EssentialsX or CMI is installed.");
+            }
+        }, 40L);
+    }
+
+    /** Human readable state of every integration, required and optional. */
+    public List<String> hooksReport() {
+        List<String> out = new ArrayList<>();
+        out.add("PlotManager v" + version() + " by RedGlitchX - hook report");
+        out.add("  Economy (Vault)      : " + (economy == null ? "STARTING" : economy.status()) + "  [required for money features]");
+        out.add("  PlaceholderAPI       : " + (papi == null ? "STARTING" : papi.status()) + "  [optional]");
+        out.add("  FAWE / WorldEdit     : " + (fawe == null ? "STARTING" : fawe.status()) + "  [optional - plot rollback]");
+        out.add("  BlueMap              : " + (blueMap == null ? "STARTING" : blueMap.status()) + "  [optional - web map]");
+        out.add("  Simple Voice Chat    : " + (voice == null ? "STARTING" : voice.status()) + "  [optional - plot voice]");
+        out.add("  Discord bot (bundled): " + (discord == null ? "STARTING" : discord.status()) + "  [optional - no extra plugin needed]");
+        out.add("  Holograms            : BUILT-IN (no hologram plugin required)");
+        out.add("  Plots loaded         : " + (store == null ? "0" : String.valueOf(store.plots.size())));
+        if (!bootFailures.isEmpty()) out.add("  Degraded             : " + String.join(", ", bootFailures));
+        return out;
+    }
+
+    /** Plugin version straight from the jar, never null. */
+    public String version() {
+        try {
+            return getPluginMeta().getVersion();
+        } catch (Throwable t) {
+            return "1.0";
+        }
     }
 
     @Override
     public void onDisable() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            PlayerSession s = sessions.get(player.getUniqueId());
-            if (s != null && s.drone) disableDrone(player, false);
+            try {
+                PlayerSession s = sessions.get(player.getUniqueId());
+                if (s != null && s.drone) disableDrone(player, false);
+            } catch (Throwable ignored) {
+            }
         }
-        holograms.shutdown();
-        discord.shutdown();
-        store.saveSync();
+        if (holograms != null) {
+            try {
+                holograms.shutdown();
+            } catch (Throwable t) {
+                getLogger().log(Level.WARNING, "Hologram cleanup failed", t);
+            }
+        }
+        if (discord != null) {
+            try {
+                discord.shutdown();
+            } catch (Throwable ignored) {
+            }
+        }
+        if (store != null) {
+            try {
+                store.saveSync();
+            } catch (Throwable t) {
+                getLogger().log(Level.SEVERE, "Could not save plot data on shutdown", t);
+            }
+        }
     }
 
     public FileConfiguration cfg() {
@@ -1063,11 +1173,11 @@ public final class PlotManager extends JavaPlugin {
 
     private void printBanner() {
         if (!cfg().getBoolean("plugin.startup_banner.enabled", true)) {
-            getLogger().info("PlotManager v" + getPluginMeta().getVersion() + " enabled.");
+            getLogger().info("PlotManager v" + version() + " enabled.");
             return;
         }
         Map<String, String> ph = Map.of(
-                "plugin_version", getPluginMeta().getVersion(),
+                "plugin_version", version(),
                 "server_version", Bukkit.getVersion(),
                 "total_plots", String.valueOf(store.plots.size()),
                 "db_status", "YAML OK",

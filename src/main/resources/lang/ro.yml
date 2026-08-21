@@ -1,3 +1,9 @@
+# ================================================================== #
+#                          PLOTMANAGER V1                            #
+#                       Created by: RedGlitchX                       #
+#          Copyright (c) 2026 RedGlitchX. All Rights Reserved.       #
+#   Proprietary software - see LICENSE. Do not remove this notice.   #
+# ================================================================== #
 # ============================================================ #
 #  PlotManager — Mesaje în română (ro)                         #
 #  Modifică liber; folosește & pentru culori și &#RRGGBB hex.  #
@@ -96,6 +102,7 @@ economy:
   deposit_message: "&aAi depus &2$%amount% &aîn banca plotului. Balanț: &2$%balance%"
   withdraw_message: "&aAi retras &2$%amount% &adin banca plotului. Balanț: &2$%balance%"
   not_enough_bank_message: "&cBanca plotului nu are suficienți bani!"
+  no_economy_message: "&cFuncțiile cu bani sunt dezactivate: nu există o economie Vault instalată pe acest server."
 
 shops:
   created_message: "&aMagazin creat! Se vinde %amount%x %item% pentru $%price%"

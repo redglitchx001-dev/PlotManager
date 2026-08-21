@@ -1,7 +1,8 @@
 # ================================================================== #
 #                    PLOTMANAGER V1 — CONFIGURATION                  #
 #                       Created by: RedGlitchX                       #
-#               Copyright (C) RedGlitchX. All Rights Reserved.       #
+#          Copyright (c) 2026 RedGlitchX. All Rights Reserved.       #
+#   Proprietary software - see LICENSE. Do not remove this notice.   #
 # ================================================================== #
 
 # ---------------------------------------------------------- #
@@ -205,6 +206,9 @@ economy:
   withdraw_message: "&aYou withdrew &2$%amount% &afrom the plot bank. Balance: &2$%balance%"
   not_enough_money_message: "&cNot enough money! You have: $%balance%"
   not_enough_bank_message: "&cThe plot bank does not have enough money!"
+  # Shown when no Vault economy is installed. PlotManager still runs, but it
+  # refuses to hand out paid features for free.
+  no_economy_message: "&cMoney features are disabled: no Vault economy is installed on this server."
 
 upkeep:
   enabled: true

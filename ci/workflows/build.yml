@@ -1,0 +1,67 @@
+# ================================================================== #
+#                          PLOTMANAGER V1                            #
+#          Copyright (c) 2026 RedGlitchX. All Rights Reserved.       #
+# ================================================================== #
+#
+# Compiles PlotManager against every supported Paper version so a broken
+# build can never reach a release.
+#
+name: Build
+
+on:
+  push:
+    branches: ['**']
+    paths-ignore: ['**.md', 'LICENSE']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  targets:
+    name: Resolve supported versions
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.resolve.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: resolve
+        run: echo "matrix=$(python3 .github/scripts/targets.py)" >> "$GITHUB_OUTPUT"
+      - run: echo '${{ steps.resolve.outputs.matrix }}' >> "$GITHUB_STEP_SUMMARY"
+
+  build:
+    name: MC ${{ matrix.mc }} (Java ${{ matrix.jdk }})
+    needs: targets
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.targets.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.jdk }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.jdk }}
+          cache: maven
+
+      - name: Build
+        run: >
+          mvn -B -ntp package
+          -Dpaper.version=${{ matrix.paper }}
+          -Djava.version=${{ matrix.jdk }}
+          -Djar.classifier=-mc${{ matrix.mc }}
+
+      - name: Upload jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: PlotManager-mc${{ matrix.mc }}
+          path: target/PlotManager-*-mc${{ matrix.mc }}.jar
+          if-no-files-found: error
+          retention-days: 30

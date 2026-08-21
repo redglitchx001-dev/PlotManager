@@ -1,0 +1,214 @@
+# ================================================================== #
+#                          PLOTMANAGER V1                            #
+#          Copyright (c) 2026 RedGlitchX. All Rights Reserved.       #
+# ================================================================== #
+#
+# Publishes a GitHub Release containing:
+#   * one .jar per supported Minecraft version, from the first supported
+#     release (1.21.4, also the universal jar) to the newest Paper build
+#   * the full source code (.zip and a Maven -sources.jar)
+#   * SHA256 checksums for every file
+#
+# Run it either by pushing a tag (git tag v1.0.0 && git push origin v1.0.0)
+# or from the Actions tab -> Release -> Run workflow.
+#
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (without the leading v), e.g. 1.0.0'
+        required: true
+        type: string
+      prerelease:
+        description: 'Mark as a pre-release'
+        required: false
+        default: false
+        type: boolean
+      draft:
+        description: 'Create as a draft (publish it yourself afterwards)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  targets:
+    name: Resolve supported versions
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.resolve.outputs.matrix }}
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: resolve
+        run: echo "matrix=$(python3 .github/scripts/targets.py)" >> "$GITHUB_OUTPUT"
+
+      - id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            version="${{ inputs.version }}"
+          else
+            version="${GITHUB_REF_NAME#v}"
+          fi
+          version="${version#v}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Releasing PlotManager v$version" >> "$GITHUB_STEP_SUMMARY"
+
+  build:
+    name: MC ${{ matrix.mc }}
+    needs: targets
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.targets.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.jdk }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.jdk }}
+          cache: maven
+
+      - name: Stamp release version
+        run: >
+          mvn -B -ntp org.codehaus.mojo:versions-maven-plugin:2.17.1:set
+          -DnewVersion=${{ needs.targets.outputs.version }}
+          -DgenerateBackupPoms=false
+
+      - name: Build jar
+        run: >
+          mvn -B -ntp package
+          -Dpaper.version=${{ matrix.paper }}
+          -Djava.version=${{ matrix.jdk }}
+          -Djar.classifier=-mc${{ matrix.mc }}
+
+      - name: Collect artifacts
+        run: |
+          mkdir -p dist
+          cp target/PlotManager-*-mc${{ matrix.mc }}.jar dist/
+          if [ "${{ matrix.universal }}" = "true" ]; then
+            # The oldest supported API is forward compatible: ship it as the
+            # one-jar-fits-all download, and publish the source archive with it.
+            cp "target/PlotManager-${{ needs.targets.outputs.version }}-mc${{ matrix.mc }}.jar" \
+               "dist/PlotManager-${{ needs.targets.outputs.version }}-universal.jar"
+            cp target/PlotManager-*-sources.jar dist/ 2>/dev/null || true
+          fi
+          ls -lh dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-mc${{ matrix.mc }}
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    name: Publish release
+    needs: [targets, build]
+    if: always() && needs.build.result != 'cancelled'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: staging
+          pattern: build-mc*
+          merge-multiple: true
+
+      - name: Assemble release files
+        id: assemble
+        env:
+          VERSION: ${{ needs.targets.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          cp staging/*.jar release/ 2>/dev/null || true
+
+          # Full source code of this exact tag
+          git archive --format=zip --prefix="PlotManager-${VERSION}/" \
+            -o "release/PlotManager-${VERSION}-source.zip" HEAD
+          cp LICENSE "release/LICENSE.txt"
+
+          cd release
+          sha256sum * > SHA256SUMS.txt
+          ls -lh
+          {
+            echo "jars<<EOF"
+            for f in PlotManager-*.jar; do echo "- \`$f\`"; done
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Write release notes
+        env:
+          VERSION: ${{ needs.targets.outputs.version }}
+        run: |
+          cat > NOTES.md <<'HEADER'
+          ## PlotManager — downloads
+
+          Pick the jar that matches your server. **Not sure? Take the universal
+          jar** — it is built against the oldest supported API and runs on every
+          supported version.
+
+          | File | Use it for |
+          |---|---|
+          | `PlotManager-VERSION-universal.jar` | any supported server (recommended) |
+          | `PlotManager-VERSION-mcX.Y.Z.jar` | built and verified against exactly that Paper version |
+          | `PlotManager-VERSION-source.zip` | the complete source code |
+          | `PlotManager-VERSION-sources.jar` | the same source code, as a Maven sources jar |
+          | `SHA256SUMS.txt` | checksums for everything above |
+
+          ### Requirements
+          - Java 21+ (Java 25 for the 26.x jars)
+          - Paper (or a fork) 1.21.4 or newer
+          - Vault + an economy plugin **only** if you want the money features —
+            everything else (holograms, protection, GUIs, Discord bot) works
+            with no other plugin installed. Run `/plot hooks` in game to see
+            what the server detected.
+
+          ### Optional integrations
+          PlaceholderAPI · FastAsyncWorldEdit · BlueMap · Simple Voice Chat.
+          All of them are detected at runtime; none of them is required.
+
+          ---
+          © 2026 **RedGlitchX** — All Rights Reserved. Proprietary software,
+          see [LICENSE](https://github.com/redglitchx001-dev/PlotManager/blob/main/LICENSE).
+          Redistribution is prohibited.
+          HEADER
+          sed -i "s/VERSION/${VERSION}/g" NOTES.md
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.targets.outputs.version }}
+        run: |
+          set -euo pipefail
+          tag="v${VERSION}"
+          flags=""
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            [ "${{ inputs.prerelease }}" = "true" ] && flags="$flags --prerelease"
+            [ "${{ inputs.draft }}" = "true" ] && flags="$flags --draft"
+          fi
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" release/* --clobber
+            gh release edit "$tag" --notes-file NOTES.md
+          else
+            # shellcheck disable=SC2086
+            gh release create "$tag" release/* \
+              --title "PlotManager v${VERSION}" \
+              --notes-file NOTES.md \
+              --target "${GITHUB_SHA}" $flags
+          fi

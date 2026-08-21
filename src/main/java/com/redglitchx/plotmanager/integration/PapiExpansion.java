@@ -1,3 +1,11 @@
+/*
+ * PlotManager — The Ultimate Plot Management System
+ * Copyright (c) 2026 RedGlitchX. All Rights Reserved.
+ *
+ * This file is proprietary and confidential. Unauthorised copying,
+ * redistribution, modification or use of this file, via any medium,
+ * is strictly prohibited. See the LICENSE file for the full terms.
+ */
 package com.redglitchx.plotmanager.integration;
 
 import com.redglitchx.plotmanager.PlotManager;
@@ -16,7 +24,7 @@ public class PapiExpansion extends PlaceholderExpansion {
 
     @Override public @NotNull String getIdentifier() { return "plotmanager"; }
     @Override public @NotNull String getAuthor() { return "RedGlitchX"; }
-    @Override public @NotNull String getVersion() { return plugin.getPluginMeta().getVersion(); }
+    @Override public @NotNull String getVersion() { return plugin.version(); }
     @Override public boolean persist() { return true; }
 
     @Override
