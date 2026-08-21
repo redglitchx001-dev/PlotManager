@@ -1,6 +1,9 @@
 # 🟢 PlotManager: The Ultimate Plot System
 *Designed by RedGlitchX*
 
+> **Copyright (c) 2026 RedGlitchX. All Rights Reserved.**
+> Proprietary software — see [LICENSE](LICENSE). Redistribution prohibited.
+
 **PlotManager** is a revolutionary, 53-feature survival plot management plugin designed to completely redefine how players claim, build, and interact on a Minecraft Survival server. It leaves absolutely zero room for lag, griefing, or exploits, and introduces next-generation features that no other plugin currently possesses.
 
 ## 🌟 Core Philosophy
@@ -18,9 +21,13 @@
 
 ## 📦 Required & Optional Dependencies
 
-**Required Plugins (Must have):**
-- **Vault** (For all economy transactions)
-- **An Economy Provider** (e.g. EssentialsX, CMI)
+**Required:**
+- **Paper 1.21.4+** and **Java 21+** — that is all.
+
+**Optional, for the money features only:**
+- **Vault** (economy bridge) + an economy provider such as **EssentialsX** or **CMI**.
+  Without them PlotManager still loads; claim costs, plot banks, shops and paid
+  upgrades simply stay switched off. Run `/plot hooks` to see the live status.
 
 **Soft-Depends (Optional, unlocks features):**
 - **FastAsyncWorldEdit (FAWE)** — Unlocks the 7-day auto-wipe & natural rollback.
@@ -76,3 +83,7 @@ vip:
 A massive, 1,300+ line blueprint file (`PlotManager-Master-Plan.txt`) has been generated on your device. This file contains the **exact Java architecture**, NBT packet instructions, and Edge-Case logic required to code this plugin without a single flaw. 
 
 **Give that file to the building AI, and watch the magic happen.**
+
+---
+
+© 2026 **RedGlitchX** — PlotManager. All Rights Reserved.
