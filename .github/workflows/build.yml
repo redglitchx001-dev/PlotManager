@@ -1,0 +1,127 @@
+# ================================================================== #
+#                          PLOTMANAGER V1                            #
+#          Copyright (c) 2026 RedGlitchX. All Rights Reserved.       #
+# ================================================================== #
+#
+# One jar for every server: PlotManagerv1-All.jar
+#
+#   * verify   - compiles the code against EVERY supported Paper version
+#                (fast, no packaging) so an API break is caught before release
+#   * universal - builds the single shaded jar against the oldest supported
+#                API (1.21), which runs on 1.21.x through 26.x
+#
+name: Build
+
+on:
+  push:
+    branches: ['**']
+    paths-ignore: ['**.md', 'LICENSE', 'release/**']
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      commit_jar:
+        description: 'Commit release/PlotManagerv1-All.jar back to this branch'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  targets:
+    name: Resolve supported versions
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.resolve.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: resolve
+        run: echo "matrix=$(python3 .github/scripts/targets.py)" >> "$GITHUB_OUTPUT"
+      - run: echo '${{ steps.resolve.outputs.matrix }}' >> "$GITHUB_STEP_SUMMARY"
+
+  verify:
+    name: Verify MC ${{ matrix.mc }} (Java ${{ matrix.jdk }})
+    needs: targets
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.targets.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.jdk }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.jdk }}
+          cache: maven
+
+      # Compile-only: proves the code links against this Paper version.
+      # Nothing is packaged or published from this job.
+      - name: Verify compilation
+        run: >
+          mvn -B -ntp test-compile
+          -Dpaper.version=${{ matrix.paper }}
+          -Djava.version=${{ matrix.jdk }}
+
+  universal:
+    name: Build PlotManagerv1-All.jar
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # only used when commit_jar is ticked on a manual run
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      - name: Build the universal jar
+        run: mvn -B -ntp package
+
+      - name: Sanity-check the jar
+        run: |
+          set -euo pipefail
+          jar=target/PlotManagerv1-All.jar
+          test -f "$jar"
+          unzip -l "$jar" | grep -q 'plugin.yml'
+          unzip -p "$jar" plugin.yml | grep -q 'com.redglitchx.plotmanager.PlotManager'
+          unzip -l "$jar" | grep -q 'com/redglitchx/plotmanager/PlotManager.class'
+          unzip -l "$jar" | grep -q 'META-INF/LICENSE'
+          unzip -l "$jar" | grep -q 'com/redglitchx/plotmanager/lib/jda'
+          echo "jar OK: $(du -h "$jar" | cut -f1)"
+          ls -lh target/*.jar
+
+      - name: Upload jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: PlotManagerv1-All
+          path: target/PlotManagerv1-All.jar
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Commit jar back to the branch
+        if: github.event_name == 'workflow_dispatch' && inputs.commit_jar
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          cp target/PlotManagerv1-All.jar release/PlotManagerv1-All.jar
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add -f release/PlotManagerv1-All.jar
+          if git diff --cached --quiet; then
+            echo 'jar unchanged - nothing to commit.'
+          else
+            git commit -m 'Build PlotManagerv1-All.jar (universal, all MC versions)'
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
