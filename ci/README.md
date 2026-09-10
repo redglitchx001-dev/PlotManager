@@ -69,8 +69,8 @@ failed build can simply be retried.
 ## Building by hand
 
 ```bash
-mvn -B package                                    # universal jar (Paper 1.21.4 API)
-mvn -B package -Dpaper.version=1.21.8-R0.1-SNAPSHOT -Djar.classifier=-mc1.21.8
+mvn -B package                                         # -> target/PlotManagerv1-All.jar (Paper 1.21 API)
+mvn -B test-compile -Dpaper.version=1.21.8-R0.1-SNAPSHOT # verify against a newer API only
 ```
 
-The jar lands in `target/`.
+The jar lands in `target/PlotManagerv1-All.jar`.
