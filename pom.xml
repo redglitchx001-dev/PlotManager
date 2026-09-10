@@ -57,17 +57,18 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <copyright>Copyright (c) 2026 RedGlitchX. All Rights Reserved.</copyright>
         <!--
-            Paper API build target. One jar is published per supported server
-            version by the release workflow; override at build time with:
+            Paper API build target. PlotManager ships as ONE universal jar that
+            runs on every supported server (1.21.x through 26.x), so it is always
+            compiled against the OLDEST supported API (1.21): the Paper API only
+            ever adds methods, which makes a jar built here forward compatible
+            with every newer version. CI additionally verify-compiles the code
+            against every newer Paper version without shipping those jars.
 
-                mvn -B package -Dpaper.version=1.21.4-R0.1-SNAPSHOT
+            Override at build time only to verify a specific version:
 
-            The oldest supported target (1.21.4) produces the "universal" jar,
-            which also runs on every newer 1.21.x / 26.x server.
+                mvn -B package -Dpaper.version=1.21.8-R0.1-SNAPSHOT
         -->
-        <paper.version>1.21.4-R0.1-SNAPSHOT</paper.version>
-        <!-- Suffix appended to the jar name, e.g. PlotManager-1.0.0-mc1.21.4.jar -->
-        <jar.classifier></jar.classifier>
+        <paper.version>1.21-R0.1-SNAPSHOT</paper.version>
     </properties>
 
     <repositories>
@@ -122,7 +123,7 @@
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}-${project.version}${jar.classifier}</finalName>
+        <finalName>PlotManagerv1-All</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>

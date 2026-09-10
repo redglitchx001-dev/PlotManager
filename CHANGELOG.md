@@ -2,6 +2,32 @@
 
 PlotManager — Copyright (c) 2026 **RedGlitchX**. All Rights Reserved.
 
+## Unreleased — one jar for all versions
+
+### Changed
+- **Single deliverable: `PlotManagerv1-All.jar`.** The per-version jars are gone;
+  the one universal jar is compiled against the oldest supported Paper API
+  (1.21) and runs on **1.21.x through 26.x**.
+- CI now **verify-compiles** the code against every supported Paper version and
+  builds only the universal jar; releases ship that jar + source + checksums.
+- Minimum server version lowered to **Paper 1.21**.
+
+### Fixed
+- `PlotStore.saveSync` can no longer lose **all** plots because of one corrupt
+  entry, and no longer risks `ConcurrentModificationException` from the
+  blackmarket list during async saves.
+- `PlotStore.readPlot` no longer throws on a malformed plot id — the entry is
+  skipped with a warning instead.
+- Merged plots are now persisted immediately (`mergePlots` saves).
+- NPE guards: `/plot freeze` with an unloaded plot world, owner-head/skull and
+  visitor tracking for ownerless plots, deleted-plot tip replies, null-seller
+  blackmarket listings, null shop materials, and null PlaceholderAPI params.
+- Hologram purchase errors now use the null-safe translated message instead of
+  a raw config lookup that could NPE on edited configs.
+- `Items.glow` no longer uses the deprecated `Enchantment.*` constant (resolved
+  by key, safe on future Paper versions).
+- Removed dead code and unused imports across listeners, tasks and GUIs.
+
 ## 1.0.0
 
 ### Fixed — the plugin no longer depends on the optional plugins

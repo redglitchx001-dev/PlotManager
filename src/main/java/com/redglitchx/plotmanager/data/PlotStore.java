@@ -94,7 +94,13 @@ public class PlotStore {
     public synchronized void saveSync() {
         YamlConfiguration yaml = new YamlConfiguration();
         for (Plot plot : plots.values()) {
-            writePlot(yaml.createSection("plots." + plot.id), plot);
+            // One corrupt plot must never nuke the whole save file.
+            try {
+                if (plot == null || plot.id == null) continue;
+                writePlot(yaml.createSection("plots." + plot.id), plot);
+            } catch (Exception e) {
+                plugin.getLogger().log(Level.WARNING, "Skipped plot " + plot.id + " while saving (corrupt data?)", e);
+            }
         }
         YamlConfiguration extra = new YamlConfiguration();
         if (leaderboardWorld != null) {
@@ -105,8 +111,9 @@ public class PlotStore {
         }
         extra.set("mayor.tax", mayorTaxPercent);
         if (mayorPlot != null) extra.set("mayor.plot", mayorPlot.toString());
-        int i = 0;
-        for (BlackmarketListing l : blackmarket) {
+        // Copy: the blackmarket list is mutated on the main thread (GUI/chat)
+        // while this save runs asynchronously.
+        for (BlackmarketListing l : List.copyOf(blackmarket)) {
             String path = "blackmarket." + l.id;
             extra.set(path + ".seller", l.seller == null ? null : l.seller.toString());
             extra.set(path + ".sellerName", l.sellerName);
@@ -114,7 +121,6 @@ public class PlotStore {
             extra.set(path + ".item", l.itemBase64);
             extra.set(path + ".price", l.price);
             extra.set(path + ".created", l.created);
-            i++;
         }
         try {
             if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdirs();
@@ -159,7 +165,9 @@ public class PlotStore {
     private Plot readPlot(ConfigurationSection s) {
         if (s == null) return null;
         Plot p = new Plot();
-        p.id = UUID.fromString(s.getName().contains("-") ? s.getName() : s.getString("id", s.getName()));
+        // The id lives both in the section name and in the "id" value; either may
+        // be missing or corrupt, so the parse is guarded (p.id keeps its fresh
+        // random UUID when it fails instead of dropping the whole plots.yml).
         try { p.id = UUID.fromString(s.getString("id", s.getName())); } catch (Exception ignored) {}
         p.name = s.getString("name", "Unnamed Plot");
         try { p.owner = UUID.fromString(s.getString("owner")); } catch (Exception ignored) {}
@@ -332,7 +340,7 @@ public class PlotStore {
         s.set("claimCostPaid", p.claimCostPaid);
         s.set("schematic", p.schematicFile);
         List<String> banned = new ArrayList<>();
-        for (UUID u : p.banned) banned.add(u.toString());
+        for (UUID u : p.banned) if (u != null) banned.add(u.toString());
         s.set("banned", banned);
         for (PlotMember m : p.members.values()) {
             String path = "members." + m.uuid;
@@ -358,7 +366,7 @@ public class PlotStore {
             s.set(path + ".x", cs.x);
             s.set(path + ".y", cs.y);
             s.set(path + ".z", cs.z);
-            s.set(path + ".item", cs.item.name());
+            s.set(path + ".item", cs.item == null ? "STONE" : cs.item.name());
             s.set(path + ".amount", cs.amount);
             s.set(path + ".price", cs.price);
         }

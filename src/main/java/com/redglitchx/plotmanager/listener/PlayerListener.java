@@ -25,7 +25,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
@@ -55,8 +54,7 @@ public class PlayerListener implements Listener {
                 plot.shopSalesOffline = 0;
                 plot.generatorItemsOffline = 0;
             }
-            int warnDays = plugin.cfg().getInt("reset_system.warning_days_before", 2);
-            // owner just logged in, so inactivity is reset
+            // owner just logged in, so lastOwnerLogin above already reset inactivity
         }
         plugin.discord.joinLeave(plugin.cfg().getString("discord.join_message", "%player% joined"), player.getName());
     }

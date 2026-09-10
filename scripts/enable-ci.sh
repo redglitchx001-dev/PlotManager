@@ -44,7 +44,7 @@ fi
 
 cat <<'NEXT'
 
-Done. To cut a release with a .jar for every Minecraft version:
+Done. To cut a release with the single all-versions jar:
 
     git tag v1.0.0
     git push origin v1.0.0

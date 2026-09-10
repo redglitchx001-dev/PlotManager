@@ -22,7 +22,7 @@
 ## 📦 Required & Optional Dependencies
 
 **Required:**
-- **Paper 1.21.4+** and **Java 21+** — that is all.
+- **Paper 1.21+** and **Java 21+** — that is all. One jar (`PlotManagerv1-All.jar`) covers every version.
 
 **Optional, for the money features only:**
 - **Vault** (economy bridge) + an economy provider such as **EssentialsX** or **CMI**.

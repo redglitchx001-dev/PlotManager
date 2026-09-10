@@ -3,11 +3,14 @@
 #          Copyright (c) 2026 RedGlitchX. All Rights Reserved.       #
 # ================================================================== #
 #
-# Publishes a GitHub Release containing:
-#   * one .jar per supported Minecraft version, from the first supported
-#     release (1.21.4, also the universal jar) to the newest Paper build
+# Publishes a GitHub Release containing the ONE universal jar:
+#
+#   * PlotManagerv1-All.jar  <- the only file players ever need
 #   * the full source code (.zip and a Maven -sources.jar)
 #   * SHA256 checksums for every file
+#
+# The code is verify-compiled against every supported Paper version first,
+# so the release notes can honestly say "works on all versions".
 #
 # Run it either by pushing a tag (git tag v1.0.0 && git push origin v1.0.0)
 # or from the Actions tab -> Release -> Run workflow.
@@ -65,8 +68,8 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "Releasing PlotManager v$version" >> "$GITHUB_STEP_SUMMARY"
 
-  build:
-    name: MC ${{ matrix.mc }}
+  verify:
+    name: Verify MC ${{ matrix.mc }}
     needs: targets
     runs-on: ubuntu-latest
     strategy:
@@ -82,6 +85,26 @@ jobs:
           java-version: ${{ matrix.jdk }}
           cache: maven
 
+      - name: Verify compilation
+        run: >
+          mvn -B -ntp test-compile
+          -Dpaper.version=${{ matrix.paper }}
+          -Djava.version=${{ matrix.jdk }}
+
+  build:
+    name: Build universal jar
+    needs: targets
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
       - name: Stamp release version
         run: >
           mvn -B -ntp org.codehaus.mojo:versions-maven-plugin:2.17.1:set
@@ -89,28 +112,18 @@ jobs:
           -DgenerateBackupPoms=false
 
       - name: Build jar
-        run: >
-          mvn -B -ntp package
-          -Dpaper.version=${{ matrix.paper }}
-          -Djava.version=${{ matrix.jdk }}
-          -Djar.classifier=-mc${{ matrix.mc }}
+        run: mvn -B -ntp package
 
       - name: Collect artifacts
         run: |
           mkdir -p dist
-          cp target/PlotManager-*-mc${{ matrix.mc }}.jar dist/
-          if [ "${{ matrix.universal }}" = "true" ]; then
-            # The oldest supported API is forward compatible: ship it as the
-            # one-jar-fits-all download, and publish the source archive with it.
-            cp "target/PlotManager-${{ needs.targets.outputs.version }}-mc${{ matrix.mc }}.jar" \
-               "dist/PlotManager-${{ needs.targets.outputs.version }}-universal.jar"
-            cp target/PlotManager-*-sources.jar dist/ 2>/dev/null || true
-          fi
+          cp target/PlotManagerv1-All.jar dist/
+          cp target/PlotManager-*-sources.jar dist/ 2>/dev/null || true
           ls -lh dist
 
       - uses: actions/upload-artifact@v4
         with:
-          name: build-mc${{ matrix.mc }}
+          name: release-files
           path: dist/*
           if-no-files-found: error
           retention-days: 7
@@ -118,7 +131,7 @@ jobs:
   publish:
     name: Publish release
     needs: [targets, build]
-    if: always() && needs.build.result != 'cancelled'
+    if: always() && needs.build.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -126,17 +139,16 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: staging
-          pattern: build-mc*
+          pattern: release-files
           merge-multiple: true
 
       - name: Assemble release files
-        id: assemble
         env:
           VERSION: ${{ needs.targets.outputs.version }}
         run: |
           set -euo pipefail
           mkdir -p release
-          cp staging/*.jar release/ 2>/dev/null || true
+          cp staging/*.jar release/
 
           # Full source code of this exact tag
           git archive --format=zip --prefix="PlotManager-${VERSION}/" \
@@ -146,34 +158,28 @@ jobs:
           cd release
           sha256sum * > SHA256SUMS.txt
           ls -lh
-          {
-            echo "jars<<EOF"
-            for f in PlotManager-*.jar; do echo "- \`$f\`"; done
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
 
       - name: Write release notes
         env:
           VERSION: ${{ needs.targets.outputs.version }}
         run: |
           cat > NOTES.md <<'HEADER'
-          ## PlotManager — downloads
+          ## PlotManager — one jar for every server
 
-          Pick the jar that matches your server. **Not sure? Take the universal
-          jar** — it is built against the oldest supported API and runs on every
-          supported version.
+          Download **`PlotManagerv1-All.jar`** and drop it into `plugins/` —
+          that's it. It is compiled against the oldest supported Paper API, so
+          the same file runs on **1.21.x through 26.x** (Paper and forks).
 
-          | File | Use it for |
+          | File | What it is |
           |---|---|
-          | `PlotManager-VERSION-universal.jar` | any supported server (recommended) |
-          | `PlotManager-VERSION-mcX.Y.Z.jar` | built and verified against exactly that Paper version |
+          | `PlotManagerv1-All.jar` | the plugin — the only file you need |
           | `PlotManager-VERSION-source.zip` | the complete source code |
           | `PlotManager-VERSION-sources.jar` | the same source code, as a Maven sources jar |
           | `SHA256SUMS.txt` | checksums for everything above |
 
           ### Requirements
-          - Java 21+ (Java 25 for the 26.x jars)
-          - Paper (or a fork) 1.21.4 or newer
+          - Java 21+
+          - Paper (or a fork) 1.21 or newer
           - Vault + an economy plugin **only** if you want the money features —
             everything else (holograms, protection, GUIs, Discord bot) works
             with no other plugin installed. Run `/plot hooks` in game to see

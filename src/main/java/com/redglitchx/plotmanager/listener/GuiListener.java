@@ -179,8 +179,8 @@ public class GuiListener implements Listener {
         Iterator<BlackmarketListing> it = plugin.store.blackmarket.iterator();
         while (it.hasNext()) {
             BlackmarketListing l = it.next();
-            if (!l.id.equals(uid)) continue;
-            if (shift && l.seller.equals(player.getUniqueId())) {
+            if (l.id == null || !l.id.equals(uid)) continue;
+            if (shift && player.getUniqueId().equals(l.seller)) {
                 ItemStack item = Serial.itemFromBase64(l.itemBase64);
                 if (item != null) player.getInventory().addItem(item);
                 it.remove();

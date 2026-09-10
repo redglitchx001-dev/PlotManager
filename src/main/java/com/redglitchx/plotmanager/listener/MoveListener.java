@@ -11,12 +11,9 @@ package com.redglitchx.plotmanager.listener;
 import com.redglitchx.plotmanager.PlotManager;
 import com.redglitchx.plotmanager.data.PlayerSession;
 import com.redglitchx.plotmanager.data.Plot;
-import com.redglitchx.plotmanager.data.PlotFlag;
 import com.redglitchx.plotmanager.util.FX;
 import com.redglitchx.plotmanager.util.Text;
-import org.bukkit.Color;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -117,7 +114,8 @@ public class MoveListener implements Listener {
             } catch (Exception ignored) {}
         }
         if (!plot.isOwner(player.getUniqueId())) {
-            if (plugin.getServer().getOfflinePlayer(plot.owner).isOnline()) {
+            boolean ownerOnline = plot.owner != null && plugin.getServer().getOfflinePlayer(plot.owner).isOnline();
+            if (ownerOnline) {
                 plugin.addPlotExp(plot, plugin.cfg().getInt("leveling.exp_per_visitor_minute", 5) / 12);
             } else {
                 plot.visitorsOffline++;

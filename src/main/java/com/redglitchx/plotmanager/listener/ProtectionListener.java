@@ -63,7 +63,6 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.projectiles.ProjectileSource;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class ProtectionListener implements Listener {
