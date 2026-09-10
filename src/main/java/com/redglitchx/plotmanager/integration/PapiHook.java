@@ -73,6 +73,7 @@ public class PapiHook {
     }
 
     public static String builtin(PlotManager plugin, Player player, String params) {
+        if (params == null) return null;
         Plot at = player == null ? null : plugin.store.index.at(player.getLocation());
         List<Plot> owned = player == null ? List.of() : plugin.store.ownedBy(player.getUniqueId());
         String none = plugin.cfg().getString("placeholders.none_text", "None");

@@ -394,6 +394,7 @@ public final class PlotManager extends JavaPlugin {
         blueMap.upsert(a);
         a.audit(player.getName(), "MERGE", "Merged adjacent plot");
         fawe.saveSchematic(a);
+        store.saveAsync();
     }
 
     public Plot findByOwnerName(String name) {
@@ -919,6 +920,10 @@ public final class PlotManager extends JavaPlugin {
             try {
                 UUID id = UUID.fromString(path.substring(4));
                 Plot plot = store.get(id);
+                if (plot == null) {
+                    lang.msg(player, "general.plot-not-found");
+                    return;
+                }
                 double amt = Double.parseDouble(msg.replace("$", "").trim());
                 double min = cfg().getDouble("economy.tip_jar_minimum", 10);
                 if (amt < min) {
@@ -992,7 +997,7 @@ public final class PlotManager extends JavaPlugin {
         }
         double cost = cfg().getDouble("holograms.cost_per_hologram", 500);
         if (plot.bank >= cost) plot.bank -= cost;
-        else if (!economy.charge(player, cost, cfg().getString("economy.not_enough_money_message").replace("%balance%", Text.money(economy.balance(player))))) return;
+        else if (!economy.charge(player, cost, lang.line(player, "economy.not_enough_money_message", "%balance%", Text.money(economy.balance(player))))) return;
         CustomHologram h = new CustomHologram();
         h.world = player.getWorld().getName();
         h.x = player.getLocation().getX();
@@ -1020,7 +1025,7 @@ public final class PlotManager extends JavaPlugin {
         }
         double cost = cfg().getDouble("holograms.cost_per_extra_line", 50);
         if (plot.bank >= cost) plot.bank -= cost;
-        else if (!economy.charge(player, cost, cfg().getString("economy.not_enough_money_message").replace("%balance%", Text.money(economy.balance(player))))) return;
+        else if (!economy.charge(player, cost, lang.line(player, "economy.not_enough_money_message", "%balance%", Text.money(economy.balance(player))))) return;
         h.lines.add(text);
         holograms.spawnCustom(plot, h);
         lang.msg(player, "holograms.line_added_message", "%text%", text);

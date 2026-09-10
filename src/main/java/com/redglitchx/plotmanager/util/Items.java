@@ -47,11 +47,17 @@ public final class Items {
     }
 
     public static ItemStack glow(ItemStack stack) {
+        if (stack == null) return null;
         ItemMeta meta = stack.getItemMeta();
         if (meta != null) {
-            meta.addEnchant(Enchantment.LUCK_OF_THE_SEA, 1, true);
-            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            stack.setItemMeta(meta);
+            // Resolved by key on purpose: the legacy Enchantment.* constants are
+            // deprecated and may disappear on future Paper versions.
+            Enchantment luck = Enchantment.getByKey(NamespacedKey.minecraft("luck_of_the_sea"));
+            if (luck != null) {
+                meta.addEnchant(luck, 1, true);
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                stack.setItemMeta(meta);
+            }
         }
         return stack;
     }

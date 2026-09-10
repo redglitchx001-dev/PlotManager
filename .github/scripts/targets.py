@@ -23,10 +23,10 @@ import urllib.request
 METADATA = ("https://repo.papermc.io/repository/maven-public/"
             "io/papermc/paper/paper-api/maven-metadata.xml")
 
-# Oldest server release PlotManager supports. Its jar is the "universal" build:
-# the Paper API only ever adds methods, so a jar compiled here also runs on
-# every newer version.
-FLOOR = (1, 21, 4)
+# Oldest server release PlotManager supports. Its API is what the single
+# universal jar (PlotManagerv1-All.jar) is compiled against: the Paper API only
+# ever adds methods, so a jar built here also runs on every newer version.
+FLOOR = (1, 21, 0)
 
 # Used when repo.papermc.io cannot be reached during the workflow.
 FALLBACK = [

@@ -661,7 +661,8 @@ public class PlotCommand implements CommandExecutor, TabCompleter {
         plugin.blueMap.upsert(plot);
         if (freeze) {
             plugin.fx(player, "quarantine");
-            Location home = plot.cuboid().nearestOutside(plot.center(), 3);
+            Location center = plot.center(); // null when the plot world is unloaded
+            Location home = center == null ? player.getLocation() : plot.cuboid().nearestOutside(center, 3);
             for (Player p : Bukkit.getOnlinePlayers()) {
                 if (plot.contains(p.getLocation()) && !p.hasPermission("plotmanager.admin")) {
                     p.teleport(home);

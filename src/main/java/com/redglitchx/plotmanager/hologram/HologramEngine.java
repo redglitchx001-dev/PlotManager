@@ -24,7 +24,6 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class HologramEngine {
@@ -134,10 +133,8 @@ public class HologramEngine {
             ArmorStand stand = stands.get(i);
             if (stand == null || !stand.isValid()) continue;
             stand.customName(Text.component(plugin.placeholders(null, lines.get(i), null)));
-            if (bob != 0) {
-                Location l = stand.getLocation();
-                // keep tiny bob without accumulating: we teleport relative to current? skip if marker
-            }
+            // NOTE: the bob animation is intentionally a no-op — teleporting the
+            // stands every tick caused jitter, so lines only refresh their text.
         }
     }
 

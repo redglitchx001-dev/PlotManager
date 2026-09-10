@@ -83,6 +83,7 @@ public class FaweHook {
         });
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void doSave(Plot plot, File file) throws Exception {
         World bw = plot.bukkitWorld();
         if (bw == null) return;

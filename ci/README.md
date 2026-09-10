@@ -22,28 +22,33 @@ truth for them.
 
 | Workflow | Trigger | Result |
 |---|---|---|
-| `build.yml` | every push / PR | compiles the plugin against **every** supported Paper version and uploads each jar as a build artifact |
-| `release.yml` | tag `v*`, or "Run workflow" | builds all jars, then publishes a GitHub Release with them + the source code + checksums |
+| `build.yml` | every push / PR | verify-compiles against **every** supported Paper version and builds the single `PlotManagerv1-All.jar` |
+| `release.yml` | tag `v*`, or "Run workflow" | publishes a GitHub Release with the one jar + the source code + checksums |
+
+`build.yml` also has a manual **commit_jar** switch: tick it on a "Run
+workflow" dispatch and the built jar is committed back to the branch as
+`release/PlotManagerv1-All.jar` (handy for grabbing the file without opening
+the Actions UI).
 
 ### The version matrix is automatic
 
 `.github/scripts/targets.py` reads PaperMC's live `maven-metadata.xml` and
-builds the list of targets from the first supported release (**1.21.4**) up to
+builds the list of targets from the first supported release (**1.21**) up to
 the newest Paper build available at that moment — so "first version to last"
 stays true without editing anything. If PaperMC is unreachable the script falls
 back to a pinned list, so a release is never blocked.
 
 Java is picked per target: `21` for the 1.21.x line, `25` for 26.x and newer.
+The matrix only *verifies* compilation — the shipped jar is always the single
+file compiled against the oldest (1.21) API, which is forward compatible with
+every newer version.
 
 ### What ends up on a release
 
 ```
-PlotManager-<version>-universal.jar     <- recommended download, runs on all supported versions
-PlotManager-<version>-mc1.21.4.jar      <- one jar per Minecraft version ...
-PlotManager-<version>-mc1.21.5.jar
-PlotManager-<version>-mc<latest>.jar
-PlotManager-<version>-source.zip        <- full source code
-PlotManager-<version>-sources.jar       <- same source, Maven layout
+PlotManagerv1-All.jar            <- the plugin: one file, every MC version
+PlotManager-<version>-source.zip  <- full source code
+PlotManager-<version>-sources.jar <- same source, Maven layout
 LICENSE.txt
 SHA256SUMS.txt
 ```

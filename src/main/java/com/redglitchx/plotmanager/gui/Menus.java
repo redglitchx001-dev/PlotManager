@@ -17,7 +17,6 @@ import com.redglitchx.plotmanager.data.PlotRole;
 import com.redglitchx.plotmanager.util.Items;
 import com.redglitchx.plotmanager.util.Serial;
 import com.redglitchx.plotmanager.util.Text;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -29,7 +28,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class Menus {
     private final PlotManager plugin;
@@ -87,7 +85,7 @@ public class Menus {
         fillBorder(inv);
         int slot = 10;
         ItemStack ownerHead = btn(Material.PLAYER_HEAD, plugin.lang.line(player, "gui.members.owner-name", "%player%", plot.ownerName), plugin.lang.list(player, "gui.members.owner-lore"), "noop");
-        if (ownerHead.getItemMeta() instanceof SkullMeta meta) {
+        if (plot.owner != null && ownerHead.getItemMeta() instanceof SkullMeta meta) {
             meta.setOwningPlayer(Bukkit.getOfflinePlayer(plot.owner));
             ownerHead.setItemMeta(meta);
         }

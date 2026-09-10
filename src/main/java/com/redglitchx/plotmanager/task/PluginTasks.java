@@ -228,7 +228,6 @@ public final class PluginTasks {
     private static void sorters(PlotManager plugin) {
         if (!plugin.cfg().getBoolean("sorters.enabled", true)) return;
         int radius = plugin.cfg().getInt("sorters.scan_radius", 6);
-        String hopperName = plugin.cfg().getString("sorters.hopper_name", "&a&lSmart Hopper");
         for (Player player : Bukkit.getOnlinePlayers()) {
             Plot plot = plugin.store.index.at(player.getLocation());
             if (plot == null || !plot.sorterUnlocked) continue;

@@ -134,7 +134,7 @@ a jar per Minecraft version plus the full source code:
 
 | Symptom | Cause / fix |
 |---|---|
-| Plugin does not appear in `/plugins` | Wrong Java version — PlotManager needs Java 21+ (Java 25 for the `mc26.*` jars). Check the startup log. |
+| Plugin does not appear in `/plugins` | Wrong Java version — PlotManager needs Java 21+. Check the startup log. |
 | `Economy OFFLINE` in the log | No Vault economy installed. Everything except money works; install Vault + EssentialsX/CMI to enable it. |
 | An optional hook says `NOT INSTALLED` | Working as intended — that integration is simply not present. |
 | A feature is missing but the plugin loaded | Run `/plot hooks`; a `Degraded` line lists any subsystem that failed to start, with the reason in the server log. |
@@ -330,5 +330,8 @@ RedGlitchX.
 <div align="center">
 
 **PlotManager V1** · Copyright (c) 2026 **RedGlitchX** · All Rights Reserved
+
+</div>
+ed
 
 </div>
